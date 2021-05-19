@@ -3,33 +3,34 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_cubit.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
-import 'package:zoo_home/auth/login/login_bloc.dart';
-import 'package:zoo_home/auth/login/login_event.dart';
-import 'package:zoo_home/auth/login/login_state.dart';
+import 'package:zoo_home/auth/signup/signup_bloc.dart';
+import 'package:zoo_home/auth/signup/signup_event.dart';
+import 'package:zoo_home/auth/signup/signup_state.dart';
 
-class LoginView extends StatelessWidget {
+class SignUpView extends StatelessWidget {
   final _formKey = GlobalKey<FormState>();
 
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       body: BlocProvider(
-        create: (context) => LoginBloc(
+        create: (context) => SignUpBloc(
           authRepo: context.read<AuthRepository>(),
           authCubit: context.read<AuthCubit>(),
         ),
         child: Stack(
           alignment: Alignment.bottomCenter,
           children: [
-            _loginForm(),
-            _showSignUpButton(context),
+            _signUpForm(),
+            _showLoginButton(context),
           ],
         ),
       ),
     );
   }
 
-  Widget _loginForm() {
-    return BlocListener<LoginBloc, LoginState>(
+  Widget _signUpForm() {
+    return BlocListener<SignUpBloc, SignUpState>(
         listener: (context, state) {
           final formStatus = state.formStatus;
           if (formStatus is SubmissionFailed) {
@@ -45,7 +46,7 @@ class LoginView extends StatelessWidget {
               children: [
                 _emailField(),
                 _passwordField(),
-                _loginButton(),
+                _signUpButton(),
               ],
             ),
           ),
@@ -53,7 +54,7 @@ class LoginView extends StatelessWidget {
   }
 
   Widget _emailField() {
-    return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
       return TextFormField(
         decoration: InputDecoration(
           icon: Icon(Icons.person),
@@ -61,15 +62,15 @@ class LoginView extends StatelessWidget {
         ),
         validator: (value) =>
             state.isValidEmail ? null : 'Некорректный email адрес',
-        onChanged: (value) => context.read<LoginBloc>().add(
-              LoginEmailChanged(email: value),
+        onChanged: (value) => context.read<SignUpBloc>().add(
+              SignUpEmailChanged(email: value),
             ),
       );
     });
   }
 
   Widget _passwordField() {
-    return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
       return TextFormField(
         obscureText: true,
         decoration: InputDecoration(
@@ -78,33 +79,33 @@ class LoginView extends StatelessWidget {
         ),
         validator: (value) =>
             state.isValidPassword ? null : 'Пароль слишком короткий',
-        onChanged: (value) => context.read<LoginBloc>().add(
-              LoginPasswordChanged(password: value),
+        onChanged: (value) => context.read<SignUpBloc>().add(
+              SignUpPasswordChanged(password: value),
             ),
       );
     });
   }
 
-  Widget _loginButton() {
-    return BlocBuilder<LoginBloc, LoginState>(builder: (context, state) {
+  Widget _signUpButton() {
+    return BlocBuilder<SignUpBloc, SignUpState>(builder: (context, state) {
       return state.formStatus is FormSubmitting
           ? CircularProgressIndicator()
           : ElevatedButton(
               onPressed: () {
                 if (_formKey.currentState.validate()) {
-                  context.read<LoginBloc>().add(LoginSubmitted());
+                  context.read<SignUpBloc>().add(SignUpSubmitted());
                 }
               },
-              child: Text('Вход'),
+              child: Text('Зарегистрироваться'),
             );
     });
   }
 
-  Widget _showSignUpButton(BuildContext context) {
+  Widget _showLoginButton(BuildContext context) {
     return SafeArea(
       child: TextButton(
-        child: Text('Еще нет аккаунта? Зарегистрироваться'),
-        onPressed: () => context.read<AuthCubit>().showSignUp(),
+        child: Text('Уже есть аккаунт? Войти'),
+        onPressed: () => context.read<AuthCubit>().showLogin(),
       ),
     );
   }

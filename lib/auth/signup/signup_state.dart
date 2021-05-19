@@ -1,7 +1,7 @@
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/helpers/validation_helper.dart';
 
-class LoginState {
+class SignUpState {
   final String email;
   bool get isValidEmail => ValidationHelper.validateEmail(email);
 
@@ -10,18 +10,19 @@ class LoginState {
 
   final FormSubmissionStatus formStatus;
 
-  LoginState({
+  SignUpState({
     this.email = '',
     this.password = '',
     this.formStatus = const InitialFormStatus(),
   });
 
-  LoginState copyWith({
+  SignUpState copyWith({
+    String username,
     String email,
     String password,
     FormSubmissionStatus formStatus,
   }) {
-    return LoginState(
+    return SignUpState(
       email: email ?? this.email,
       password: password ?? this.password,
       formStatus: formStatus ?? this.formStatus,

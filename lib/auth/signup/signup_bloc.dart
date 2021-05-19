@@ -1,38 +1,36 @@
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/auth/auth_cubit.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
-import 'package:zoo_home/auth/login/login_event.dart';
-import 'package:zoo_home/auth/login/login_state.dart';
+import 'package:zoo_home/auth/signup/signup_event.dart';
+import 'package:zoo_home/auth/signup/signup_state.dart';
 
-class LoginBloc extends Bloc<LoginEvent, LoginState> {
+class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
   final AuthRepository authRepo;
   final AuthCubit authCubit;
-  LoginBloc({this.authRepo, this.authCubit}) : super(LoginState());
+
+  SignUpBloc({this.authRepo, this.authCubit}) : super(SignUpState());
 
   @override
-  Stream<LoginState> mapEventToState(LoginEvent event) async* {
-    if (event is LoginEmailChanged) {
+  Stream<SignUpState> mapEventToState(SignUpEvent event) async* {
+    if (event is SignUpEmailChanged) {
       yield state.copyWith(email: event.email);
-    } else if (event is LoginPasswordChanged) {
+    } else if (event is SignUpPasswordChanged) {
       yield state.copyWith(password: event.password);
-
-      // Form submitted
-    } else if (event is LoginSubmitted) {
+    } else if (event is SignUpSubmitted) {
       yield state.copyWith(formStatus: FormSubmitting());
 
       try {
-        final userId = await authRepo.login(
+        await authRepo.signUp(
           email: state.email,
           password: state.password,
         );
         yield state.copyWith(formStatus: SubmissionSuccess());
 
-        authCubit.launchSession(AuthCredentials(
+        authCubit.showConfirmSignUp(
           email: state.email,
-          userShelterId: userId,
-        ));
+          password: state.password,
+        );
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }
