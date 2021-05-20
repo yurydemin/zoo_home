@@ -1,0 +1,9 @@
+type UserShelter @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  email: String!
+  location: String
+  title: String
+  description: String
+  images: [String]!
+}
+ 
