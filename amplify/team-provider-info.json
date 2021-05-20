@@ -9,7 +9,8 @@
       "UnauthRoleName": "amplify-zoohome-staging-230237-unauthRole",
       "StackName": "amplify-zoohome-staging-230237",
       "StackId": "arn:aws:cloudformation:eu-west-2:749284692336:stack/amplify-zoohome-staging-230237/4de3c350-b8f6-11eb-9361-0263a06a1252",
-      "AmplifyAppId": "d3si74luvq5dtk"
+      "AmplifyAppId": "d3si74luvq5dtk",
+      "AuthTriggerTemplateURL": ""
     },
     "categories": {
       "auth": {

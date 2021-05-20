@@ -1,3 +1,4 @@
+import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_flutter/amplify.dart';
 import 'package:flutter/foundation.dart';
 
@@ -44,10 +45,13 @@ class AuthRepository {
     @required String email,
     @required String password,
   }) async {
+    final options =
+        CognitoSignUpOptions(userAttributes: {'email': email.trim()});
     try {
       final result = await Amplify.Auth.signUp(
         username: email.trim(),
         password: password.trim(),
+        options: options,
       );
       return result.isSignUpComplete;
     } catch (e) {
