@@ -29,6 +29,7 @@ class UserShelter extends Model {
   final String title;
   final String description;
   final List<String> images;
+  final String avatarKey;
 
   @override
   getInstanceType() => classType;
@@ -44,7 +45,8 @@ class UserShelter extends Model {
       this.location,
       this.title,
       this.description,
-      @required this.images});
+      @required this.images,
+      this.avatarKey});
 
   factory UserShelter(
       {String id,
@@ -52,14 +54,16 @@ class UserShelter extends Model {
       String location,
       String title,
       String description,
-      @required List<String> images}) {
+      @required List<String> images,
+      String avatarKey}) {
     return UserShelter._internal(
         id: id == null ? UUID.getUUID() : id,
         email: email,
         location: location,
         title: title,
         description: description,
-        images: images != null ? List.unmodifiable(images) : images);
+        images: images != null ? List.unmodifiable(images) : images,
+        avatarKey: avatarKey);
   }
 
   bool equals(Object other) {
@@ -75,7 +79,8 @@ class UserShelter extends Model {
         location == other.location &&
         title == other.title &&
         description == other.description &&
-        DeepCollectionEquality().equals(images, other.images);
+        DeepCollectionEquality().equals(images, other.images) &&
+        avatarKey == other.avatarKey;
   }
 
   @override
@@ -91,7 +96,9 @@ class UserShelter extends Model {
     buffer.write("location=" + "$location" + ", ");
     buffer.write("title=" + "$title" + ", ");
     buffer.write("description=" + "$description" + ", ");
-    buffer.write("images=" + (images != null ? images.toString() : "null"));
+    buffer.write(
+        "images=" + (images != null ? images.toString() : "null") + ", ");
+    buffer.write("avatarKey=" + "$avatarKey");
     buffer.write("}");
 
     return buffer.toString();
@@ -103,14 +110,16 @@ class UserShelter extends Model {
       String location,
       String title,
       String description,
-      List<String> images}) {
+      List<String> images,
+      String avatarKey}) {
     return UserShelter(
         id: id ?? this.id,
         email: email ?? this.email,
         location: location ?? this.location,
         title: title ?? this.title,
         description: description ?? this.description,
-        images: images ?? this.images);
+        images: images ?? this.images,
+        avatarKey: avatarKey ?? this.avatarKey);
   }
 
   UserShelter.fromJson(Map<String, dynamic> json)
@@ -119,7 +128,8 @@ class UserShelter extends Model {
         location = json['location'],
         title = json['title'],
         description = json['description'],
-        images = json['images']?.cast<String>();
+        images = json['images']?.cast<String>(),
+        avatarKey = json['avatarKey'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -127,7 +137,8 @@ class UserShelter extends Model {
         'location': location,
         'title': title,
         'description': description,
-        'images': images
+        'images': images,
+        'avatarKey': avatarKey
       };
 
   static final QueryField ID = QueryField(fieldName: "userShelter.id");
@@ -136,6 +147,7 @@ class UserShelter extends Model {
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField IMAGES = QueryField(fieldName: "images");
+  static final QueryField AVATARKEY = QueryField(fieldName: "avatarKey");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "UserShelter";
@@ -178,6 +190,11 @@ class UserShelter extends Model {
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.string))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: UserShelter.AVATARKEY,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 
