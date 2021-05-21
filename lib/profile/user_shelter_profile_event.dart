@@ -1,17 +1,29 @@
+import 'package:image_picker/image_picker.dart';
+
 abstract class UserShelterProfileEvent {}
 
 class ChangeAvatarRequest extends UserShelterProfileEvent {}
 
-class UploadGalleryRequest extends UserShelterProfileEvent {}
+class OpenImagePicker extends UserShelterProfileEvent {
+  final ImageSource imageSource;
 
-class OpenImagePicker extends UserShelterProfileEvent {}
+  OpenImagePicker({this.imageSource});
+}
+
+class ProvideAvatarImagePath extends UserShelterProfileEvent {
+  final String avatarPath;
+
+  ProvideAvatarImagePath({this.avatarPath});
+}
+
+class ChangeProfileImagesRequest extends UserShelterProfileEvent {}
 
 class OpenMultiImagePicker extends UserShelterProfileEvent {}
 
-class ProvideImagePath extends UserShelterProfileEvent {
-  final String avatarPath;
+class ProvideProfileImagesPaths extends UserShelterProfileEvent {
+  final List<String> images;
 
-  ProvideImagePath({this.avatarPath});
+  ProvideProfileImagesPaths({this.images});
 }
 
 class UserShelterProfileLocationChanged extends UserShelterProfileEvent {

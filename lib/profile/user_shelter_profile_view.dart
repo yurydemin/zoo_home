@@ -1,5 +1,9 @@
+import 'dart:io';
+
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/profile/user_shelter_profile_state.dart';
@@ -14,10 +18,17 @@ class UserShelterProfileView extends StatelessWidget {
         user: sessionCubit.selectedUser ?? sessionCubit.currentUser,
         isCurrentUser: sessionCubit.isCurrentUserSelected,
       ),
-      child: Scaffold(
-        backgroundColor: Color(0xFFF2F2F7),
-        appBar: _appBar(),
-        body: _profilePage(),
+      child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
+        listener: (context, state) {
+          if (state.avatarImageSourceActionSheetIsVisible) {
+            _showImageSourceActionSheet(context);
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Color(0xFFF2F2F7),
+          appBar: _appBar(),
+          body: _profilePage(),
+        ),
       ),
     );
   }
@@ -30,6 +41,7 @@ class UserShelterProfileView extends StatelessWidget {
           builder: (context, state) {
         return AppBar(
           title: Text('Зоодом'),
+          centerTitle: true,
           actions: [
             if (state.isCurrentUser)
               IconButton(
@@ -46,22 +58,20 @@ class UserShelterProfileView extends StatelessWidget {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
       return SafeArea(
-        child: Center(
-          child: SingleChildScrollView(
-            child: Column(
-              children: [
-                SizedBox(height: 20),
-                _avatar(),
-                if (state.isCurrentUser) _changeAvatarButton(),
-                SizedBox(height: 10),
-                _titleTile(),
-                SizedBox(height: 20),
-                _locationTile(),
-                _emailTile(),
-                _descriptionTile(),
-                if (state.isCurrentUser) _saveProfileChangesButton(),
-              ],
-            ),
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              SizedBox(height: 20),
+              _avatar(),
+              if (state.isCurrentUser) _changeAvatarButton(),
+              SizedBox(height: 10),
+              _titleTile(),
+              SizedBox(height: 20),
+              _locationTile(),
+              _emailTile(),
+              _descriptionTile(),
+              if (state.isCurrentUser) _saveProfileChangesButton(),
+            ],
           ),
         ),
       );
@@ -82,8 +92,9 @@ class UserShelterProfileView extends StatelessWidget {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
       return TextButton(
-        onPressed: () {},
-        child: Text('Change Avatar'),
+        onPressed: () =>
+            context.read<UserShelterProfileBloc>().add(ChangeAvatarRequest()),
+        child: Text('Изменить аватар'),
       );
     });
   }
@@ -94,7 +105,22 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.location_city),
-        title: Text(state.location),
+        title: TextFormField(
+          initialValue: state.location,
+          decoration: InputDecoration.collapsed(
+              hintText: state.isCurrentUser ? 'Укажите город' : 'Город'),
+          maxLines: null,
+          readOnly: !state.isCurrentUser,
+          toolbarOptions: ToolbarOptions(
+            copy: state.isCurrentUser,
+            cut: state.isCurrentUser,
+            paste: state.isCurrentUser,
+            selectAll: state.isCurrentUser,
+          ),
+          onChanged: (value) => context
+              .read<UserShelterProfileBloc>()
+              .add(UserShelterProfileLocationChanged(location: value)),
+        ),
       );
     });
   }
@@ -116,7 +142,24 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.title),
-        title: Text(state.title),
+        title: TextFormField(
+          initialValue: state.title,
+          decoration: InputDecoration.collapsed(
+              hintText: state.isCurrentUser
+                  ? 'Добавьте название своего зоодома'
+                  : 'Название зоодома'),
+          maxLines: null,
+          readOnly: !state.isCurrentUser,
+          toolbarOptions: ToolbarOptions(
+            copy: state.isCurrentUser,
+            cut: state.isCurrentUser,
+            paste: state.isCurrentUser,
+            selectAll: state.isCurrentUser,
+          ),
+          onChanged: (value) => context
+              .read<UserShelterProfileBloc>()
+              .add(UserShelterProfileTitleChanged(title: value)),
+        ),
       );
     });
   }
@@ -157,5 +200,59 @@ class UserShelterProfileView extends StatelessWidget {
         child: Text('Сохранить изменения'),
       );
     });
+  }
+
+  void _showImageSourceActionSheet(BuildContext context) {
+    Function(ImageSource) selectImageSource = (imageSource) {
+      context
+          .read<UserShelterProfileBloc>()
+          .add(OpenImagePicker(imageSource: imageSource));
+    };
+
+    if (Platform.isIOS) {
+      showCupertinoModalPopup(
+        context: context,
+        builder: (context) => CupertinoActionSheet(
+          actions: [
+            CupertinoActionSheetAction(
+              child: Text('Камера'),
+              onPressed: () {
+                Navigator.pop(context);
+                selectImageSource(ImageSource.camera);
+              },
+            ),
+            CupertinoActionSheetAction(
+              child: Text('Галерея'),
+              onPressed: () {
+                Navigator.pop(context);
+                selectImageSource(ImageSource.gallery);
+              },
+            )
+          ],
+        ),
+      );
+    } else {
+      showModalBottomSheet(
+        context: context,
+        builder: (context) => Wrap(children: [
+          ListTile(
+            leading: Icon(Icons.camera_alt),
+            title: Text('Камера'),
+            onTap: () {
+              Navigator.pop(context);
+              selectImageSource(ImageSource.camera);
+            },
+          ),
+          ListTile(
+            leading: Icon(Icons.photo_album),
+            title: Text('Галерея'),
+            onTap: () {
+              Navigator.pop(context);
+              selectImageSource(ImageSource.gallery);
+            },
+          ),
+        ]),
+      );
+    }
   }
 }

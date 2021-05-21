@@ -24,6 +24,7 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc:
+  image_picker:
   amplify_flutter:
   amplify_auth_cognito:
   amplify_datastore:

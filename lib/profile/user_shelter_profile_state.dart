@@ -14,6 +14,7 @@ class UserShelterProfileState {
   String get email => user.email;
 
   final FormSubmissionStatus formStatus;
+  bool avatarImageSourceActionSheetIsVisible;
 
   UserShelterProfileState({
     @required UserShelter user,
@@ -24,13 +25,16 @@ class UserShelterProfileState {
     List<String> images,
     String avatarPath,
     this.formStatus = const InitialFormStatus(),
+    avatarImageSourceActionSheetIsVisible = false,
   })  : this.user = user,
         this.isCurrentUser = isCurrentUser,
         this.location = location ?? user.location,
         this.title = title ?? user.title,
         this.description = description ?? user.description,
         this.images = images ?? user.images,
-        this.avatarPath = avatarPath;
+        this.avatarPath = avatarPath,
+        this.avatarImageSourceActionSheetIsVisible =
+            avatarImageSourceActionSheetIsVisible;
 
   UserShelterProfileState copyWith({
     UserShelter user,
@@ -40,6 +44,7 @@ class UserShelterProfileState {
     List<String> images,
     String avatarPath,
     FormSubmissionStatus formStatus,
+    bool avatarImageSourceActionSheetIsVisible,
   }) {
     return UserShelterProfileState(
       user: user ?? this.user,
@@ -50,6 +55,9 @@ class UserShelterProfileState {
       images: images ?? this.images,
       avatarPath: avatarPath ?? this.avatarPath,
       formStatus: formStatus ?? this.formStatus,
+      avatarImageSourceActionSheetIsVisible:
+          avatarImageSourceActionSheetIsVisible ??
+              this.avatarImageSourceActionSheetIsVisible,
     );
   }
 }
