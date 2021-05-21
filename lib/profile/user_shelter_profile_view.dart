@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
+import 'package:zoo_home/profile/user_shelter_profile_carousel.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/profile/user_shelter_profile_state.dart';
 import 'package:zoo_home/repositories/data_repository.dart';
@@ -74,7 +75,8 @@ class UserShelterProfileView extends StatelessWidget {
               _locationTile(),
               _emailTile(),
               _descriptionTile(),
-              _addImagesButton(),
+              if (state.isCurrentUser) _addImagesButton(),
+              _galleryCarousel(),
               if (state.isCurrentUser) _saveProfileChangesButton(),
             ],
           ),
@@ -224,6 +226,13 @@ class UserShelterProfileView extends StatelessWidget {
           child: Icon(Icons.add_a_photo),
         ),
       );
+    });
+  }
+
+  Widget _galleryCarousel() {
+    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+        builder: (context, state) {
+      return UserShelterProfileCarousel(images: state.images);
     });
   }
 

@@ -1,8 +1,10 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/profile/user_shelter_profile_state.dart';
@@ -25,6 +27,10 @@ class UserShelterProfileBloc
     storageRepo
         .getUrlForFile(user.avatarKey)
         .then((url) => add(ProvideAvatarImagePath(avatarPath: url)));
+    Future.wait(user.images.map((imageKey) async {
+      return await storageRepo.getUrlForFile(imageKey);
+    }).toList())
+        .then((urls) => add(ProvideProfileImagesPaths(images: urls)));
   }
 
   @override
@@ -51,9 +57,39 @@ class UserShelterProfileBloc
     } else if (event is ProvideAvatarImagePath) {
       yield state.copyWith(avatarPath: event.avatarPath);
     } else if (event is OpenMultiImagePicker) {
-      // open multi image picker to fill gallery
+      final pickedImages = await MultiImagePicker.pickImages(
+        maxImages: 8,
+        enableCamera: false,
+        cupertinoOptions: CupertinoOptions(
+          takePhotoIcon: "chat",
+          doneButtonTitle: "Fatto",
+        ),
+        materialOptions: MaterialOptions(
+          actionBarColor: "#abcdef",
+          actionBarTitle: "Галерея зоодома",
+          allViewTitle: "Все изображения",
+          useDetailsView: false,
+          selectCircleStrokeColor: "#000000",
+        ),
+      ).catchError(() => null);
+      if (pickedImages == null || pickedImages.isEmpty) return;
+
+      final imagesKeys = await Future.wait(pickedImages.map((image) async {
+        final imagePath =
+            await FlutterAbsolutePath.getAbsolutePath(image.identifier);
+        return await storageRepo.uploadFile(File(imagePath), state.user.id);
+      }).toList());
+
+      final imagesUrls = await Future.wait(imagesKeys.map((imageKey) async {
+        return await storageRepo.getUrlForFile(imageKey);
+      }).toList());
+
+      final updatedUser = state.user.copyWith(images: imagesKeys);
+      await dataRepo.updateUser(updatedUser);
+
+      yield state.copyWith(images: imagesUrls);
     } else if (event is ProvideProfileImagesPaths) {
-      // get gallery images
+      yield state.copyWith(images: event.images);
     } else if (event is UserShelterProfileLocationChanged) {
       yield state.copyWith(location: event.location);
     } else if (event is UserShelterProfileTitleChanged) {

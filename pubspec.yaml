@@ -25,6 +25,9 @@ dependencies:
     sdk: flutter
   flutter_bloc:
   image_picker:
+  multi_image_picker2:
+  flutter_absolute_path:
+  carousel_slider:
   amplify_flutter:
   amplify_auth_cognito:
   amplify_datastore:
