@@ -2,6 +2,7 @@ import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:amplify_flutter/amplify.dart';
+import 'package:amplify_storage_s3/amplify_storage_s3.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/amplifyconfiguration.dart';
@@ -9,6 +10,7 @@ import 'package:zoo_home/app_navigator.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/views/loading_view.dart';
 
@@ -37,7 +39,8 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
             ? MultiRepositoryProvider(
                 providers: [
                   RepositoryProvider(create: (context) => AuthRepository()),
-                  RepositoryProvider(create: (context) => DataRepository())
+                  RepositoryProvider(create: (context) => DataRepository()),
+                  RepositoryProvider(create: (context) => StorageRepository()),
                 ],
                 child: BlocProvider(
                   create: (context) => SessionCubit(
@@ -56,6 +59,7 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
         AmplifyAuthCognito(),
         AmplifyDataStore(modelProvider: ModelProvider.instance),
         AmplifyAPI(),
+        AmplifyStorageS3(),
       ]);
 
       await Amplify.configure(amplifyconfig);

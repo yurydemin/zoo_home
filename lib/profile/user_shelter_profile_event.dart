@@ -16,9 +16,10 @@ class ProvideAvatarImagePath extends UserShelterProfileEvent {
   ProvideAvatarImagePath({this.avatarPath});
 }
 
-class ChangeProfileImagesRequest extends UserShelterProfileEvent {}
-
-class OpenMultiImagePicker extends UserShelterProfileEvent {}
+class OpenMultiImagePicker extends UserShelterProfileEvent {
+  final ImageSource imageSource;
+  OpenMultiImagePicker({this.imageSource});
+}
 
 class ProvideProfileImagesPaths extends UserShelterProfileEvent {
   final List<String> images;

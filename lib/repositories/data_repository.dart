@@ -26,4 +26,13 @@ class DataRepository {
       throw e;
     }
   }
+
+  Future<UserShelter> updateUser(UserShelter updatedUser) async {
+    try {
+      await Amplify.DataStore.save(updatedUser);
+      return updatedUser;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

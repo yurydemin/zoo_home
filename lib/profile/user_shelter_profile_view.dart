@@ -7,6 +7,8 @@ import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/profile/user_shelter_profile_state.dart';
+import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 
 class UserShelterProfileView extends StatelessWidget {
@@ -15,6 +17,8 @@ class UserShelterProfileView extends StatelessWidget {
     final sessionCubit = context.read<SessionCubit>();
     return BlocProvider(
       create: (context) => UserShelterProfileBloc(
+        dataRepo: context.read<DataRepository>(),
+        storageRepo: context.read<StorageRepository>(),
         user: sessionCubit.selectedUser ?? sessionCubit.currentUser,
         isCurrentUser: sessionCubit.isCurrentUserSelected,
       ),
@@ -70,6 +74,7 @@ class UserShelterProfileView extends StatelessWidget {
               _locationTile(),
               _emailTile(),
               _descriptionTile(),
+              _addImagesButton(),
               if (state.isCurrentUser) _saveProfileChangesButton(),
             ],
           ),
@@ -81,10 +86,23 @@ class UserShelterProfileView extends StatelessWidget {
   Widget _avatar() {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
-      return CircleAvatar(
-        radius: 50,
-        child: Icon(Icons.person),
-      );
+      return state.avatarPath == null
+          ? Container(
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: Colors.blue,
+              ),
+              width: 100,
+              height: 100,
+              child: Icon(
+                Icons.person,
+                size: 50,
+              ),
+            )
+          : CircleAvatar(
+              radius: 50,
+              backgroundImage: NetworkImage(state.avatarPath),
+            );
     });
   }
 
@@ -187,6 +205,23 @@ class UserShelterProfileView extends StatelessWidget {
           onChanged: (value) => context
               .read<UserShelterProfileBloc>()
               .add(UserShelterProfileDescriptionChanged(description: value)),
+        ),
+      );
+    });
+  }
+
+  Widget _addImagesButton() {
+    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+        builder: (context, state) {
+      return ListTile(
+        tileColor: Colors.white,
+        leading: Icon(Icons.photo_album),
+        title: Text('Галерея'),
+        trailing: GestureDetector(
+          onTap: () => context
+              .read<UserShelterProfileBloc>()
+              .add(OpenMultiImagePicker(imageSource: ImageSource.gallery)),
+          child: Icon(Icons.add_a_photo),
         ),
       );
     });
