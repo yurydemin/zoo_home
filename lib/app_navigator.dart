@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_cubit.dart';
 import 'package:zoo_home/auth/auth_navigator.dart';
+import 'package:zoo_home/profile/user_shelter_profile_view.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/session/session_state.dart';
-import 'package:zoo_home/session/session_view.dart';
 import 'package:zoo_home/views/loading_view.dart';
 
 class AppNavigator extends StatelessWidget {
@@ -29,9 +29,8 @@ class AppNavigator extends StatelessWidget {
           // Show session flow
           if (state is Authenticated)
             MaterialPage(
-                child: SessionView(
-              email: state.userShelter.email,
-            ))
+              child: UserShelterProfileView(),
+            )
         ],
         onPopPage: (route, result) => route.didPop(result),
       );

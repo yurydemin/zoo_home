@@ -10,6 +10,11 @@ class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
   final DataRepository dataRepo;
 
+  UserShelter get currentUser => (state as Authenticated).user;
+  UserShelter get selectedUser => (state as Authenticated).selectedUser;
+  bool get isCurrentUserSelected =>
+      selectedUser == null || currentUser.id == selectedUser.id;
+
   SessionCubit({
     @required this.authRepo,
     @required this.dataRepo,
@@ -32,7 +37,8 @@ class SessionCubit extends Cubit<SessionState> {
           email: user.email,
         );
       }
-      emit(Authenticated(userShelter: user));
+      //TODO AuthenticatedAsUser
+      emit(Authenticated(user: user));
     } on Exception {
       emit(Unauthenticated());
     }
@@ -51,7 +57,7 @@ class SessionCubit extends Cubit<SessionState> {
         );
       }
       //TODO AuthenticatedAsUser
-      emit(Authenticated(userShelter: user));
+      emit(Authenticated(user: user));
     } catch (e) {
       emit(Unauthenticated());
     }
