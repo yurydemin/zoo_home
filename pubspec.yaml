@@ -24,10 +24,13 @@ dependencies:
   flutter:
     sdk: flutter
   flutter_bloc:
+
   image_picker:
   multi_image_picker2:
   flutter_absolute_path:
   carousel_slider:
+  cached_network_image:
+
   amplify_flutter:
   amplify_auth_cognito:
   amplify_datastore:

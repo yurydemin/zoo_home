@@ -1,9 +1,11 @@
 import 'dart:io';
 
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
 import 'package:zoo_home/profile/user_shelter_profile_carousel.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
@@ -27,6 +29,11 @@ class UserShelterProfileView extends StatelessWidget {
         listener: (context, state) {
           if (state.avatarImageSourceActionSheetIsVisible) {
             _showImageSourceActionSheet(context);
+          }
+
+          final formStatus = state.formStatus;
+          if (formStatus is SubmissionFailed) {
+            _showSnackBar(context, formStatus.exception.toString());
           }
         },
         child: Scaffold(
@@ -88,23 +95,26 @@ class UserShelterProfileView extends StatelessWidget {
   Widget _avatar() {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
-      return state.avatarPath == null
-          ? Container(
-              decoration: BoxDecoration(
-                shape: BoxShape.circle,
-                color: Colors.blue,
-              ),
-              width: 100,
-              height: 100,
-              child: Icon(
+      return Container(
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: Colors.blue,
+        ),
+        width: 100,
+        height: 100,
+        child: state.avatarPath == null
+            ? Icon(
                 Icons.person,
                 size: 50,
+              )
+            : ClipRRect(
+                borderRadius: BorderRadius.circular(50),
+                child: CachedNetworkImage(
+                  imageUrl: state.avatarPath,
+                  fit: BoxFit.cover,
+                ),
               ),
-            )
-          : CircleAvatar(
-              radius: 50,
-              backgroundImage: NetworkImage(state.avatarPath),
-            );
+      );
     });
   }
 
@@ -239,10 +249,14 @@ class UserShelterProfileView extends StatelessWidget {
   Widget _saveProfileChangesButton() {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
-      return ElevatedButton(
-        onPressed: () {},
-        child: Text('Сохранить изменения'),
-      );
+      return (state.formStatus is FormSubmitting)
+          ? CircularProgressIndicator()
+          : ElevatedButton(
+              onPressed: () => context
+                  .read<UserShelterProfileBloc>()
+                  .add(SaveUserShelterProfileChanges()),
+              child: Text('Сохранить изменения'),
+            );
     });
   }
 
@@ -298,5 +312,10 @@ class UserShelterProfileView extends StatelessWidget {
         ]),
       );
     }
+  }
+
+  void _showSnackBar(BuildContext context, String message) {
+    final snackBar = SnackBar(content: Text(message));
+    ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }

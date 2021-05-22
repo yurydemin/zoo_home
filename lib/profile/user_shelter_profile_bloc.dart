@@ -5,11 +5,13 @@ import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/profile/user_shelter_profile_state.dart';
 import 'package:zoo_home/repositories/data_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
+import 'package:zoo_home/services/image_url_cache.dart';
 
 class UserShelterProfileBloc
     extends Bloc<UserShelterProfileEvent, UserShelterProfileState> {
@@ -24,11 +26,11 @@ class UserShelterProfileBloc
     @required bool isCurrentUser,
   }) : super(
             UserShelterProfileState(user: user, isCurrentUser: isCurrentUser)) {
-    storageRepo
-        .getUrlForFile(user.avatarKey)
+    ImageUrlCache.instance
+        .getUrl(user.avatarKey)
         .then((url) => add(ProvideAvatarImagePath(avatarPath: url)));
     Future.wait(user.images.map((imageKey) async {
-      return await storageRepo.getUrlForFile(imageKey);
+      return await ImageUrlCache.instance.getUrl(user.avatarKey);
     }).toList())
         .then((urls) => add(ProvideProfileImagesPaths(images: urls)));
   }
@@ -97,7 +99,20 @@ class UserShelterProfileBloc
     } else if (event is UserShelterProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
     } else if (event is SaveUserShelterProfileChanges) {
-      // handle save changes
+      yield state.copyWith(formStatus: FormSubmitting());
+
+      final updatedUser = state.user.copyWith(
+        location: state.location,
+        title: state.title,
+        description: state.description,
+      );
+
+      try {
+        await dataRepo.updateUser(updatedUser);
+        yield state.copyWith(formStatus: SubmissionSuccess());
+      } catch (e) {
+        yield state.copyWith(formStatus: SubmissionFailed(e));
+      }
     }
   }
 }

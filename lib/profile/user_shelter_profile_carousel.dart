@@ -1,3 +1,4 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:flutter/material.dart';
 
@@ -18,7 +19,11 @@ class UserShelterProfileCarousel extends StatelessWidget {
               margin: EdgeInsets.symmetric(horizontal: 5.0),
               decoration: BoxDecoration(color: Colors.amber),
               child: Center(
-                child: Image.network(image, fit: BoxFit.cover, width: 500),
+                child: CachedNetworkImage(
+                  imageUrl: image,
+                  fit: BoxFit.cover,
+                  width: 500,
+                ),
               ),
             );
           },
