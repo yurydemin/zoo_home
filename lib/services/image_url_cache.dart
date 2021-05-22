@@ -10,6 +10,7 @@ class ImageUrlCache {
   Map<String, String> _urlCache = Map();
 
   Future<String> getUrl(String imageKey) async {
+    if (imageKey == null || imageKey.isEmpty) return null;
     String url = _urlCache[imageKey];
 
     if (url == null) {

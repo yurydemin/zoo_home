@@ -55,7 +55,7 @@ class UserShelterProfileBloc
         storageRepo.getUrlForFile(imageKey),
       ]);
 
-      yield state.copyWith(avatarPath: results.last);
+      yield state.copyWith(user: updatedUser, avatarPath: results.last);
     } else if (event is ProvideAvatarImagePath) {
       yield state.copyWith(avatarPath: event.avatarPath);
     } else if (event is OpenMultiImagePicker) {
@@ -89,7 +89,7 @@ class UserShelterProfileBloc
       final updatedUser = state.user.copyWith(images: imagesKeys);
       await dataRepo.updateUser(updatedUser);
 
-      yield state.copyWith(images: imagesUrls);
+      yield state.copyWith(user: updatedUser, images: imagesUrls);
     } else if (event is ProvideProfileImagesPaths) {
       yield state.copyWith(images: event.images);
     } else if (event is UserShelterProfileLocationChanged) {
@@ -109,7 +109,8 @@ class UserShelterProfileBloc
 
       try {
         await dataRepo.updateUser(updatedUser);
-        yield state.copyWith(formStatus: SubmissionSuccess());
+        yield state.copyWith(
+            user: updatedUser, formStatus: SubmissionSuccess());
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }
