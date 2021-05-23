@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
+import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
 import 'package:zoo_home/profile/user_shelter_profile_carousel.dart';
 import 'package:zoo_home/profile/user_shelter_profile_event.dart';
@@ -15,6 +16,11 @@ import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 
 class UserShelterProfileView extends StatelessWidget {
+  final UserShelter selectedUser;
+
+  UserShelterProfileView({Key key, @required this.selectedUser})
+      : super(key: key);
+
   @override
   Widget build(BuildContext context) {
     final sessionCubit = context.read<SessionCubit>();
@@ -22,8 +28,9 @@ class UserShelterProfileView extends StatelessWidget {
       create: (context) => UserShelterProfileBloc(
         dataRepo: context.read<DataRepository>(),
         storageRepo: context.read<StorageRepository>(),
-        user: sessionCubit.selectedUser ?? sessionCubit.currentUser,
-        isCurrentUser: sessionCubit.isCurrentUserSelected,
+        user: selectedUser,
+        isCurrentUser: sessionCubit.currentUser != null &&
+            sessionCubit.currentUser.id == selectedUser.id,
       ),
       child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
         listener: (context, state) {
@@ -58,7 +65,8 @@ class UserShelterProfileView extends StatelessWidget {
             if (state.isCurrentUser)
               IconButton(
                 icon: Icon(Icons.logout),
-                onPressed: () {},
+                onPressed: () =>
+                    BlocProvider.of<SessionCubit>(context).signOut(),
               ),
           ],
         );

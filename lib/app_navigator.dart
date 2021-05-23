@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_cubit.dart';
 import 'package:zoo_home/auth/auth_navigator.dart';
-import 'package:zoo_home/profile/user_shelter_profile_view.dart';
+import 'package:zoo_home/content/content_cubit.dart';
+import 'package:zoo_home/content/content_navigator.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/session/session_state.dart';
 import 'package:zoo_home/views/loading_view.dart';
@@ -13,10 +14,10 @@ class AppNavigator extends StatelessWidget {
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
       return Navigator(
         pages: [
-          // Show loading screen
+          // loading screen
           if (state is UnknownSessionState) MaterialPage(child: LoadingView()),
 
-          // Show auth flow
+          // auth flow
           if (state is Unauthenticated)
             MaterialPage(
               child: BlocProvider(
@@ -26,11 +27,15 @@ class AppNavigator extends StatelessWidget {
               ),
             ),
 
-          // Show session flow
-          if (state is Authenticated)
+          // content flow
+          if (state is AuthenticatedAsGuest || state is AuthenticatedAsUser)
             MaterialPage(
-              child: UserShelterProfileView(),
-            )
+              child: BlocProvider(
+                create: (context) =>
+                    ContentCubit(sessionCubit: context.read<SessionCubit>()),
+                child: ContentNavigator(),
+              ),
+            ),
         ],
         onPopPage: (route, result) => route.didPop(result),
       );

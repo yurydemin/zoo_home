@@ -10,10 +10,9 @@ class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
   final DataRepository dataRepo;
 
-  UserShelter get currentUser => (state as Authenticated).user;
-  UserShelter get selectedUser => (state as Authenticated).selectedUser;
-  bool get isCurrentUserSelected =>
-      selectedUser == null || currentUser.id == selectedUser.id;
+  bool get isUserLoggedIn => (state is AuthenticatedAsUser);
+  UserShelter get currentUser =>
+      isUserLoggedIn ? (state as AuthenticatedAsUser).user : null;
 
   SessionCubit({
     @required this.authRepo,
@@ -31,16 +30,14 @@ class SessionCubit extends Cubit<SessionState> {
 
       UserShelter user = await dataRepo.getUserById(userId);
       if (user == null) {
-        //TODO AuthenticatedAsGuest
         user = await dataRepo.createUser(
           userId: userId,
           email: user.email,
         );
       }
-      //TODO AuthenticatedAsUser
-      emit(Authenticated(user: user));
+      emit(AuthenticatedAsUser(user: user));
     } on Exception {
-      emit(Unauthenticated());
+      emit(AuthenticatedAsGuest());
     }
   }
 
@@ -56,8 +53,7 @@ class SessionCubit extends Cubit<SessionState> {
           email: credentials.email,
         );
       }
-      //TODO AuthenticatedAsUser
-      emit(Authenticated(user: user));
+      emit(AuthenticatedAsUser(user: user));
     } catch (e) {
       emit(Unauthenticated());
     }
@@ -65,6 +61,6 @@ class SessionCubit extends Cubit<SessionState> {
 
   void signOut() {
     authRepo.signOut();
-    emit(Unauthenticated());
+    emit(AuthenticatedAsGuest());
   }
 }
