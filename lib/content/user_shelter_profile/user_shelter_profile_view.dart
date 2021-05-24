@@ -7,11 +7,11 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/profile/user_shelter_profile_bloc.dart';
-import 'package:zoo_home/profile/user_shelter_profile_carousel.dart';
-import 'package:zoo_home/profile/user_shelter_profile_event.dart';
-import 'package:zoo_home/profile/user_shelter_profile_state.dart';
-import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_bloc.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_carousel.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_event.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_state.dart';
+import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 
@@ -26,7 +26,7 @@ class UserShelterProfileView extends StatelessWidget {
     final sessionCubit = context.read<SessionCubit>();
     return BlocProvider(
       create: (context) => UserShelterProfileBloc(
-        dataRepo: context.read<DataRepository>(),
+        userShelterRepo: context.read<UserShelterRepository>(),
         storageRepo: context.read<StorageRepository>(),
         user: selectedUser,
         isCurrentUser: sessionCubit.currentUser != null &&

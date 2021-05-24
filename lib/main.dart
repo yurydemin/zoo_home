@@ -9,7 +9,8 @@ import 'package:zoo_home/amplifyconfiguration.dart';
 import 'package:zoo_home/app_navigator.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
-import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/content/pets/pets_repository.dart';
+import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/views/loading_view.dart';
@@ -39,13 +40,15 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
             ? MultiRepositoryProvider(
                 providers: [
                   RepositoryProvider(create: (context) => AuthRepository()),
-                  RepositoryProvider(create: (context) => DataRepository()),
+                  RepositoryProvider(
+                      create: (context) => UserShelterRepository()),
+                  RepositoryProvider(create: (context) => PetsRepository()),
                   RepositoryProvider(create: (context) => StorageRepository()),
                 ],
                 child: BlocProvider(
                   create: (context) => SessionCubit(
                     authRepo: context.read<AuthRepository>(),
-                    dataRepo: context.read<DataRepository>(),
+                    userShelterRepo: context.read<UserShelterRepository>(),
                   ),
                   child: AppNavigator(),
                 ),

@@ -7,20 +7,20 @@ import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/profile/user_shelter_profile_event.dart';
-import 'package:zoo_home/profile/user_shelter_profile_state.dart';
-import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_event.dart';
+import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_state.dart';
+import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/services/image_url_cache.dart';
 
 class UserShelterProfileBloc
     extends Bloc<UserShelterProfileEvent, UserShelterProfileState> {
-  final DataRepository dataRepo;
+  final UserShelterRepository userShelterRepo;
   final StorageRepository storageRepo;
   final _imagePicker = ImagePicker();
 
   UserShelterProfileBloc({
-    @required this.dataRepo,
+    @required this.userShelterRepo,
     @required this.storageRepo,
     @required UserShelter user,
     @required bool isCurrentUser,
@@ -51,7 +51,7 @@ class UserShelterProfileBloc
       final updatedUser = state.user.copyWith(avatarKey: imageKey);
 
       final results = await Future.wait([
-        dataRepo.updateUser(updatedUser),
+        userShelterRepo.updateUser(updatedUser),
         storageRepo.getUrlForFile(imageKey),
       ]);
 
@@ -87,7 +87,7 @@ class UserShelterProfileBloc
       }).toList());
 
       final updatedUser = state.user.copyWith(images: imagesKeys);
-      await dataRepo.updateUser(updatedUser);
+      await userShelterRepo.updateUser(updatedUser);
 
       yield state.copyWith(user: updatedUser, images: imagesUrls);
     } else if (event is ProvideProfileImagesPaths) {
@@ -108,7 +108,7 @@ class UserShelterProfileBloc
       );
 
       try {
-        await dataRepo.updateUser(updatedUser);
+        await userShelterRepo.updateUser(updatedUser);
         yield state.copyWith(
             user: updatedUser, formStatus: SubmissionSuccess());
       } catch (e) {

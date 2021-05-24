@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/repositories/data_repository.dart';
+import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
 import 'package:zoo_home/session/session_state.dart';
 
 class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
-  final DataRepository dataRepo;
+  final UserShelterRepository userShelterRepo;
 
   bool get isUserLoggedIn => (state is AuthenticatedAsUser);
   UserShelter get currentUser =>
@@ -16,7 +16,7 @@ class SessionCubit extends Cubit<SessionState> {
 
   SessionCubit({
     @required this.authRepo,
-    @required this.dataRepo,
+    @required this.userShelterRepo,
   }) : super(UnknownSessionState()) {
     attemptAutoLogin();
   }
@@ -28,9 +28,9 @@ class SessionCubit extends Cubit<SessionState> {
         throw Exception('User not logged in');
       }
 
-      UserShelter user = await dataRepo.getUserById(userId);
+      UserShelter user = await userShelterRepo.getUserById(userId);
       if (user == null) {
-        user = await dataRepo.createUser(
+        user = await userShelterRepo.createUser(
           userId: userId,
           email: user.email,
         );
@@ -45,10 +45,11 @@ class SessionCubit extends Cubit<SessionState> {
 
   void showSession(AuthCredentials credentials) async {
     try {
-      UserShelter user = await dataRepo.getUserById(credentials.userShelterId);
+      UserShelter user =
+          await userShelterRepo.getUserById(credentials.userShelterId);
 
       if (user == null) {
-        user = await dataRepo.createUser(
+        user = await userShelterRepo.createUser(
           userId: credentials.userShelterId,
           email: credentials.email,
         );
