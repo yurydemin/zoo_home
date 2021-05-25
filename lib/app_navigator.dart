@@ -9,36 +9,44 @@ import 'package:zoo_home/session/session_state.dart';
 import 'package:zoo_home/views/loading_view.dart';
 
 class AppNavigator extends StatelessWidget {
+  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<SessionCubit, SessionState>(builder: (context, state) {
-      return Navigator(
-        pages: [
-          // loading screen
-          if (state is UnknownSessionState) MaterialPage(child: LoadingView()),
+      return WillPopScope(
+          onWillPop: () async {
+            _navigatorKey.currentState.maybePop();
+            return false;
+          },
+          child: Navigator(
+            key: _navigatorKey,
+            pages: [
+              // loading screen
+              if (state is UnknownSessionState)
+                MaterialPage(child: LoadingView()),
 
-          // auth flow
-          if (state is Unauthenticated)
-            MaterialPage(
-              child: BlocProvider(
-                create: (context) =>
-                    AuthCubit(sessionCubit: context.read<SessionCubit>()),
-                child: AuthNavigator(),
-              ),
-            ),
+              // auth flow
+              if (state is Unauthenticated)
+                MaterialPage(
+                  child: BlocProvider(
+                    create: (context) =>
+                        AuthCubit(sessionCubit: context.read<SessionCubit>()),
+                    child: AuthNavigator(),
+                  ),
+                ),
 
-          // content flow
-          if (state is AuthenticatedAsGuest || state is AuthenticatedAsUser)
-            MaterialPage(
-              child: BlocProvider(
-                create: (context) =>
-                    ContentCubit(sessionCubit: context.read<SessionCubit>()),
-                child: ContentNavigator(),
-              ),
-            ),
-        ],
-        onPopPage: (route, result) => route.didPop(result),
-      );
+              // content flow
+              if (state is AuthenticatedAsGuest || state is AuthenticatedAsUser)
+                MaterialPage(
+                  child: BlocProvider(
+                    create: (context) => ContentCubit(
+                        sessionCubit: context.read<SessionCubit>()),
+                    child: ContentNavigator(),
+                  ),
+                ),
+            ],
+            onPopPage: (route, result) => route.didPop(result),
+          ));
     });
   }
 }

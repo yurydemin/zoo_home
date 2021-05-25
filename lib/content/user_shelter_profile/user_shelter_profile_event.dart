@@ -11,9 +11,9 @@ class OpenImagePicker extends UserShelterProfileEvent {
 }
 
 class ProvideAvatarImagePath extends UserShelterProfileEvent {
-  final String avatarPath;
+  final String avatarUrl;
 
-  ProvideAvatarImagePath({this.avatarPath});
+  ProvideAvatarImagePath({this.avatarUrl});
 }
 
 class OpenMultiImagePicker extends UserShelterProfileEvent {
@@ -22,9 +22,9 @@ class OpenMultiImagePicker extends UserShelterProfileEvent {
 }
 
 class ProvideProfileImagesPaths extends UserShelterProfileEvent {
-  final List<String> images;
+  final List<String> imageUrls;
 
-  ProvideProfileImagesPaths({this.images});
+  ProvideProfileImagesPaths({this.imageUrls});
 }
 
 class UserShelterProfileLocationChanged extends UserShelterProfileEvent {

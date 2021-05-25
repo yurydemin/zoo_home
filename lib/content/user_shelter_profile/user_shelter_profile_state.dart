@@ -8,8 +8,8 @@ class UserShelterProfileState {
   final String location;
   final String title;
   final String description;
-  final List<String> images;
-  final String avatarPath;
+  final List<String> imageUrls;
+  final String avatarUrl;
 
   String get email => user.email;
 
@@ -22,8 +22,8 @@ class UserShelterProfileState {
     String location,
     String title,
     String description,
-    List<String> images,
-    String avatarPath,
+    List<String> imageUrls,
+    String avatarUrl,
     this.formStatus = const InitialFormStatus(),
     avatarImageSourceActionSheetIsVisible = false,
   })  : this.user = user,
@@ -31,8 +31,8 @@ class UserShelterProfileState {
         this.location = location ?? user.location,
         this.title = title ?? user.title,
         this.description = description ?? user.description,
-        this.images = images ?? user.images,
-        this.avatarPath = avatarPath,
+        this.imageUrls = imageUrls ?? <String>[],
+        this.avatarUrl = avatarUrl,
         this.avatarImageSourceActionSheetIsVisible =
             avatarImageSourceActionSheetIsVisible;
 
@@ -41,8 +41,8 @@ class UserShelterProfileState {
     String location,
     String title,
     String description,
-    List<String> images,
-    String avatarPath,
+    List<String> imageUrls,
+    String avatarUrl,
     FormSubmissionStatus formStatus,
     bool avatarImageSourceActionSheetIsVisible,
   }) {
@@ -52,8 +52,8 @@ class UserShelterProfileState {
       location: location ?? this.location,
       title: title ?? this.title,
       description: description ?? this.description,
-      images: images ?? this.images,
-      avatarPath: avatarPath ?? this.avatarPath,
+      imageUrls: imageUrls ?? this.imageUrls,
+      avatarUrl: avatarUrl ?? this.avatarUrl,
       formStatus: formStatus ?? this.formStatus,
       avatarImageSourceActionSheetIsVisible:
           avatarImageSourceActionSheetIsVisible ??

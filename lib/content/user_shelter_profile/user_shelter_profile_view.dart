@@ -86,13 +86,13 @@ class UserShelterProfileView extends StatelessWidget {
               if (state.isCurrentUser) _changeAvatarButton(),
               SizedBox(height: 10),
               _titleTile(),
-              SizedBox(height: 20),
               _locationTile(),
               _emailTile(),
               _descriptionTile(),
               if (state.isCurrentUser) _addImagesButton(),
-              _galleryCarousel(),
+              if (state.imageUrls.isNotEmpty) _galleryCarousel(),
               if (state.isCurrentUser) _saveProfileChangesButton(),
+              SizedBox(height: 10),
             ],
           ),
         ),
@@ -110,7 +110,7 @@ class UserShelterProfileView extends StatelessWidget {
         ),
         width: 100,
         height: 100,
-        child: state.avatarPath == null
+        child: state.avatarUrl == null
             ? Icon(
                 Icons.person,
                 size: 50,
@@ -118,7 +118,7 @@ class UserShelterProfileView extends StatelessWidget {
             : ClipRRect(
                 borderRadius: BorderRadius.circular(50),
                 child: CachedNetworkImage(
-                  imageUrl: state.avatarPath,
+                  imageUrl: state.avatarUrl,
                   fit: BoxFit.cover,
                 ),
               ),
@@ -250,7 +250,7 @@ class UserShelterProfileView extends StatelessWidget {
   Widget _galleryCarousel() {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
-      return UserShelterProfileCarousel(images: state.images);
+      return UserShelterProfileCarousel(images: state.imageUrls);
     });
   }
 

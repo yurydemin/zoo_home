@@ -5,7 +5,7 @@ class StorageRepository {
   Future<String> uploadFile(File file, String userId) async {
     try {
       String fileNameDataPart = DateTime.now().toIso8601String();
-      final fileName = '$userId-$fileNameDataPart';
+      final fileName = 'image-$userId-$fileNameDataPart';
       final result = await Amplify.Storage.uploadFile(
         local: file,
         key: fileName + '.jpg',

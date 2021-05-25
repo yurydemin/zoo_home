@@ -57,7 +57,7 @@ class UserShelterCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  userShelter.title,
+                                  userShelter.title ?? 'Новый зоодом',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -67,7 +67,8 @@ class UserShelterCard extends StatelessWidget {
                                 const Padding(
                                     padding: EdgeInsets.only(bottom: 2.0)),
                                 Text(
-                                  userShelter.description,
+                                  userShelter.description ??
+                                      'Описание нового зоодома',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -85,7 +86,8 @@ class UserShelterCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 Text(
-                                  userShelter.location,
+                                  userShelter.location ??
+                                      'Неизвестное местоположение',
                                   style: const TextStyle(
                                     fontSize: 12.0,
                                     color: Colors.black54,

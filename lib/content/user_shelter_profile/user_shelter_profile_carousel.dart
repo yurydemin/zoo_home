@@ -10,14 +10,14 @@ class UserShelterProfileCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
-      options: CarouselOptions(height: 300.0, autoPlay: false),
+      options: CarouselOptions(height: 250.0, autoPlay: false),
       items: images.map((image) {
         return Builder(
           builder: (BuildContext context) {
             return Container(
               width: MediaQuery.of(context).size.width,
               margin: EdgeInsets.symmetric(horizontal: 5.0),
-              decoration: BoxDecoration(color: Colors.amber),
+              //decoration: BoxDecoration(color: Colors.amber),
               child: Center(
                 child: CachedNetworkImage(
                   imageUrl: image,

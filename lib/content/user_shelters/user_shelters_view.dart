@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/user_shelters/user_shelter_cubit.dart';
 import 'package:zoo_home/content/user_shelters/user_shelter_state.dart';
 import 'package:zoo_home/models/UserShelter.dart';
@@ -60,7 +61,9 @@ class UserSheltersView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final userShelter = userShelters[index];
         return UserShelterCard(
-            onTap: () {},
+            onTap: () => context
+                .read<ContentCubit>()
+                .showProfile(selectedUser: userShelter),
             userShelter: userShelter,
             avatarUrl: avatarsKeyUrl.containsKey(userShelter.avatarKey)
                 ? avatarsKeyUrl[userShelter.avatarKey]

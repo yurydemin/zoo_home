@@ -28,11 +28,11 @@ class UserShelterProfileBloc
             UserShelterProfileState(user: user, isCurrentUser: isCurrentUser)) {
     ImageUrlCache.instance
         .getUrl(user.avatarKey)
-        .then((url) => add(ProvideAvatarImagePath(avatarPath: url)));
+        .then((url) => add(ProvideAvatarImagePath(avatarUrl: url)));
     Future.wait(user.images.map((imageKey) async {
-      return await ImageUrlCache.instance.getUrl(user.avatarKey);
+      return await ImageUrlCache.instance.getUrl(imageKey);
     }).toList())
-        .then((urls) => add(ProvideProfileImagesPaths(images: urls)));
+        .then((urls) => add(ProvideProfileImagesPaths(imageUrls: urls)));
   }
 
   @override
@@ -55,25 +55,30 @@ class UserShelterProfileBloc
         storageRepo.getUrlForFile(imageKey),
       ]);
 
-      yield state.copyWith(user: updatedUser, avatarPath: results.last);
+      yield state.copyWith(user: updatedUser, avatarUrl: results.last);
     } else if (event is ProvideAvatarImagePath) {
-      yield state.copyWith(avatarPath: event.avatarPath);
+      yield state.copyWith(avatarUrl: event.avatarUrl);
     } else if (event is OpenMultiImagePicker) {
-      final pickedImages = await MultiImagePicker.pickImages(
-        maxImages: 8,
-        enableCamera: false,
-        cupertinoOptions: CupertinoOptions(
-          takePhotoIcon: "chat",
-          doneButtonTitle: "Fatto",
-        ),
-        materialOptions: MaterialOptions(
-          actionBarColor: "#abcdef",
-          actionBarTitle: "Галерея зоодома",
-          allViewTitle: "Все изображения",
-          useDetailsView: false,
-          selectCircleStrokeColor: "#000000",
-        ),
-      ).catchError(() => null);
+      List<Asset> pickedImages = <Asset>[];
+      try {
+        pickedImages = await MultiImagePicker.pickImages(
+          maxImages: 8,
+          enableCamera: false,
+          cupertinoOptions: CupertinoOptions(
+            takePhotoIcon: "chat",
+            doneButtonTitle: "Fatto",
+          ),
+          materialOptions: MaterialOptions(
+            actionBarColor: "#abcdef",
+            actionBarTitle: "Галерея зоодома",
+            allViewTitle: "Все изображения",
+            useDetailsView: false,
+            selectCircleStrokeColor: "#000000",
+          ),
+        );
+      } on Exception catch (e) {
+        print(e.toString());
+      }
       if (pickedImages == null || pickedImages.isEmpty) return;
 
       final imagesKeys = await Future.wait(pickedImages.map((image) async {
@@ -82,16 +87,16 @@ class UserShelterProfileBloc
         return await storageRepo.uploadFile(File(imagePath), state.user.id);
       }).toList());
 
-      final imagesUrls = await Future.wait(imagesKeys.map((imageKey) async {
+      final imageUrls = await Future.wait(imagesKeys.map((imageKey) async {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
 
       final updatedUser = state.user.copyWith(images: imagesKeys);
       await userShelterRepo.updateUser(updatedUser);
 
-      yield state.copyWith(user: updatedUser, images: imagesUrls);
+      yield state.copyWith(user: updatedUser, imageUrls: imageUrls);
     } else if (event is ProvideProfileImagesPaths) {
-      yield state.copyWith(images: event.images);
+      yield state.copyWith(imageUrls: event.imageUrls);
     } else if (event is UserShelterProfileLocationChanged) {
       yield state.copyWith(location: event.location);
     } else if (event is UserShelterProfileTitleChanged) {
