@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
+import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_bloc.dart';
 import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_carousel.dart';
@@ -65,8 +66,7 @@ class UserShelterProfileView extends StatelessWidget {
             if (state.isCurrentUser)
               IconButton(
                 icon: Icon(Icons.logout),
-                onPressed: () =>
-                    BlocProvider.of<SessionCubit>(context).signOut(),
+                onPressed: () => context.read<ContentCubit>().signOut(),
               ),
           ],
         );
@@ -169,7 +169,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.mail),
-        title: Text(state.email),
+        title: SelectableText(state.email),
       );
     });
   }

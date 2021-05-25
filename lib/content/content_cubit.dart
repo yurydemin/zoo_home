@@ -8,14 +8,19 @@ class ContentCubit extends Cubit<UserShelter> {
 
   ContentCubit({@required this.sessionCubit}) : super(sessionCubit.currentUser);
 
+  bool get isUserLoggedIn => sessionCubit.isUserLoggedIn;
+
+  void showAuth() => sessionCubit.showAuth();
+
   void showProfile({
     UserShelter selectedUser,
   }) =>
-      emit(selectedUser);
+      emit(selectedUser ?? sessionCubit.currentUser);
 
   void popToMain() => emit(null);
 
-  void showAuthOrProfile() => sessionCubit.isUserLoggedIn
-      ? emit(sessionCubit.currentUser)
-      : sessionCubit.showAuth();
+  void signOut() {
+    popToMain();
+    sessionCubit.signOut();
+  }
 }

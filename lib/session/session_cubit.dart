@@ -44,6 +44,8 @@ class SessionCubit extends Cubit<SessionState> {
 
   void showAuth() => emit(Unauthenticated());
 
+  void popToMain() => emit(AuthenticatedAsGuest());
+
   void showSession(AuthCredentials credentials) async {
     try {
       UserShelter user =

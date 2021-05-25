@@ -37,8 +37,4 @@ class UserShelterCubit extends Cubit<UserShelterState> {
       emit(ListUserSheltersFailure(exception: e));
     }
   }
-
-  void showAuthOrProfile() {
-    if (!(state is LoadingUserShelters)) contentCubit.showAuthOrProfile();
-  }
 }

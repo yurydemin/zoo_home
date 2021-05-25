@@ -36,6 +36,9 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
+        theme: ThemeData(
+          primaryColor: Colors.green,
+        ),
         home: _isAmplifyConfigured
             ? MultiRepositoryProvider(
                 providers: [

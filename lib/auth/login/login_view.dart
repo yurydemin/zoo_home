@@ -21,7 +21,7 @@ class LoginView extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           children: [
             _loginForm(),
-            _showSignUpButton(context),
+            _showActionButtons(context),
           ],
         ),
       ),
@@ -100,11 +100,41 @@ class LoginView extends StatelessWidget {
     });
   }
 
+  Widget _showActionButtons(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _showBackButton(context),
+          _showSignUpButton(context),
+        ],
+      ),
+    );
+  }
+
   Widget _showSignUpButton(BuildContext context) {
     return SafeArea(
       child: TextButton(
         child: Text('Еще нет аккаунта? Зарегистрироваться'),
         onPressed: () => context.read<AuthCubit>().showSignUp(),
+      ),
+    );
+  }
+
+  Widget _showBackButton(BuildContext context) {
+    return SafeArea(
+      child: TextButton(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Icon(Icons.arrow_back),
+            ),
+            Text('Вернуться к списку зоодомов'),
+          ],
+        ),
+        onPressed: () => context.read<AuthCubit>().popToMain(),
       ),
     );
   }

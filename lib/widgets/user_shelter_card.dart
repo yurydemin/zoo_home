@@ -22,7 +22,7 @@ class UserShelterCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.black26, width: 0.5),
+              border: Border.all(color: Colors.green, width: 1.0),
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -35,14 +35,19 @@ class UserShelterCard extends StatelessWidget {
                     aspectRatio: 1.0,
                     child: Hero(
                       tag: '${userShelter.id}-shelter',
-                      child: avatarUrl == null
-                          ? Image.asset(
-                              'assets/images/shelter_placeholder.jpg',
-                            )
-                          : CachedNetworkImage(
-                              imageUrl: avatarUrl,
-                              fit: BoxFit.cover,
-                            ),
+                      child: ClipRRect(
+                        borderRadius: BorderRadius.only(
+                            topLeft: Radius.circular(10.0),
+                            bottomLeft: Radius.circular(10.0)),
+                        child: avatarUrl == null
+                            ? Image.asset(
+                                'assets/images/shelter_placeholder.jpg',
+                              )
+                            : CachedNetworkImage(
+                                imageUrl: avatarUrl,
+                                fit: BoxFit.cover,
+                              ),
+                      ),
                     ),
                   ),
                   Expanded(

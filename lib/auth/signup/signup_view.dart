@@ -22,7 +22,7 @@ class SignUpView extends StatelessWidget {
           alignment: Alignment.bottomCenter,
           children: [
             _signUpForm(),
-            _showLoginButton(context),
+            _showActionButtons(context),
           ],
         ),
       ),
@@ -99,6 +99,36 @@ class SignUpView extends StatelessWidget {
               child: Text('Зарегистрироваться'),
             );
     });
+  }
+
+  Widget _showActionButtons(BuildContext context) {
+    return SafeArea(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.end,
+        children: [
+          _showBackButton(context),
+          _showLoginButton(context),
+        ],
+      ),
+    );
+  }
+
+  Widget _showBackButton(BuildContext context) {
+    return SafeArea(
+      child: TextButton(
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(right: 5.0),
+              child: Icon(Icons.arrow_back),
+            ),
+            Text('Вернуться к списку зоодомов'),
+          ],
+        ),
+        onPressed: () => context.read<AuthCubit>().popToMain(),
+      ),
+    );
   }
 
   Widget _showLoginButton(BuildContext context) {

@@ -9,14 +9,23 @@ import 'package:zoo_home/widgets/user_shelter_card.dart';
 class UserSheltersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
     return Scaffold(
       appBar: AppBar(
         title: Text('Зоодома'),
         centerTitle: true,
         actions: [
+          if (!isLoggedIn)
+            OneTapTooltip(
+              message:
+                  'Нажмите на кнопку справа, если хотите войти и создать свой Зоодом. Требуется авторизация',
+              child: Icon(Icons.info_outline),
+            ),
           IconButton(
-            icon: Icon(Icons.home),
-            onPressed: () => context.read<ContentCubit>().showAuthOrProfile(),
+            icon: Icon(isLoggedIn ? Icons.home : Icons.login),
+            onPressed: () => isLoggedIn
+                ? context.read<ContentCubit>().showProfile()
+                : context.read<ContentCubit>().showAuth(),
           ),
         ],
       ),
@@ -66,5 +75,32 @@ class UserSheltersView extends StatelessWidget {
                 : null);
       },
     );
+  }
+}
+
+class OneTapTooltip extends StatelessWidget {
+  final Widget child;
+  final String message;
+
+  OneTapTooltip({@required this.message, @required this.child});
+
+  @override
+  Widget build(BuildContext context) {
+    final key = GlobalKey<State<Tooltip>>();
+    return Tooltip(
+      key: key,
+      message: message,
+      child: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onTap: () => _onTap(key),
+        child: child,
+      ),
+      height: 50,
+    );
+  }
+
+  void _onTap(GlobalKey key) {
+    final dynamic tooltip = key.currentState;
+    tooltip?.ensureTooltipVisible();
   }
 }
