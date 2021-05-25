@@ -10,9 +10,16 @@ class UserSheltersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: _navBar(),
-
-      ///floatingActionButton: _floatingActionButton(),
+      appBar: AppBar(
+        title: Text('Зоодома'),
+        centerTitle: true,
+        actions: [
+          IconButton(
+            icon: Icon(Icons.home),
+            onPressed: () => context.read<ContentCubit>().showAuthOrProfile(),
+          ),
+        ],
+      ),
       body: BlocBuilder<UserShelterCubit, UserShelterState>(
           builder: (context, state) {
         if (state is ListUserSheltersSuccess) {
@@ -35,17 +42,6 @@ class UserSheltersView extends StatelessWidget {
 
   Widget _exceptionView(Exception exception) {
     return Center(child: Text(exception.toString()));
-  }
-
-  AppBar _navBar() {
-    return AppBar(
-      // leading: IconButton(
-      //   icon: Icon(Icons.logout),
-      //   onPressed: () => BlocProvider.of<AuthCubit>(context).signOut(),
-      // ),
-      title: Text('Зоодома'),
-      centerTitle: true,
-    );
   }
 
   Widget _emptyUserSheltersView() {

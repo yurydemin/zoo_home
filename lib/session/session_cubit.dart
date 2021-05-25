@@ -10,6 +10,7 @@ class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
   final UserShelterRepository userShelterRepo;
 
+  bool get isGuestLoggedIn => (state is AuthenticatedAsGuest);
   bool get isUserLoggedIn => (state is AuthenticatedAsUser);
   UserShelter get currentUser =>
       isUserLoggedIn ? (state as AuthenticatedAsUser).user : null;

@@ -16,6 +16,7 @@ class ContentNavigator extends StatelessWidget {
           MaterialPage(
             child: BlocProvider(
               create: (context) => UserShelterCubit(
+                  contentCubit: context.read<ContentCubit>(),
                   userShelterRepo: context.read<UserShelterRepository>())
                 ..getUserShelters(),
               child: UserSheltersView(),

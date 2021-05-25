@@ -42,6 +42,7 @@ class UserShelterProfileBloc
       yield state.copyWith(avatarImageSourceActionSheetIsVisible: true);
     } else if (event is OpenImagePicker) {
       yield state.copyWith(avatarImageSourceActionSheetIsVisible: false);
+
       final pickedImage =
           await _imagePicker.getImage(source: event.imageSource);
       if (pickedImage == null) return;
