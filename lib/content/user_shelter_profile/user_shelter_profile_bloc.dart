@@ -60,6 +60,7 @@ class UserShelterProfileBloc
     } else if (event is ProvideAvatarImagePath) {
       yield state.copyWith(avatarUrl: event.avatarUrl);
     } else if (event is OpenMultiImagePicker) {
+      // pick images from gallery
       List<Asset> pickedImages = <Asset>[];
       try {
         pickedImages = await MultiImagePicker.pickImages(
@@ -82,17 +83,22 @@ class UserShelterProfileBloc
       }
       if (pickedImages == null || pickedImages.isEmpty) return;
 
-      final imagesKeys = await Future.wait(pickedImages.map((image) async {
+      // upload files and get keys
+      final newImageKeys = await Future.wait(pickedImages.map((image) async {
         final imagePath =
             await FlutterAbsolutePath.getAbsolutePath(image.identifier);
         return await storageRepo.uploadFile(File(imagePath), state.user.id);
       }).toList());
-
-      final imageUrls = await Future.wait(imagesKeys.map((imageKey) async {
+      // get images urls
+      final newImageUrls = await Future.wait(newImageKeys.map((imageKey) async {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
+      // compare keys and urls with existing
+      final imageKeys = [...state.user.images, ...newImageKeys];
+      final imageUrls = [...state.imageUrls, ...newImageUrls];
 
-      final updatedUser = state.user.copyWith(images: imagesKeys);
+      // update user and state
+      final updatedUser = state.user.copyWith(images: imageKeys);
       await userShelterRepo.updateUser(updatedUser);
 
       yield state.copyWith(user: updatedUser, imageUrls: imageUrls);
