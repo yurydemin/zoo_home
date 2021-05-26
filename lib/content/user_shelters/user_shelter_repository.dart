@@ -46,4 +46,8 @@ class UserShelterRepository {
       throw e;
     }
   }
+
+  Stream observeUserShelters() {
+    return Amplify.DataStore.observe(UserShelter.classType);
+  }
 }

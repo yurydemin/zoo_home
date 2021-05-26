@@ -37,4 +37,9 @@ class UserShelterCubit extends Cubit<UserShelterState> {
       emit(ListUserSheltersFailure(exception: e));
     }
   }
+
+  void observeUserShelters() {
+    final userSheltersStream = userShelterRepo.observeUserShelters();
+    userSheltersStream.listen((_) => getUserShelters());
+  }
 }

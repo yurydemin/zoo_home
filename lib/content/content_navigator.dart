@@ -18,7 +18,8 @@ class ContentNavigator extends StatelessWidget {
               create: (context) => UserShelterCubit(
                   contentCubit: context.read<ContentCubit>(),
                   userShelterRepo: context.read<UserShelterRepository>())
-                ..getUserShelters(),
+                ..getUserShelters()
+                ..observeUserShelters(),
               child: UserSheltersView(),
             ),
           ),
