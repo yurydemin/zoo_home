@@ -30,6 +30,7 @@ dependencies:
   flutter_absolute_path:
   carousel_slider:
   cached_network_image:
+  intl:
 
   amplify_flutter:
   amplify_auth_cognito:

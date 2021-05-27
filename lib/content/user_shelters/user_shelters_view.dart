@@ -24,7 +24,7 @@ class UserSheltersView extends StatelessWidget {
           IconButton(
             icon: Icon(isLoggedIn ? Icons.home : Icons.login),
             onPressed: () => isLoggedIn
-                ? context.read<ContentCubit>().showProfile()
+                ? context.read<ContentCubit>().showUserProfile()
                 : context.read<ContentCubit>().showAuth(),
           ),
         ],
@@ -68,7 +68,7 @@ class UserSheltersView extends StatelessWidget {
         return UserShelterCard(
             onTap: () => context
                 .read<ContentCubit>()
-                .showProfile(selectedUser: userShelter),
+                .showUserProfile(selectedUser: userShelter),
             userShelter: userShelter,
             avatarUrl: avatarsKeyUrl.containsKey(userShelter.avatarKey)
                 ? avatarsKeyUrl[userShelter.avatarKey]
