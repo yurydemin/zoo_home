@@ -1,15 +1,15 @@
 import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_state.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_state.dart';
 import 'package:zoo_home/services/image_url_cache.dart';
 
-class UserShelterCubit extends Cubit<UserShelterState> {
+class UserSheltersCubit extends Cubit<UserSheltersState> {
   final ContentCubit contentCubit;
-  final UserShelterRepository userShelterRepo;
+  final UserSheltersRepository userShelterRepo;
 
-  UserShelterCubit(
+  UserSheltersCubit(
       {@required this.contentCubit, @required this.userShelterRepo})
       : super(LoadingUserShelters());
 

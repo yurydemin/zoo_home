@@ -1,17 +1,17 @@
 import 'package:zoo_home/models/UserShelter.dart';
 
-abstract class UserShelterState {}
+abstract class UserSheltersState {}
 
-class LoadingUserShelters extends UserShelterState {}
+class LoadingUserShelters extends UserSheltersState {}
 
-class ListUserSheltersSuccess extends UserShelterState {
+class ListUserSheltersSuccess extends UserSheltersState {
   final List<UserShelter> userShelters;
   final Map<String, String> avatarsKeyUrl;
 
   ListUserSheltersSuccess({this.userShelters, this.avatarsKeyUrl});
 }
 
-class ListUserSheltersFailure extends UserShelterState {
+class ListUserSheltersFailure extends UserSheltersState {
   final Exception exception;
 
   ListUserSheltersFailure({this.exception});

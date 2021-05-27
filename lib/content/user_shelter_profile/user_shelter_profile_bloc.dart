@@ -9,13 +9,13 @@ import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_event.dart';
 import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_state.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/services/image_url_cache.dart';
 
 class UserShelterProfileBloc
     extends Bloc<UserShelterProfileEvent, UserShelterProfileState> {
-  final UserShelterRepository userShelterRepo;
+  final UserSheltersRepository userShelterRepo;
   final StorageRepository storageRepo;
   final _imagePicker = ImagePicker();
 

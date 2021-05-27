@@ -1,3 +1,26 @@
+enum PetStatus {
+  OPENED
+  CLOSED
+  RESERVED
+}
+
+enum PetKind {
+  CAT
+  DOG
+  OTHER
+}
+
+type Pet @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userShelterId: ID!
+  kind: PetKind
+  status: PetStatus
+  title: String
+  description: String
+  images: [String]!
+  date: AWSDateTime!
+}
+
 type UserShelter @model @auth(rules: [{allow: public}]) {
   id: ID!
   email: String!

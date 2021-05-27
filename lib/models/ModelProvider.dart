@@ -16,21 +16,30 @@
 // ignore_for_file: public_member_api_docs
 
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
+import 'Pet.dart';
 import 'UserShelter.dart';
 
+export 'Pet.dart';
+export 'PetKind.dart';
+export 'PetStatus.dart';
 export 'UserShelter.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "cad58709c2c44c3845d8b632d588bec3";
+  String version = "375d4370d6757f23b42672276ecca7c3";
   @override
-  List<ModelSchema> modelSchemas = [UserShelter.schema];
+  List<ModelSchema> modelSchemas = [Pet.schema, UserShelter.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
 
   ModelType getModelTypeByModelName(String modelName) {
     switch (modelName) {
+      case "Pet":
+        {
+          return Pet.classType;
+        }
+        break;
       case "UserShelter":
         {
           return UserShelter.classType;

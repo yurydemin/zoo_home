@@ -3,12 +3,12 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_repository.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
 import 'package:zoo_home/session/session_state.dart';
 
 class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
-  final UserShelterRepository userShelterRepo;
+  final UserSheltersRepository userShelterRepo;
 
   bool get isGuestLoggedIn => (state is AuthenticatedAsGuest);
   bool get isUserLoggedIn => (state is AuthenticatedAsUser);

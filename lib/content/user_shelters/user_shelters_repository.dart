@@ -1,7 +1,7 @@
 import 'package:amplify_flutter/amplify.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
-class UserShelterRepository {
+class UserSheltersRepository {
   Future<List<UserShelter>> getUserShelters() async {
     try {
       final userShelters = await Amplify.DataStore.query(

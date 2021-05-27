@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_cubit.dart';
-import 'package:zoo_home/content/user_shelters/user_shelter_state.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
+import 'package:zoo_home/content/user_shelters/user_shelters_state.dart';
 import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/widgets/user_shelter_card.dart';
 
@@ -29,7 +29,7 @@ class UserSheltersView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<UserShelterCubit, UserShelterState>(
+      body: BlocBuilder<UserSheltersCubit, UserSheltersState>(
           builder: (context, state) {
         if (state is ListUserSheltersSuccess) {
           return state.userShelters.isEmpty
