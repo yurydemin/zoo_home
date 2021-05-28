@@ -32,4 +32,16 @@ class PetsCubit extends Cubit<PetsState> {
     final petsStream = petsRepo.observePets();
     petsStream.listen((_) => getPets());
   }
+  // TODO create new pet from separate view
+  // void createPet() async {
+  //   await petsRepo.createPet(
+  //     userShelterId: userShelterId,
+  //     kind: kind,
+  //     status: status,
+  //     title: title,
+  //     description: description,
+  //     images: images,
+  //     date: date,
+  //   );
+  // }
 }
