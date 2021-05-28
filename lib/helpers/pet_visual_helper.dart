@@ -14,21 +14,21 @@ class PetVisualHelper {
 
   static String petStatusToString(PetStatus status) {
     if (status == PetStatus.OPENED) {
-      return 'Opened';
+      return 'Открыто';
     } else if (status == PetStatus.RESERVED) {
-      return 'Reserved';
+      return 'Зарезервировано';
     } else {
-      return 'Closed';
+      return 'Закрыто';
     }
   }
 
   static String petKindToString(PetKind kind) {
     if (kind == PetKind.CAT) {
-      return 'Cat';
+      return 'Кошка';
     } else if (kind == PetKind.DOG) {
-      return 'Dog';
+      return 'Собака';
     } else {
-      return 'Other';
+      return 'Другое';
     }
   }
 }

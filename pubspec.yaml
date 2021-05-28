@@ -31,6 +31,7 @@ dependencies:
   carousel_slider:
   cached_network_image:
   intl:
+  enum_to_string:
 
   amplify_flutter:
   amplify_auth_cognito:

@@ -49,6 +49,14 @@ class PetsRepository {
     }
   }
 
+  Future<void> deletePet(Pet petToDelete) async {
+    try {
+      await Amplify.DataStore.delete(petToDelete);
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Stream observePets() {
     return Amplify.DataStore.observe(Pet.classType);
   }

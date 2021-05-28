@@ -4,6 +4,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_absolute_path/flutter_absolute_path.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
+import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_state.dart';
 import 'package:zoo_home/content/pets/pets_repository.dart';
@@ -74,6 +75,30 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       yield state.copyWith(pet: updatedPet, imageUrls: imageUrls);
     } else if (event is ProvideProfileImagesPaths) {
       yield state.copyWith(imageUrls: event.imageUrls);
+    } else if (event is PetProfileKindChanged) {
+      yield state.copyWith(kind: event.kind);
+    } else if (event is PetProfileStatusChanged) {
+      yield state.copyWith(status: event.status);
+    } else if (event is PetProfileTitleChanged) {
+      yield state.copyWith(title: event.title);
+    } else if (event is PetProfileDescriptionChanged) {
+      yield state.copyWith(description: event.description);
+    } else if (event is SavePetProfileChanges) {
+      yield state.copyWith(formStatus: FormSubmitting());
+
+      final updatedPet = state.pet.copyWith(
+        kind: state.kind,
+        status: state.status,
+        title: state.title,
+        description: state.description,
+      );
+
+      try {
+        await petsRepo.updatePet(updatedPet);
+        yield state.copyWith(pet: updatedPet, formStatus: SubmissionSuccess());
+      } catch (e) {
+        yield state.copyWith(formStatus: SubmissionFailed(e));
+      }
     }
   }
 }
