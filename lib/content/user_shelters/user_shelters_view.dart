@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
+import 'package:zoo_home/content/pets/pets_cubit.dart';
+import 'package:zoo_home/content/pets/pets_state.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_state.dart';
-import 'package:zoo_home/models/UserShelter.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/widgets/pet_card.dart';
 import 'package:zoo_home/widgets/user_shelter_card.dart';
 
 class UserSheltersView extends StatelessWidget {
@@ -29,23 +32,52 @@ class UserSheltersView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<UserSheltersCubit, UserSheltersState>(
-          builder: (context, state) {
-        if (state is ListUserSheltersSuccess) {
-          return state.userShelters.isEmpty
-              ? _emptyUserSheltersView()
-              : _userSheltersListView(state.userShelters, state.avatarsKeyUrl);
-        } else if (state is ListUserSheltersFailure) {
-          return _exceptionView(state.exception);
-        } else {
-          return Container(
-            color: Colors.white,
-            child: Center(
-              child: CircularProgressIndicator(),
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            BlocBuilder<UserSheltersCubit, UserSheltersState>(
+                builder: (context, state) {
+              if (state is ListUserSheltersSuccess) {
+                return state.userShelters.isEmpty
+                    ? _emptyUserSheltersView()
+                    : _userSheltersListView(
+                        state.userShelters, state.avatarsKeyUrl);
+              } else if (state is ListUserSheltersFailure) {
+                return _exceptionView(state.exception);
+              } else {
+                return Container(
+                  color: Colors.white,
+                  child: Center(
+                    child: CircularProgressIndicator(),
+                  ),
+                );
+              }
+            }),
+            BlocBuilder<PetsCubit, PetsState>(
+              builder: (context, state) {
+                if (state is LoadingPets) {
+                  return Center(
+                    child: CircularProgressIndicator(),
+                  );
+                } else if (state is ListPetsSuccess) {
+                  return state.pets.isEmpty
+                      ? _emptyUserSheltersView()
+                      : _testPetsListView(state.pets);
+                } else if (state is ListPetsFailure) {
+                  return _exceptionView(state.exception);
+                } else {
+                  return Container(
+                    color: Colors.white,
+                    child: Center(
+                      child: CircularProgressIndicator(),
+                    ),
+                  );
+                }
+              },
             ),
-          );
-        }
-      }),
+          ],
+        ),
+      ),
     );
   }
 
@@ -59,6 +91,8 @@ class UserSheltersView extends StatelessWidget {
     );
   }
 
+// TODO add BlocBuilder<PetsCubit, PetsState>
+// TODO add dropdown list with PetCard
   Widget _userSheltersListView(
       List<UserShelter> userShelters, Map<String, String> avatarsKeyUrl) {
     return ListView.builder(
@@ -76,6 +110,21 @@ class UserSheltersView extends StatelessWidget {
       },
     );
   }
+}
+
+//TODO TEST PETS LOADING AND PROFILE
+Widget _testPetsListView(List<Pet> pets) {
+  return ListView.builder(
+    itemCount: pets.length,
+    itemBuilder: (BuildContext context, int index) {
+      final pet = pets[index];
+      return PetCard(
+        pet: pet,
+        onTap: () =>
+            context.read<ContentCubit>().showPetProfile(selectedPet: pet),
+      );
+    },
+  );
 }
 
 class OneTapTooltip extends StatelessWidget {
