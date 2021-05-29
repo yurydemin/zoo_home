@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
+import 'package:zoo_home/content/pets/pets_add_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/content/pets/pets_state.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
@@ -78,6 +79,31 @@ class UserSheltersView extends StatelessWidget {
           ],
         ),
       ),
+      floatingActionButton: isLoggedIn
+          ? FloatingActionButton(
+              tooltip: 'Добавить животное',
+              child: Icon(Icons.add),
+              onPressed: () {
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                      builder: (context) => PetsAddView(
+                            isEditing: false,
+                            onSave: (
+                              PetKind kind,
+                              PetStatus status,
+                              String title,
+                              String description,
+                            ) {
+                              context
+                                  .read<PetsCubit>()
+                                  .createPet(kind, status, title, description);
+                            },
+                          )),
+                );
+              },
+            )
+          : null,
     );
   }
 

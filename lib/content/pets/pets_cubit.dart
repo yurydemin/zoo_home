@@ -1,8 +1,10 @@
+import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/pets/pets_repository.dart';
 import 'package:zoo_home/content/pets/pets_state.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 
 class PetsCubit extends Cubit<PetsState> {
   final ContentCubit contentCubit;
@@ -32,16 +34,22 @@ class PetsCubit extends Cubit<PetsState> {
     final petsStream = petsRepo.observePets();
     petsStream.listen((_) => getPets());
   }
-  // TODO create new pet from separate view
-  // void createPet() async {
-  //   await petsRepo.createPet(
-  //     userShelterId: userShelterId,
-  //     kind: kind,
-  //     status: status,
-  //     title: title,
-  //     description: description,
-  //     images: images,
-  //     date: date,
-  //   );
-  // }
+
+  void createPet(
+    PetKind kind,
+    PetStatus status,
+    String title,
+    String description,
+  ) async {
+    if (!contentCubit.isUserLoggedIn) return;
+    await petsRepo.createPet(
+      userShelterId: contentCubit.userId,
+      kind: kind,
+      status: status,
+      title: title,
+      description: description,
+      images: [],
+      date: TemporalDateTime(DateTime.now()),
+    );
+  }
 }
