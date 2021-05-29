@@ -4,6 +4,9 @@ import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/pets/pets_add_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/content/pets/pets_state.dart';
+import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_bloc.dart';
+import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_event.dart';
+import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_state.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
@@ -33,46 +36,45 @@ class UserSheltersView extends StatelessWidget {
           ),
         ],
       ),
-      body:
-          // BlocBuilder<UserSheltersCubit, UserSheltersState>(
-          //     builder: (context, state) {
-          //   if (state is ListUserSheltersSuccess) {
-          //     return state.userShelters.isEmpty
-          //         ? _emptyUserSheltersView()
-          //         : _userSheltersListView(state.userShelters, state.avatarsKeyUrl);
-          //   } else if (state is ListUserSheltersFailure) {
-          //     return _exceptionView(state.exception);
-          //   } else {
-          //     return Container(
-          //       color: Colors.white,
-          //       child: Center(
-          //         child: CircularProgressIndicator(),
-          //       ),
-          //     );
-          //   }
-          // }),
-          BlocBuilder<PetsCubit, PetsState>(
-        builder: (context, state) {
-          if (state is LoadingPets) {
-            return Center(
+      body: BlocBuilder<UserSheltersCubit, UserSheltersState>(
+          builder: (context, state) {
+        if (state is ListUserSheltersSuccess) {
+          return state.userShelters.isEmpty
+              ? _emptyUserSheltersView()
+              : _userSheltersListView(state.userShelters, state.avatarsKeyUrl);
+        } else if (state is ListUserSheltersFailure) {
+          return _exceptionView(state.exception);
+        } else {
+          return Container(
+            color: Colors.white,
+            child: Center(
               child: CircularProgressIndicator(),
-            );
-          } else if (state is ListPetsSuccess) {
-            return state.pets.isEmpty
-                ? _emptyUserSheltersView()
-                : _testPetsListView(state.pets);
-          } else if (state is ListPetsFailure) {
-            return _exceptionView(state.exception);
-          } else {
-            return Container(
-              color: Colors.white,
-              child: Center(
-                child: CircularProgressIndicator(),
-              ),
-            );
-          }
-        },
-      ),
+            ),
+          );
+        }
+      }),
+      //     BlocBuilder<PetsCubit, PetsState>(
+      //   builder: (context, state) {
+      //     if (state is LoadingPets) {
+      //       return Center(
+      //         child: CircularProgressIndicator(),
+      //       );
+      //     } else if (state is ListPetsSuccess) {
+      //       return state.pets.isEmpty
+      //           ? _emptyUserSheltersView()
+      //           : _testPetsListView(state.pets);
+      //     } else if (state is ListPetsFailure) {
+      //       return _exceptionView(state.exception);
+      //     } else {
+      //       return Container(
+      //         color: Colors.white,
+      //         child: Center(
+      //           child: CircularProgressIndicator(),
+      //         ),
+      //       );
+      //     }
+      //   },
+      // ),
       floatingActionButton: isLoggedIn
           ? FloatingActionButton(
               tooltip: 'Добавить животное',
@@ -108,41 +110,79 @@ class UserSheltersView extends StatelessWidget {
     return Text('Еще не создано ни одного зоодома');
   }
 
-// TODO add BlocBuilder<PetsCubit, PetsState>
-// TODO add dropdown list with PetCard
   Widget _userSheltersListView(
       List<UserShelter> userShelters, Map<String, String> avatarsKeyUrl) {
     return ListView.builder(
       itemCount: userShelters.length,
       itemBuilder: (BuildContext context, int index) {
         final userShelter = userShelters[index];
-        return UserShelterCard(
-            onTap: () => context
-                .read<ContentCubit>()
-                .showUserProfile(selectedUser: userShelter),
-            userShelter: userShelter,
-            avatarUrl: avatarsKeyUrl.containsKey(userShelter.avatarKey)
-                ? avatarsKeyUrl[userShelter.avatarKey]
-                : null);
+        return Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            UserShelterCard(
+                onTap: () => context
+                    .read<ContentCubit>()
+                    .showUserProfile(selectedUser: userShelter),
+                userShelter: userShelter,
+                avatarUrl: avatarsKeyUrl.containsKey(userShelter.avatarKey)
+                    ? avatarsKeyUrl[userShelter.avatarKey]
+                    : null),
+            BlocProvider<UserShelterPetsBloc>(
+              create: (context) => UserShelterPetsBloc(
+                userShelterId: userShelter.id,
+                petsCubit: BlocProvider.of<PetsCubit>(context),
+              )..add(UserShelterPetsUpdatedEvent(userShelter.id)),
+              child: _userShelterPetsList(),
+            ),
+          ],
+        );
       },
     );
   }
 }
 
-//TODO TEST PETS LOADING AND PROFILE
-Widget _testPetsListView(List<Pet> pets) {
-  return ListView.builder(
-    itemCount: pets.length,
-    itemBuilder: (BuildContext context, int index) {
-      final pet = pets[index];
-      return PetCard(
-        pet: pet,
-        onTap: () =>
-            context.read<ContentCubit>().showPetProfile(selectedPet: pet),
-      );
+Widget _userShelterPetsList() {
+  return BlocBuilder<UserShelterPetsBloc, UserShelterPetsState>(
+    builder: (context, state) {
+      if (state is UserShelterPetsInitialState) {
+        return Text('Загрузка животных зоодома...');
+      } else if (state is UserShelterPetsLoadSuccessState) {
+        final pets = state.pets;
+        return pets.isEmpty
+            ? Text('Еще не добавлено ни одного животного')
+            : Column(
+                children: [
+                  ...pets.map((pet) {
+                    return PetCard(
+                      pet: pet,
+                      onTap: () => context
+                          .read<ContentCubit>()
+                          .showPetProfile(selectedPet: pet),
+                    );
+                  }).toList(),
+                ],
+              );
+      } else {
+        return Text('Ошибка при загрузке списка животных');
+      }
     },
   );
 }
+
+//TEST PETS LOADING AND PROFILE
+// Widget _testPetsListView(List<Pet> pets) {
+//   return ListView.builder(
+//     itemCount: pets.length,
+//     itemBuilder: (BuildContext context, int index) {
+//       final pet = pets[index];
+//       return PetCard(
+//         pet: pet,
+//         onTap: () =>
+//             context.read<ContentCubit>().showPetProfile(selectedPet: pet),
+//       );
+//     },
+//   );
+// }
 
 class OneTapTooltip extends StatelessWidget {
   final Widget child;
