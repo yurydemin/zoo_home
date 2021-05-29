@@ -56,7 +56,7 @@ class _PetProfileViewState extends State<PetProfileView> {
       child: BlocBuilder<PetProfileBloc, PetProfileState>(
           builder: (context, state) {
         return AppBar(
-          title: Text(state.pet.title),
+          title: Text(state.title),
           centerTitle: true,
           // actions: [
           //   if (state.isCurrentPet)
@@ -130,11 +130,11 @@ class _PetProfileViewState extends State<PetProfileView> {
         leading: Icon(Icons.more_vert_rounded),
         trailing: Icon(
           Icons.circle,
-          color: PetVisualHelper.petStatusToColor(state.pet.status),
+          color: PetVisualHelper.petStatusToColor(state.status),
         ),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(state.pet.status),
+                value: EnumToString.convertToString(state.status),
                 items: PetStatus.values
                     .map(
                       (label) => DropdownMenuItem(
@@ -149,7 +149,7 @@ class _PetProfileViewState extends State<PetProfileView> {
                           EnumToString.fromString(PetStatus.values, value)));
                 }),
               )
-            : Text(EnumToString.convertToString(state.pet.status)),
+            : Text(EnumToString.convertToString(state.status)),
       );
     });
   }
@@ -162,7 +162,7 @@ class _PetProfileViewState extends State<PetProfileView> {
         leading: Icon(Icons.pets),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(state.pet.kind),
+                value: EnumToString.convertToString(state.kind),
                 items: PetKind.values
                     .map(
                       (label) => DropdownMenuItem(
@@ -176,7 +176,7 @@ class _PetProfileViewState extends State<PetProfileView> {
                       kind: EnumToString.fromString(PetKind.values, value)));
                 }),
               )
-            : Text(EnumToString.convertToString(state.pet.kind)),
+            : Text(EnumToString.convertToString(state.kind)),
       );
     });
   }

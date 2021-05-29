@@ -54,76 +54,80 @@ class _PetsAddViewState extends State<PetsAddView> {
         title: Text(isEditing ? 'Изменить' : 'Добавить новое животное'),
         centerTitle: true,
       ),
-      body: Form(
-        key: _formKey,
-        child: ListView(
-          children: [
-            TextFormField(
-              initialValue: _title,
-              decoration: InputDecoration(
-                hintText: 'Имя',
+      body: Padding(
+        padding: const EdgeInsets.all(12.0),
+        child: Form(
+          key: _formKey,
+          child: ListView(
+            children: [
+              TextFormField(
+                initialValue: _title,
+                decoration: InputDecoration(
+                  hintText: 'Имя',
+                ),
+                validator: (val) {
+                  return val.trim().isEmpty ? 'Имя не может быть пустым' : null;
+                },
+                onSaved: (value) => _title = value,
               ),
-              validator: (val) {
-                return val.trim().isEmpty ? 'Имя не может быть пустым' : null;
-              },
-              onSaved: (value) => _title = value,
-            ),
-            TextFormField(
-              initialValue: _description,
-              decoration: InputDecoration(
-                hintText: 'Описание',
+              TextFormField(
+                initialValue: _description,
+                decoration: InputDecoration(
+                  hintText: 'Описание',
+                ),
+                maxLines: 8,
+                validator: (val) {
+                  return val.trim().isEmpty
+                      ? 'Описание не может быть пустым'
+                      : null;
+                },
+                onSaved: (value) => _description = value,
               ),
-              maxLines: 8,
-              validator: (val) {
-                return val.trim().isEmpty
-                    ? 'Описание не может быть пустым'
-                    : null;
-              },
-              onSaved: (value) => _description = value,
-            ),
-            DropdownButtonFormField<String>(
-              value: EnumToString.convertToString(_kind),
-              validator: (value) {
-                if (value == null || value.isEmpty) return 'Выберите категорию';
-                return null;
-              },
-              items: PetKind.values
-                  .map(
-                    (label) => DropdownMenuItem(
-                      child: Text(EnumToString.convertToString(label)),
-                      value: EnumToString.convertToString(label),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) => setState(() {
-                _kind = EnumToString.fromString(PetKind.values, value);
-              }),
-            ),
-            DropdownButtonFormField<String>(
-              value: EnumToString.convertToString(_status),
-              validator: (value) {
-                if (value == null || value.isEmpty)
-                  return 'Выберите статус карточки';
-                return null;
-              },
-              items: PetStatus.values
-                  .map(
-                    (label) => DropdownMenuItem(
-                      child: Text(EnumToString.convertToString(label)),
-                      value: EnumToString.convertToString(label),
-                    ),
-                  )
-                  .toList(),
-              onChanged: (value) => setState(() {
-                _status = EnumToString.fromString(PetStatus.values, value);
-              }),
-            ),
-          ],
+              DropdownButtonFormField<String>(
+                value: EnumToString.convertToString(_kind),
+                validator: (value) {
+                  if (value == null || value.isEmpty)
+                    return 'Выберите категорию';
+                  return null;
+                },
+                items: PetKind.values
+                    .map(
+                      (label) => DropdownMenuItem(
+                        child: Text(EnumToString.convertToString(label)),
+                        value: EnumToString.convertToString(label),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setState(() {
+                  _kind = EnumToString.fromString(PetKind.values, value);
+                }),
+              ),
+              DropdownButtonFormField<String>(
+                value: EnumToString.convertToString(_status),
+                validator: (value) {
+                  if (value == null || value.isEmpty)
+                    return 'Выберите статус карточки';
+                  return null;
+                },
+                items: PetStatus.values
+                    .map(
+                      (label) => DropdownMenuItem(
+                        child: Text(EnumToString.convertToString(label)),
+                        value: EnumToString.convertToString(label),
+                      ),
+                    )
+                    .toList(),
+                onChanged: (value) => setState(() {
+                  _status = EnumToString.fromString(PetStatus.values, value);
+                }),
+              ),
+            ],
+          ),
         ),
       ),
       floatingActionButton: FloatingActionButton(
         tooltip: isEditing ? 'Сохранить изменения' : 'Добавить',
-        child: Icon(isEditing ? Icons.check : Icons.add),
+        child: Icon(isEditing ? Icons.check : Icons.done),
         onPressed: () {
           if (_formKey.currentState.validate()) {
             _formKey.currentState.save();

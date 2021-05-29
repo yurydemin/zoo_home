@@ -33,51 +33,45 @@ class UserSheltersView extends StatelessWidget {
           ),
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            BlocBuilder<UserSheltersCubit, UserSheltersState>(
-                builder: (context, state) {
-              if (state is ListUserSheltersSuccess) {
-                return state.userShelters.isEmpty
-                    ? _emptyUserSheltersView()
-                    : _userSheltersListView(
-                        state.userShelters, state.avatarsKeyUrl);
-              } else if (state is ListUserSheltersFailure) {
-                return _exceptionView(state.exception);
-              } else {
-                return Container(
-                  color: Colors.white,
-                  child: Center(
-                    child: CircularProgressIndicator(),
-                  ),
-                );
-              }
-            }),
-            BlocBuilder<PetsCubit, PetsState>(
-              builder: (context, state) {
-                if (state is LoadingPets) {
-                  return Center(
-                    child: CircularProgressIndicator(),
-                  );
-                } else if (state is ListPetsSuccess) {
-                  return state.pets.isEmpty
-                      ? _emptyUserSheltersView()
-                      : _testPetsListView(state.pets);
-                } else if (state is ListPetsFailure) {
-                  return _exceptionView(state.exception);
-                } else {
-                  return Container(
-                    color: Colors.white,
-                    child: Center(
-                      child: CircularProgressIndicator(),
-                    ),
-                  );
-                }
-              },
-            ),
-          ],
-        ),
+      body:
+          // BlocBuilder<UserSheltersCubit, UserSheltersState>(
+          //     builder: (context, state) {
+          //   if (state is ListUserSheltersSuccess) {
+          //     return state.userShelters.isEmpty
+          //         ? _emptyUserSheltersView()
+          //         : _userSheltersListView(state.userShelters, state.avatarsKeyUrl);
+          //   } else if (state is ListUserSheltersFailure) {
+          //     return _exceptionView(state.exception);
+          //   } else {
+          //     return Container(
+          //       color: Colors.white,
+          //       child: Center(
+          //         child: CircularProgressIndicator(),
+          //       ),
+          //     );
+          //   }
+          // }),
+          BlocBuilder<PetsCubit, PetsState>(
+        builder: (context, state) {
+          if (state is LoadingPets) {
+            return Center(
+              child: CircularProgressIndicator(),
+            );
+          } else if (state is ListPetsSuccess) {
+            return state.pets.isEmpty
+                ? _emptyUserSheltersView()
+                : _testPetsListView(state.pets);
+          } else if (state is ListPetsFailure) {
+            return _exceptionView(state.exception);
+          } else {
+            return Container(
+              color: Colors.white,
+              child: Center(
+                child: CircularProgressIndicator(),
+              ),
+            );
+          }
+        },
       ),
       floatingActionButton: isLoggedIn
           ? FloatingActionButton(
@@ -87,7 +81,7 @@ class UserSheltersView extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (context) => PetsAddView(
+                      builder: (routedContext) => PetsAddView(
                             isEditing: false,
                             onSave: (
                               PetKind kind,
@@ -95,8 +89,7 @@ class UserSheltersView extends StatelessWidget {
                               String title,
                               String description,
                             ) {
-                              context
-                                  .read<PetsCubit>()
+                              BlocProvider.of<PetsCubit>(context)
                                   .createPet(kind, status, title, description);
                             },
                           )),
@@ -108,13 +101,11 @@ class UserSheltersView extends StatelessWidget {
   }
 
   Widget _exceptionView(Exception exception) {
-    return Center(child: Text(exception.toString()));
+    return Text(exception.toString());
   }
 
   Widget _emptyUserSheltersView() {
-    return Center(
-      child: Text('Еще не создано ни одного зоодома'),
-    );
+    return Text('Еще не создано ни одного зоодома');
   }
 
 // TODO add BlocBuilder<PetsCubit, PetsState>

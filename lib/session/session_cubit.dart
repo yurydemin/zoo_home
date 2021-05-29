@@ -31,10 +31,11 @@ class SessionCubit extends Cubit<SessionState> {
 
       UserShelter user = await userShelterRepo.getUserById(userId);
       if (user == null) {
-        user = await userShelterRepo.createUser(
-          userId: userId,
-          email: user.email,
-        );
+        // user = await userShelterRepo.createUser(
+        //   userId: userId,
+        //   email: user.email,
+        // );
+        throw Exception('User auth exception');
       }
       emit(AuthenticatedAsUser(user: user));
     } on Exception {
