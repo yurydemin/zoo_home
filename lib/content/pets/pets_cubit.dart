@@ -49,6 +49,7 @@ class PetsCubit extends Cubit<PetsState> {
       title: title,
       description: description,
       images: [],
+      contact: contentCubit.userContact,
       date: TemporalDateTime(DateTime.now()),
     );
   }

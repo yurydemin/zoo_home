@@ -18,6 +18,7 @@ type Pet @model @auth(rules: [{allow: public}]) {
   title: String
   description: String
   images: [String]!
+  contact: String!
   date: AWSDateTime!
 }
 

@@ -31,6 +31,7 @@ class Pet extends Model {
   final String title;
   final String description;
   final List<String> images;
+  final String contact;
   final TemporalDateTime date;
 
   @override
@@ -49,6 +50,7 @@ class Pet extends Model {
       this.title,
       this.description,
       @required this.images,
+      @required this.contact,
       @required this.date});
 
   factory Pet(
@@ -59,6 +61,7 @@ class Pet extends Model {
       String title,
       String description,
       @required List<String> images,
+      @required String contact,
       @required TemporalDateTime date}) {
     return Pet._internal(
         id: id == null ? UUID.getUUID() : id,
@@ -68,6 +71,7 @@ class Pet extends Model {
         title: title,
         description: description,
         images: images != null ? List.unmodifiable(images) : images,
+        contact: contact,
         date: date);
   }
 
@@ -86,6 +90,7 @@ class Pet extends Model {
         title == other.title &&
         description == other.description &&
         DeepCollectionEquality().equals(images, other.images) &&
+        contact == other.contact &&
         date == other.date;
   }
 
@@ -106,6 +111,7 @@ class Pet extends Model {
     buffer.write("description=" + "$description" + ", ");
     buffer.write(
         "images=" + (images != null ? images.toString() : "null") + ", ");
+    buffer.write("contact=" + "$contact" + ", ");
     buffer.write("date=" + (date != null ? date.format() : "null"));
     buffer.write("}");
 
@@ -120,6 +126,7 @@ class Pet extends Model {
       String title,
       String description,
       List<String> images,
+      String contact,
       TemporalDateTime date}) {
     return Pet(
         id: id ?? this.id,
@@ -129,6 +136,7 @@ class Pet extends Model {
         title: title ?? this.title,
         description: description ?? this.description,
         images: images ?? this.images,
+        contact: contact ?? this.contact,
         date: date ?? this.date);
   }
 
@@ -140,6 +148,7 @@ class Pet extends Model {
         title = json['title'],
         description = json['description'],
         images = json['images']?.cast<String>(),
+        contact = json['contact'],
         date = json['date'] != null
             ? TemporalDateTime.fromString(json['date'])
             : null;
@@ -152,6 +161,7 @@ class Pet extends Model {
         'title': title,
         'description': description,
         'images': images,
+        'contact': contact,
         'date': date?.format()
       };
 
@@ -163,6 +173,7 @@ class Pet extends Model {
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField IMAGES = QueryField(fieldName: "images");
+  static final QueryField CONTACT = QueryField(fieldName: "contact");
   static final QueryField DATE = QueryField(fieldName: "date");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
@@ -211,6 +222,11 @@ class Pet extends Model {
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.string))));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Pet.CONTACT,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Pet.DATE,

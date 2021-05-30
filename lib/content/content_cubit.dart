@@ -15,6 +15,8 @@ class ContentCubit extends Cubit<ContentState> {
   bool get isUserLoggedIn => sessionCubit.isUserLoggedIn;
   String get userId =>
       sessionCubit.isUserLoggedIn ? sessionCubit.currentUser.id : null;
+  String get userContact =>
+      sessionCubit.isUserLoggedIn ? sessionCubit.currentUser.email : '';
 
   void showAuth() => sessionCubit.showAuth();
 

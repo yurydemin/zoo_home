@@ -22,6 +22,7 @@ class PetsRepository {
     @required String title,
     @required String description,
     @required List<String> images,
+    @required String contact,
     @required TemporalDateTime date,
   }) async {
     final newPet = Pet(
@@ -31,6 +32,7 @@ class PetsRepository {
         title: title,
         description: description,
         images: images,
+        contact: contact,
         date: date);
     try {
       await Amplify.DataStore.save(newPet);
