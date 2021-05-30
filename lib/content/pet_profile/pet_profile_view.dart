@@ -38,6 +38,8 @@ class _PetProfileViewState extends State<PetProfileView> {
           final formStatus = state.formStatus;
           if (formStatus is SubmissionFailed) {
             _showSnackBar(context, formStatus.exception.toString());
+          } else if (formStatus is SubmissionSuccess) {
+            _showSnackBar(context, 'Информация обновлена');
           }
         },
         child: Scaffold(
@@ -117,7 +119,11 @@ class _PetProfileViewState extends State<PetProfileView> {
 
   Widget _galleryPlaceHolder() {
     return Image.asset(
-      'assets/images/other_placeholder.jpg',
+      widget.selectedPet.kind == PetKind.CAT
+          ? 'assets/images/cat_placeholder.jpg'
+          : widget.selectedPet.kind == PetKind.DOG
+              ? 'assets/images/dog_placeholder.jpg'
+              : 'assets/images/other_placeholder.jpg',
       height: 250,
     );
   }

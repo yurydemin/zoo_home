@@ -9,7 +9,10 @@ class ProfileCarousel extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return CarouselSlider(
-      options: CarouselOptions(height: 250.0, autoPlay: false),
+      options: CarouselOptions(
+          height: 250.0,
+          autoPlay: false,
+          enableInfiniteScroll: images.length > 1),
       items: images.map((image) {
         return Builder(
           builder: (BuildContext context) {

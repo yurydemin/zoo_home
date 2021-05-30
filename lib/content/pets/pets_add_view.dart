@@ -126,6 +126,7 @@ class _PetsAddViewState extends State<PetsAddView> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
+        backgroundColor: Theme.of(context).primaryColor,
         tooltip: isEditing ? 'Сохранить изменения' : 'Добавить',
         child: Icon(isEditing ? Icons.check : Icons.done),
         onPressed: () {

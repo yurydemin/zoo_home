@@ -38,7 +38,12 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
     return MaterialApp(
         theme: ThemeData(
           primaryColor: Colors.green,
+          primarySwatch: Colors.green,
+          colorScheme: ColorScheme.fromSwatch(
+            primarySwatch: Colors.green,
+          ).copyWith(),
         ),
+        debugShowCheckedModeBanner: false,
         home: _isAmplifyConfigured
             ? MultiRepositoryProvider(
                 providers: [

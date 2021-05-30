@@ -7,6 +7,7 @@ import 'package:zoo_home/content/pets/pets_state.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_event.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/services/image_url_cache.dart';
 
 class UserShelterPetsBloc
     extends Bloc<UserShelterPetsEvent, UserShelterPetsState> {
@@ -34,12 +35,22 @@ class UserShelterPetsBloc
   Stream<UserShelterPetsState> _mapPetsUpdateToState(
       UserShelterPetsUpdatedEvent event) async* {
     if (petsCubit.state is ListPetsSuccess) {
-      yield UserShelterPetsLoadSuccessState(
+      // filter pets by userShelterId
+      final filteredPets = _mapPetsToShelterPets(
         event.userShelterId,
-        _mapPetsToShelterPets(
-          event.userShelterId,
-          (petsCubit.state as ListPetsSuccess).pets,
-        ),
+        (petsCubit.state as ListPetsSuccess).pets,
+      );
+      // preload avatars urls
+      final avatarsKeyUrl = Map<String, String>();
+      await Future.wait(filteredPets.map((pet) async {
+        if (pet.images.isNotEmpty)
+          avatarsKeyUrl[pet.images.first] =
+              await ImageUrlCache.instance.getUrl(pet.images.first);
+      }));
+      yield UserShelterPetsLoadSuccessState(
+        userShelterId: event.userShelterId,
+        pets: filteredPets,
+        avatarsKeyUrl: avatarsKeyUrl,
       );
     }
   }

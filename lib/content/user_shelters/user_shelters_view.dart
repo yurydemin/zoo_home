@@ -3,7 +3,6 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/pets/pets_add_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
-import 'package:zoo_home/content/pets/pets_state.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_bloc.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_event.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_state.dart';
@@ -53,28 +52,6 @@ class UserSheltersView extends StatelessWidget {
           );
         }
       }),
-      //     BlocBuilder<PetsCubit, PetsState>(
-      //   builder: (context, state) {
-      //     if (state is LoadingPets) {
-      //       return Center(
-      //         child: CircularProgressIndicator(),
-      //       );
-      //     } else if (state is ListPetsSuccess) {
-      //       return state.pets.isEmpty
-      //           ? _emptyUserSheltersView()
-      //           : _testPetsListView(state.pets);
-      //     } else if (state is ListPetsFailure) {
-      //       return _exceptionView(state.exception);
-      //     } else {
-      //       return Container(
-      //         color: Colors.white,
-      //         child: Center(
-      //           child: CircularProgressIndicator(),
-      //         ),
-      //       );
-      //     }
-      //   },
-      // ),
       floatingActionButton: isLoggedIn
           ? FloatingActionButton(
               tooltip: 'Добавить животное',
@@ -153,11 +130,20 @@ Widget _userShelterPetsList() {
             : Column(
                 children: [
                   ...pets.map((pet) {
-                    return PetCard(
-                      pet: pet,
-                      onTap: () => context
-                          .read<ContentCubit>()
-                          .showPetProfile(selectedPet: pet),
+                    final avatarUrl = pet.images.isNotEmpty
+                        ? state.avatarsKeyUrl.containsKey(pet.images.first)
+                            ? state.avatarsKeyUrl[pet.images.first]
+                            : null
+                        : null;
+                    return Padding(
+                      padding: const EdgeInsets.only(left: 24.0),
+                      child: PetCard(
+                        avatarUrl: avatarUrl,
+                        pet: pet,
+                        onTap: () => context
+                            .read<ContentCubit>()
+                            .showPetProfile(selectedPet: pet),
+                      ),
                     );
                   }).toList(),
                 ],
@@ -168,21 +154,6 @@ Widget _userShelterPetsList() {
     },
   );
 }
-
-//TEST PETS LOADING AND PROFILE
-// Widget _testPetsListView(List<Pet> pets) {
-//   return ListView.builder(
-//     itemCount: pets.length,
-//     itemBuilder: (BuildContext context, int index) {
-//       final pet = pets[index];
-//       return PetCard(
-//         pet: pet,
-//         onTap: () =>
-//             context.read<ContentCubit>().showPetProfile(selectedPet: pet),
-//       );
-//     },
-//   );
-// }
 
 class OneTapTooltip extends StatelessWidget {
   final Widget child;

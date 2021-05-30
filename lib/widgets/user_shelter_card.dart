@@ -22,7 +22,7 @@ class UserShelterCard extends StatelessWidget {
         padding: const EdgeInsets.all(8.0),
         child: Container(
           decoration: BoxDecoration(
-              border: Border.all(color: Colors.green, width: 1.0),
+              border: Border.all(color: Colors.green, width: 2.0),
               borderRadius: BorderRadius.all(Radius.circular(10.0))),
           child: Padding(
             padding: const EdgeInsets.all(2.0),
@@ -52,7 +52,7 @@ class UserShelterCard extends StatelessWidget {
                   ),
                   Expanded(
                     child: Padding(
-                      padding: const EdgeInsets.fromLTRB(20.0, 0.0, 0.0, 0.0),
+                      padding: const EdgeInsets.fromLTRB(16.0, 0.0, 0.0, 0.0),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: <Widget>[
@@ -104,7 +104,16 @@ class UserShelterCard extends StatelessWidget {
                         ],
                       ),
                     ),
-                  )
+                  ),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 8.0),
+                    child: Container(
+                      width: 20,
+                      child: Align(
+                        child: Icon(Icons.home),
+                      ),
+                    ),
+                  ),
                 ],
               ),
             ),

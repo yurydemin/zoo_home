@@ -47,6 +47,7 @@ class PetsView extends StatelessWidget {
       itemBuilder: (BuildContext context, int index) {
         final pet = pets[index];
         return PetCard(
+            avatarUrl: null,
             onTap: () =>
                 context.read<ContentCubit>().showPetProfile(selectedPet: pet),
             pet: pet);

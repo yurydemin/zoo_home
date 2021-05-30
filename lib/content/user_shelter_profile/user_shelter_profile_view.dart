@@ -42,6 +42,8 @@ class UserShelterProfileView extends StatelessWidget {
           final formStatus = state.formStatus;
           if (formStatus is SubmissionFailed) {
             _showSnackBar(context, formStatus.exception.toString());
+          } else if (formStatus is SubmissionSuccess) {
+            _showSnackBar(context, 'Информация обновлена');
           }
         },
         child: Scaffold(
@@ -323,7 +325,10 @@ class UserShelterProfileView extends StatelessWidget {
   }
 
   void _showSnackBar(BuildContext context, String message) {
-    final snackBar = SnackBar(content: Text(message));
+    final snackBar = SnackBar(
+      content: Text(message),
+      duration: const Duration(milliseconds: 1000),
+    );
     ScaffoldMessenger.of(context).showSnackBar(snackBar);
   }
 }
