@@ -32,6 +32,8 @@ dependencies:
   cached_network_image:
   intl:
   enum_to_string:
+  url_launcher:
+  mailto:
 
   amplify_flutter:
   amplify_auth_cognito:

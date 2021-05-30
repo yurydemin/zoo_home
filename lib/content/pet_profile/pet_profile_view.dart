@@ -2,6 +2,8 @@ import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
@@ -24,14 +26,14 @@ class PetProfileView extends StatefulWidget {
 class _PetProfileViewState extends State<PetProfileView> {
   @override
   Widget build(BuildContext context) {
-    final sessionCubit = context.read<SessionCubit>();
+    final currentUser = context.read<SessionCubit>().currentUser;
     return BlocProvider(
       create: (context) => PetProfileBloc(
         petsRepo: context.read<PetsRepository>(),
         storageRepo: context.read<StorageRepository>(),
         pet: widget.selectedPet,
-        isCurrentPet: sessionCubit.currentUser != null &&
-            sessionCubit.currentUser.id == widget.selectedPet.userShelterId,
+        isCurrentPet: currentUser != null &&
+            currentUser.id == widget.selectedPet.userShelterId,
       ),
       child: BlocListener<PetProfileBloc, PetProfileState>(
         listener: (context, state) {
@@ -89,7 +91,9 @@ class _PetProfileViewState extends State<PetProfileView> {
               _kindTile(),
               _titleTile(),
               _descriptionTile(),
-              if (state.isCurrentPet) _saveProfileChangesButton(),
+              state.isCurrentPet
+                  ? _saveProfileChangesButton()
+                  : _mailToTextButton(),
               SizedBox(height: 10),
             ],
           ),
@@ -253,6 +257,30 @@ class _PetProfileViewState extends State<PetProfileView> {
                   context.read<PetProfileBloc>().add(SavePetProfileChanges()),
               child: Text('Сохранить изменения'),
             );
+    });
+  }
+
+  Widget _mailToTextButton() {
+    return BlocBuilder<PetProfileBloc, PetProfileState>(
+        builder: (context, state) {
+      final targetEmail = state.pet.contact;
+      final petCardTitle = state.pet.title;
+      return TextButton(
+        onPressed: () async {
+          final url = Mailto(
+            to: [targetEmail],
+            subject: 'Новая заявка на "$petCardTitle"',
+            body: 'Здравствуйте, меня интересует животное "$petCardTitle".',
+          ).toString();
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            _showSnackBar(context,
+                'Не удалось открыть почтовый клиент для отправки письма по ссылке $url');
+          }
+        },
+        child: Text('Оставить заявку'),
+      );
     });
   }
 

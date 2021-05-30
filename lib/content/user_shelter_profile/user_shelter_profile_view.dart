@@ -5,6 +5,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:mailto/mailto.dart';
+import 'package:url_launcher/url_launcher.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/models/UserShelter.dart';
@@ -24,14 +26,13 @@ class UserShelterProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final sessionCubit = context.read<SessionCubit>();
+    final currentUser = context.read<SessionCubit>().currentUser;
     return BlocProvider(
       create: (context) => UserShelterProfileBloc(
         userShelterRepo: context.read<UserSheltersRepository>(),
         storageRepo: context.read<StorageRepository>(),
         user: selectedUser,
-        isCurrentUser: sessionCubit.currentUser != null &&
-            sessionCubit.currentUser.id == selectedUser.id,
+        isCurrentUser: currentUser != null && currentUser.id == selectedUser.id,
       ),
       child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
         listener: (context, state) {
@@ -93,7 +94,9 @@ class UserShelterProfileView extends StatelessWidget {
               _descriptionTile(),
               if (state.isCurrentUser) _addImagesButton(),
               if (state.imageUrls.isNotEmpty) _galleryCarousel(),
-              if (state.isCurrentUser) _saveProfileChangesButton(),
+              state.isCurrentUser
+                  ? _saveProfileChangesButton()
+                  : _mailToTextButton(),
               SizedBox(height: 10),
             ],
           ),
@@ -267,6 +270,30 @@ class UserShelterProfileView extends StatelessWidget {
                   .add(SaveUserShelterProfileChanges()),
               child: Text('Сохранить изменения'),
             );
+    });
+  }
+
+  Widget _mailToTextButton() {
+    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+        builder: (context, state) {
+      final targetEmail = state.user.email;
+      final targetUserShelterName = state.user.title;
+      return TextButton(
+        onPressed: () async {
+          final url = Mailto(
+            to: [targetEmail],
+            subject: 'Новый вопрос к зоодому "$targetUserShelterName"',
+            body: 'Здравствуйте, у меня вопрос',
+          ).toString();
+          if (await canLaunch(url)) {
+            await launch(url);
+          } else {
+            _showSnackBar(context,
+                'Не удалось открыть почтовый клиент для отправки письма по ссылке $url');
+          }
+        },
+        child: Text('Связаться с нами'),
+      );
     });
   }
 
