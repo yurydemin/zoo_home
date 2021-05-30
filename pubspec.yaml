@@ -31,7 +31,6 @@ dependencies:
   carousel_slider:
   cached_network_image:
   intl:
-  enum_to_string:
   url_launcher:
   mailto:
 

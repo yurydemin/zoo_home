@@ -1,5 +1,5 @@
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
+import 'package:zoo_home/helpers/pet_visual_helper.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
 typedef OnSaveCallback = Function(
@@ -84,7 +84,7 @@ class _PetsAddViewState extends State<PetsAddView> {
                 onSaved: (value) => _description = value,
               ),
               DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(_kind),
+                value: PetVisualHelper.petKindToString(_kind),
                 validator: (value) {
                   if (value == null || value.isEmpty)
                     return 'Выберите категорию';
@@ -93,17 +93,17 @@ class _PetsAddViewState extends State<PetsAddView> {
                 items: PetKind.values
                     .map(
                       (label) => DropdownMenuItem(
-                        child: Text(EnumToString.convertToString(label)),
-                        value: EnumToString.convertToString(label),
+                        child: Text(PetVisualHelper.petKindToString(label)),
+                        value: PetVisualHelper.petKindToString(label),
                       ),
                     )
                     .toList(),
                 onChanged: (value) => setState(() {
-                  _kind = EnumToString.fromString(PetKind.values, value);
+                  _kind = PetVisualHelper.petKindFromString(value);
                 }),
               ),
               DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(_status),
+                value: PetVisualHelper.petStatusToString(_status),
                 validator: (value) {
                   if (value == null || value.isEmpty)
                     return 'Выберите статус карточки';
@@ -112,13 +112,13 @@ class _PetsAddViewState extends State<PetsAddView> {
                 items: PetStatus.values
                     .map(
                       (label) => DropdownMenuItem(
-                        child: Text(EnumToString.convertToString(label)),
-                        value: EnumToString.convertToString(label),
+                        child: Text(PetVisualHelper.petStatusToString(label)),
+                        value: PetVisualHelper.petStatusToString(label),
                       ),
                     )
                     .toList(),
                 onChanged: (value) => setState(() {
-                  _status = EnumToString.fromString(PetStatus.values, value);
+                  _status = PetVisualHelper.petStatusFromString(value);
                 }),
               ),
             ],

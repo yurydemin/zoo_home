@@ -1,4 +1,3 @@
-import 'package:enum_to_string/enum_to_string.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
@@ -144,22 +143,21 @@ class _PetProfileViewState extends State<PetProfileView> {
         ),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(state.status),
+                value: PetVisualHelper.petStatusToString(state.status),
                 items: PetStatus.values
                     .map(
                       (label) => DropdownMenuItem(
-                        child: Text(EnumToString.convertToString(label)),
-                        value: EnumToString.convertToString(label),
+                        child: Text(PetVisualHelper.petStatusToString(label)),
+                        value: PetVisualHelper.petStatusToString(label),
                       ),
                     )
                     .toList(),
                 onChanged: (value) => setState(() {
                   context.read<PetProfileBloc>().add(PetProfileStatusChanged(
-                      status:
-                          EnumToString.fromString(PetStatus.values, value)));
+                      status: PetVisualHelper.petStatusFromString(value)));
                 }),
               )
-            : Text(EnumToString.convertToString(state.status)),
+            : Text(PetVisualHelper.petStatusToString(state.status)),
       );
     });
   }
@@ -172,21 +170,21 @@ class _PetProfileViewState extends State<PetProfileView> {
         leading: Icon(Icons.pets),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
-                value: EnumToString.convertToString(state.kind),
+                value: PetVisualHelper.petKindToString(state.kind),
                 items: PetKind.values
                     .map(
                       (label) => DropdownMenuItem(
-                        child: Text(EnumToString.convertToString(label)),
-                        value: EnumToString.convertToString(label),
+                        child: Text(PetVisualHelper.petKindToString(label)),
+                        value: PetVisualHelper.petKindToString(label),
                       ),
                     )
                     .toList(),
                 onChanged: (value) => setState(() {
                   context.read<PetProfileBloc>().add(PetProfileKindChanged(
-                      kind: EnumToString.fromString(PetKind.values, value)));
+                      kind: PetVisualHelper.petKindFromString(value)));
                 }),
               )
-            : Text(EnumToString.convertToString(state.kind)),
+            : Text(PetVisualHelper.petKindToString(state.kind)),
       );
     });
   }
