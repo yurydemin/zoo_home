@@ -1,8 +1,8 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
+import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/content/content_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
-import 'package:zoo_home/models/UserShelter.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 
 class ContentCubit extends Cubit<ContentState> {
@@ -32,6 +32,11 @@ class ContentCubit extends Cubit<ContentState> {
 
   void popToMain() =>
       emit(ContentState(currentUserShelter: null, currentPet: null));
+
+  void updateSession(UserShelter updatedUser) {
+    sessionCubit.showSession(AuthCredentials(
+        email: updatedUser.email, userShelterId: updatedUser.id));
+  }
 
   void signOut() {
     popToMain();

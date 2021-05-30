@@ -47,6 +47,8 @@ class ProfileCarousel extends StatelessWidget {
                                   child: CircularProgressIndicator(
                                       value: downloadProgress.progress),
                                 ),
+                                errorWidget: (context, url, error) =>
+                                    Center(child: Icon(Icons.error)),
                               ),
                               Positioned(
                                 bottom: 10,
@@ -75,6 +77,8 @@ class ProfileCarousel extends StatelessWidget {
                               child: CircularProgressIndicator(
                                   value: downloadProgress.progress),
                             ),
+                            errorWidget: (context, url, error) =>
+                                Center(child: Icon(Icons.error)),
                           ),
                   );
                 },

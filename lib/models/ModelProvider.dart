@@ -26,7 +26,7 @@ export 'UserShelter.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "46099c04df0e1685f98ef71845c5848c";
+  String version = "ec231aa1ce08252149486ac073cfee46";
   @override
   List<ModelSchema> modelSchemas = [Pet.schema, UserShelter.schema];
   static final ModelProvider _instance = ModelProvider();

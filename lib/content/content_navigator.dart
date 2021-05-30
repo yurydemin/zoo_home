@@ -9,6 +9,7 @@ import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
 import 'package:zoo_home/content/user_shelters/user_shelters_view.dart';
 import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_view.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 
 class ContentNavigator extends StatelessWidget {
   @override
@@ -49,6 +50,8 @@ class ContentNavigator extends StatelessWidget {
         ],
         onPopPage: (route, result) {
           BlocProvider.of<ContentCubit>(context).popToMain();
+          if (result is UserShelter)
+            BlocProvider.of<ContentCubit>(context).updateSession(result);
           return route.didPop(result);
         },
       );

@@ -50,7 +50,7 @@ class Pet extends Model {
       this.title,
       this.description,
       @required this.images,
-      @required this.contact,
+      this.contact,
       @required this.date});
 
   factory Pet(
@@ -61,7 +61,7 @@ class Pet extends Model {
       String title,
       String description,
       @required List<String> images,
-      @required String contact,
+      String contact,
       @required TemporalDateTime date}) {
     return Pet._internal(
         id: id == null ? UUID.getUUID() : id,
@@ -225,7 +225,7 @@ class Pet extends Model {
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Pet.CONTACT,
-        isRequired: true,
+        isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(

@@ -58,6 +58,8 @@ class PetCard extends StatelessWidget {
                                   child: CircularProgressIndicator(
                                       value: downloadProgress.progress),
                                 ),
+                                errorWidget: (context, url, error) =>
+                                    Center(child: Icon(Icons.error)),
                               ),
                       ),
                     ),

@@ -56,7 +56,8 @@ class UserShelterProfileBloc
         storageRepo.getUrlForFile(imageKey),
       ]);
 
-      yield state.copyWith(user: updatedUser, avatarUrl: results.last);
+      yield state.copyWith(
+          user: updatedUser, avatarUrl: results.last, isUserChanged: true);
     } else if (event is ProvideAvatarImagePath) {
       yield state.copyWith(avatarUrl: event.avatarUrl);
     } else if (event is OpenMultiImagePicker) {
@@ -101,7 +102,8 @@ class UserShelterProfileBloc
       final updatedUser = state.user.copyWith(images: imageKeys);
       await userShelterRepo.updateUser(updatedUser);
 
-      yield state.copyWith(user: updatedUser, imageUrls: imageUrls);
+      yield state.copyWith(
+          user: updatedUser, imageUrls: imageUrls, isUserChanged: true);
     } else if (event is ProvideProfileImagesPaths) {
       yield state.copyWith(imageUrls: event.imageUrls);
     } else if (event is UserShelterProfileLocationChanged) {
@@ -118,7 +120,8 @@ class UserShelterProfileBloc
 
       final updatedImageUrls =
           state.imageUrls.where((item) => item != event.imageUrl).toList();
-      yield state.copyWith(user: updatedUser, imageUrls: updatedImageUrls);
+      yield state.copyWith(
+          user: updatedUser, imageUrls: updatedImageUrls, isUserChanged: true);
     } else if (event is SaveUserShelterProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());
 
@@ -131,7 +134,9 @@ class UserShelterProfileBloc
       try {
         await userShelterRepo.updateUser(updatedUser);
         yield state.copyWith(
-            user: updatedUser, formStatus: SubmissionSuccess());
+            user: updatedUser,
+            formStatus: SubmissionSuccess(),
+            isUserChanged: true);
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }

@@ -10,6 +10,7 @@ class UserShelterProfileState {
   final String description;
   final List<String> imageUrls;
   final String avatarUrl;
+  final bool isUserChanged;
 
   String get email => user.email;
 
@@ -26,6 +27,7 @@ class UserShelterProfileState {
     String avatarUrl,
     this.formStatus = const InitialFormStatus(),
     avatarImageSourceActionSheetIsVisible = false,
+    isUserChanged = false,
   })  : this.user = user,
         this.isCurrentUser = isCurrentUser,
         this.location = location ?? user.location,
@@ -34,7 +36,8 @@ class UserShelterProfileState {
         this.imageUrls = imageUrls ?? <String>[],
         this.avatarUrl = avatarUrl,
         this.avatarImageSourceActionSheetIsVisible =
-            avatarImageSourceActionSheetIsVisible;
+            avatarImageSourceActionSheetIsVisible,
+        this.isUserChanged = isUserChanged;
 
   UserShelterProfileState copyWith({
     UserShelter user,
@@ -45,6 +48,7 @@ class UserShelterProfileState {
     String avatarUrl,
     FormSubmissionStatus formStatus,
     bool avatarImageSourceActionSheetIsVisible,
+    bool isUserChanged,
   }) {
     return UserShelterProfileState(
       user: user ?? this.user,
@@ -58,6 +62,7 @@ class UserShelterProfileState {
       avatarImageSourceActionSheetIsVisible:
           avatarImageSourceActionSheetIsVisible ??
               this.avatarImageSourceActionSheetIsVisible,
+      isUserChanged: isUserChanged ?? this.isUserChanged,
     );
   }
 }

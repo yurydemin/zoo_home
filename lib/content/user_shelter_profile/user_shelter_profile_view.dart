@@ -65,6 +65,17 @@ class UserShelterProfileView extends StatelessWidget {
         return AppBar(
           title: Text('Зоодом'),
           centerTitle: true,
+          leading: IconButton(
+              icon: Icon(Icons.arrow_back),
+              onPressed: () {
+                Navigator.pop(
+                    context,
+                    state.isCurrentUser
+                        ? state.isUserChanged
+                            ? state.user
+                            : null
+                        : null);
+              }),
           actions: [
             if (state.isCurrentUser)
               IconButton(
@@ -130,6 +141,8 @@ class UserShelterProfileView extends StatelessWidget {
                     child: CircularProgressIndicator(
                         value: downloadProgress.progress),
                   ),
+                  errorWidget: (context, url, error) =>
+                      Center(child: Icon(Icons.error)),
                 ),
               ),
       );
