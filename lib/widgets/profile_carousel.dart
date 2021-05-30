@@ -23,6 +23,7 @@ class ProfileCarousel extends StatelessWidget {
       options: CarouselOptions(
           height: 250.0,
           autoPlay: false,
+          enlargeCenterPage: true,
           enableInfiniteScroll: imageUrls.length > 1),
       items: imageUrls
           .asMap()
@@ -40,9 +41,15 @@ class ProfileCarousel extends StatelessWidget {
                               CachedNetworkImage(
                                 imageUrl: url,
                                 fit: BoxFit.cover,
+                                width: 1000.0,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Center(
+                                  child: CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                                ),
                               ),
                               Positioned(
-                                bottom: 0,
+                                bottom: 10,
                                 right: 10,
                                 child: GestureDetector(
                                   onTap: () {
@@ -62,6 +69,12 @@ class ProfileCarousel extends StatelessWidget {
                         : CachedNetworkImage(
                             imageUrl: url,
                             fit: BoxFit.cover,
+                            width: 1000.0,
+                            progressIndicatorBuilder:
+                                (context, url, downloadProgress) => Center(
+                              child: CircularProgressIndicator(
+                                  value: downloadProgress.progress),
+                            ),
                           ),
                   );
                 },

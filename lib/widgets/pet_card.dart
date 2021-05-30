@@ -53,6 +53,11 @@ class PetCard extends StatelessWidget {
                             : CachedNetworkImage(
                                 imageUrl: avatarUrl,
                                 fit: BoxFit.cover,
+                                progressIndicatorBuilder:
+                                    (context, url, downloadProgress) => Center(
+                                  child: CircularProgressIndicator(
+                                      value: downloadProgress.progress),
+                                ),
                               ),
                       ),
                     ),

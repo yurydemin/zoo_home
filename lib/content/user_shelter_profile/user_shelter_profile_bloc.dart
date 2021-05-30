@@ -111,13 +111,13 @@ class UserShelterProfileBloc
     } else if (event is UserShelterProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
     } else if (event is UserShelterProfileRemoveImage) {
-      var updatedImageKeys = state.user.images;
-      updatedImageKeys.remove(event.imageKey);
+      final updatedImageKeys =
+          state.user.images.where((item) => item != event.imageKey).toList();
       final updatedUser = state.user.copyWith(images: updatedImageKeys);
       await userShelterRepo.updateUser(updatedUser);
 
-      var updatedImageUrls = state.imageUrls;
-      updatedImageUrls.remove(event.imageUrl);
+      final updatedImageUrls =
+          state.imageUrls.where((item) => item != event.imageUrl).toList();
       yield state.copyWith(user: updatedUser, imageUrls: updatedImageUrls);
     } else if (event is SaveUserShelterProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());

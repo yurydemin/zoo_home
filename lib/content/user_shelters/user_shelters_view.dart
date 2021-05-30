@@ -84,7 +84,7 @@ class UserSheltersView extends StatelessWidget {
   }
 
   Widget _emptyUserSheltersView() {
-    return Text('Еще не создано ни одного зоодома');
+    return Center(child: Text('Еще не создано ни одного зоодома'));
   }
 
   Widget _userSheltersListView(

@@ -84,13 +84,13 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
     } else if (event is PetProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
     } else if (event is PetProfileRemoveImage) {
-      var updatedImageKeys = state.pet.images;
-      updatedImageKeys.remove(event.imageKey);
+      final updatedImageKeys =
+          state.pet.images.where((item) => item != event.imageKey).toList();
       final updatedPet = state.pet.copyWith(images: updatedImageKeys);
       await petsRepo.updatePet(updatedPet);
 
-      var updatedImageUrls = state.imageUrls;
-      updatedImageUrls.remove(event.imageUrl);
+      final updatedImageUrls =
+          state.imageUrls.where((item) => item != event.imageUrl).toList();
       yield state.copyWith(pet: updatedPet, imageUrls: updatedImageUrls);
     } else if (event is SavePetProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());

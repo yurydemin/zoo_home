@@ -125,6 +125,11 @@ class UserShelterProfileView extends StatelessWidget {
                 child: CachedNetworkImage(
                   imageUrl: state.avatarUrl,
                   fit: BoxFit.cover,
+                  progressIndicatorBuilder: (context, url, downloadProgress) =>
+                      Center(
+                    child: CircularProgressIndicator(
+                        value: downloadProgress.progress),
+                  ),
                 ),
               ),
       );
