@@ -64,7 +64,7 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       final newImageUrls = await Future.wait(newImageKeys.map((imageKey) async {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
-      // compare keys and urls with existing
+      // combine keys and urls with existing
       final imageKeys = [...state.pet.images, ...newImageKeys];
       final imageUrls = [...state.imageUrls, ...newImageUrls];
 
@@ -83,6 +83,15 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       yield state.copyWith(title: event.title);
     } else if (event is PetProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
+    } else if (event is PetProfileRemoveImage) {
+      var updatedImageKeys = state.pet.images;
+      updatedImageKeys.remove(event.imageKey);
+      final updatedPet = state.pet.copyWith(images: updatedImageKeys);
+      await petsRepo.updatePet(updatedPet);
+
+      var updatedImageUrls = state.imageUrls;
+      updatedImageUrls.remove(event.imageUrl);
+      yield state.copyWith(pet: updatedPet, imageUrls: updatedImageUrls);
     } else if (event is SavePetProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());
 

@@ -51,7 +51,7 @@ class PetsRepository {
     }
   }
 
-  Future<void> deletePet(Pet petToDelete) async {
+  Future<void> removePet(Pet petToDelete) async {
     try {
       await Amplify.DataStore.delete(petToDelete);
     } catch (e) {

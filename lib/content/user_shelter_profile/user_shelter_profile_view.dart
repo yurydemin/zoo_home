@@ -255,7 +255,16 @@ class UserShelterProfileView extends StatelessWidget {
   Widget _galleryCarousel() {
     return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
         builder: (context, state) {
-      return ProfileCarousel(images: state.imageUrls);
+      return ProfileCarousel(
+        imageKeys: state.user.images,
+        imageUrls: state.imageUrls,
+        onRemoveImage: (String imageKey, String imageUrl) {
+          context.read<UserShelterProfileBloc>().add(
+              UserShelterProfileRemoveImage(
+                  imageKey: imageKey, imageUrl: imageUrl));
+        },
+        isRemovable: state.isCurrentUser,
+      );
     });
   }
 

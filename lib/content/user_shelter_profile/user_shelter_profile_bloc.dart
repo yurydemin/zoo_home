@@ -93,7 +93,7 @@ class UserShelterProfileBloc
       final newImageUrls = await Future.wait(newImageKeys.map((imageKey) async {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
-      // compare keys and urls with existing
+      // combine keys and urls with existing
       final imageKeys = [...state.user.images, ...newImageKeys];
       final imageUrls = [...state.imageUrls, ...newImageUrls];
 
@@ -110,6 +110,15 @@ class UserShelterProfileBloc
       yield state.copyWith(title: event.title);
     } else if (event is UserShelterProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
+    } else if (event is UserShelterProfileRemoveImage) {
+      var updatedImageKeys = state.user.images;
+      updatedImageKeys.remove(event.imageKey);
+      final updatedUser = state.user.copyWith(images: updatedImageKeys);
+      await userShelterRepo.updateUser(updatedUser);
+
+      var updatedImageUrls = state.imageUrls;
+      updatedImageUrls.remove(event.imageUrl);
+      yield state.copyWith(user: updatedUser, imageUrls: updatedImageUrls);
     } else if (event is SaveUserShelterProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());
 

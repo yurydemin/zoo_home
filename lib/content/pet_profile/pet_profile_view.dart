@@ -116,7 +116,15 @@ class _PetProfileViewState extends State<PetProfileView> {
   Widget _galleryCarousel() {
     return BlocBuilder<PetProfileBloc, PetProfileState>(
         builder: (context, state) {
-      return ProfileCarousel(images: state.imageUrls);
+      return ProfileCarousel(
+        imageKeys: state.pet.images,
+        imageUrls: state.imageUrls,
+        onRemoveImage: (String imageKey, String imageUrl) {
+          context.read<PetProfileBloc>().add(
+              PetProfileRemoveImage(imageKey: imageKey, imageUrl: imageUrl));
+        },
+        isRemovable: state.isCurrentPet,
+      );
     });
   }
 

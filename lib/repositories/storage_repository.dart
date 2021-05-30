@@ -24,4 +24,13 @@ class StorageRepository {
       throw e;
     }
   }
+
+  Future<String> removeFile(String fileKey) async {
+    try {
+      final result = await Amplify.Storage.remove(key: fileKey);
+      return result.key;
+    } catch (e) {
+      throw e;
+    }
+  }
 }

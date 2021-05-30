@@ -38,4 +38,11 @@ class ProvideProfileImagesPaths extends PetProfileEvent {
   ProvideProfileImagesPaths({this.imageUrls});
 }
 
+class PetProfileRemoveImage extends PetProfileEvent {
+  final String imageKey;
+  final String imageUrl;
+
+  PetProfileRemoveImage({this.imageKey, this.imageUrl});
+}
+
 class SavePetProfileChanges extends PetProfileEvent {}

@@ -45,4 +45,11 @@ class UserShelterProfileDescriptionChanged extends UserShelterProfileEvent {
   UserShelterProfileDescriptionChanged({this.description});
 }
 
+class UserShelterProfileRemoveImage extends UserShelterProfileEvent {
+  final String imageKey;
+  final String imageUrl;
+
+  UserShelterProfileRemoveImage({this.imageKey, this.imageUrl});
+}
+
 class SaveUserShelterProfileChanges extends UserShelterProfileEvent {}
