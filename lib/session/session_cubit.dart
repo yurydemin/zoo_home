@@ -26,20 +26,24 @@ class SessionCubit extends Cubit<SessionState> {
     try {
       final userId = await authRepo.attemptAutoLogin();
       if (userId == null) {
-        throw Exception('User not logged in');
+        //throw Exception('User not logged in');
+        emit(AuthenticatedAsGuest());
+      } else {
+        UserShelter user = await userShelterRepo.getUserById(userId);
+        if (user == null) {
+          // user = await userShelterRepo.createUser(
+          //   userId: userId,
+          //   email: user.email,
+          // );
+          //throw Exception('User auth exception');
+          emit(AuthenticatedAsGuest());
+        } else {
+          emit(AuthenticatedAsUser(user: user));
+        }
       }
-
-      UserShelter user = await userShelterRepo.getUserById(userId);
-      if (user == null) {
-        // user = await userShelterRepo.createUser(
-        //   userId: userId,
-        //   email: user.email,
-        // );
-        throw Exception('User auth exception');
-      }
-      emit(AuthenticatedAsUser(user: user));
-    } on Exception {
-      emit(AuthenticatedAsGuest());
+    } on Exception catch (e) {
+      print(e.toString());
+      //emit(AuthenticatedAsGuest());
     }
   }
 
