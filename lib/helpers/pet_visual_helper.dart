@@ -9,8 +9,8 @@ class PetVisualHelper {
   };
 
   static Map<PetKind, String> _petKindMap = {
-    PetKind.CAT: 'Кошка',
-    PetKind.DOG: 'Собака',
+    PetKind.CAT: 'Кошки',
+    PetKind.DOG: 'Собаки',
     PetKind.OTHER: 'Другое'
   };
 

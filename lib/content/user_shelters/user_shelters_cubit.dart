@@ -23,16 +23,15 @@ class UserSheltersCubit extends Cubit<UserSheltersState> {
       final userShelters = await userShelterRepo.getUserShelters();
       // preload avatars urls
       final avatarsKeyUrl = Map<String, String>();
-      await Future.wait(userShelters.map((userShelter) async {
+      Future.wait(userShelters.map((userShelter) async {
         if (userShelter.avatarKey != null && userShelter.avatarKey.isNotEmpty)
           avatarsKeyUrl[userShelter.avatarKey] =
               await ImageUrlCache.instance.getUrl(userShelter.avatarKey);
-      }));
-      // ok
-      emit(ListUserSheltersSuccess(
-        userShelters: userShelters,
-        avatarsKeyUrl: avatarsKeyUrl,
-      ));
+      })).then((_) => // ok
+          emit(ListUserSheltersSuccess(
+            userShelters: userShelters,
+            avatarsKeyUrl: avatarsKeyUrl,
+          )));
     } catch (e) {
       emit(ListUserSheltersFailure(exception: e));
     }
