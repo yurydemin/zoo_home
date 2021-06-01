@@ -18,6 +18,7 @@ class UserSheltersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
+    String loggedUserShelterId = context.read<ContentCubit>().userId;
     return Scaffold(
       appBar: AppBar(
         title: SearchTextfield(
@@ -46,10 +47,17 @@ class UserSheltersView extends StatelessWidget {
       body: BlocBuilder<FilteredUserSheltersBloc, FilteredUserSheltersState>(
           builder: (context, state) {
         if (state is FilteredUserSheltersLoadSuccessState) {
+          final loggedUserShelterIndex = loggedUserShelterId == null
+              ? -1
+              : state.filteredUserShelters
+                  .indexWhere((item) => item.id == loggedUserShelterId);
           return state.filteredUserShelters.isEmpty
               ? _emptyUserSheltersView()
               : _userSheltersListView(
-                  state.filteredUserShelters, state.avatarsKeyUrl);
+                  state.filteredUserShelters,
+                  state.avatarsKeyUrl,
+                  loggedUserShelterIndex,
+                );
         } else {
           return Container(
             color: Colors.white,
@@ -94,12 +102,18 @@ class UserSheltersView extends StatelessWidget {
     return Center(child: Text('Еще не создано ни одного зоодома'));
   }
 
-  Widget _userSheltersListView(
-      List<UserShelter> userShelters, Map<String, String> avatarsKeyUrl) {
+  Widget _userSheltersListView(List<UserShelter> userShelters,
+      Map<String, String> avatarsKeyUrl, int loggedUserShelterIndex) {
     return ListView.builder(
       itemCount: userShelters.length,
       itemBuilder: (BuildContext context, int index) {
-        final userShelter = userShelters[index];
+        final userShelter = loggedUserShelterIndex == -1
+            ? userShelters[index]
+            : index == 0
+                ? userShelters[loggedUserShelterIndex]
+                : index == loggedUserShelterIndex
+                    ? userShelters[0]
+                    : userShelters[index];
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
