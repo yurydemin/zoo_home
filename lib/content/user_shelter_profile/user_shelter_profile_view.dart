@@ -63,7 +63,7 @@ class UserShelterProfileView extends StatelessWidget {
       child: BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
           builder: (context, state) {
         return AppBar(
-          title: Text('Зоодом'),
+          title: Text(state.title),
           centerTitle: true,
           leading: IconButton(
               icon: Icon(Icons.arrow_back),
@@ -166,6 +166,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.location_city),
+        subtitle: Text('адрес'),
         title: TextFormField(
           initialValue: state.location,
           decoration: InputDecoration.collapsed(
@@ -203,6 +204,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.title),
+        subtitle: Text('название зоодома'),
         title: TextFormField(
           initialValue: state.title,
           decoration: InputDecoration.collapsed(
@@ -231,6 +233,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.edit),
+        subtitle: Text('описание'),
         title: TextFormField(
           initialValue: state.description,
           decoration: InputDecoration.collapsed(
@@ -259,13 +262,11 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.photo_album),
+        subtitle: Text('нажмите, чтобы добавить фото'),
         title: Text('Галерея'),
-        trailing: GestureDetector(
-          onTap: () => context
-              .read<UserShelterProfileBloc>()
-              .add(OpenMultiImagePicker(imageSource: ImageSource.gallery)),
-          child: Icon(Icons.add_a_photo),
-        ),
+        onTap: () => context
+            .read<UserShelterProfileBloc>()
+            .add(OpenMultiImagePicker(imageSource: ImageSource.gallery)),
       );
     });
   }

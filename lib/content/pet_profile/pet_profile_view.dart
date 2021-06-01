@@ -90,9 +90,9 @@ class _PetProfileViewState extends State<PetProfileView> {
               _kindTile(),
               _titleTile(),
               _descriptionTile(),
-              state.isCurrentPet
-                  ? _saveProfileChangesButton()
-                  : _mailToTextButton(),
+              if (state.isCurrentPet) _saveProfileChangesButton(),
+              if (!state.isCurrentPet && state.status == PetStatus.OPENED)
+                _mailToTextButton(),
               SizedBox(height: 10),
             ],
           ),
@@ -149,6 +149,7 @@ class _PetProfileViewState extends State<PetProfileView> {
           Icons.circle,
           color: PetVisualHelper.petStatusToColor(state.status),
         ),
+        subtitle: Text('статус карточки животного'),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
                 value: PetVisualHelper.petStatusToString(state.status),
@@ -176,6 +177,7 @@ class _PetProfileViewState extends State<PetProfileView> {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.pets),
+        subtitle: Text('категория'),
         title: state.isCurrentPet
             ? DropdownButtonFormField<String>(
                 value: PetVisualHelper.petKindToString(state.kind),
@@ -203,6 +205,7 @@ class _PetProfileViewState extends State<PetProfileView> {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.title),
+        subtitle: Text('имя животного'),
         title: TextFormField(
           initialValue: state.title,
           decoration: InputDecoration.collapsed(
@@ -231,6 +234,7 @@ class _PetProfileViewState extends State<PetProfileView> {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.edit),
+        subtitle: Text('описание'),
         title: TextFormField(
           initialValue: state.description,
           decoration: InputDecoration.collapsed(
