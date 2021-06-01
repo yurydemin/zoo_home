@@ -1,15 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
+import 'package:zoo_home/content/filtered_user_shelters/filtered_user_shelters_bloc.dart';
+import 'package:zoo_home/content/filtered_user_shelters/filtered_user_shelters_event.dart';
+import 'package:zoo_home/content/filtered_user_shelters/filtered_user_shelters_state.dart';
 import 'package:zoo_home/content/pets/pets_add_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_bloc.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_event.dart';
 import 'package:zoo_home/content/user_shelter_pets/user_shelter_pets_state.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/widgets/pet_card.dart';
+import 'package:zoo_home/widgets/search_textfield.dart';
 import 'package:zoo_home/widgets/user_shelter_card.dart';
 
 class UserSheltersView extends StatelessWidget {
@@ -18,8 +20,14 @@ class UserSheltersView extends StatelessWidget {
     bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
     return Scaffold(
       appBar: AppBar(
-        title: Text('Зоодома'),
-        centerTitle: true,
+        title: SearchTextfield(
+          searchFilter: '',
+          onChanged: (value) {
+            BlocProvider.of<FilteredUserSheltersBloc>(context)
+                .add(FilterUpdated(value));
+          },
+        ),
+        leading: Icon(Icons.search),
         actions: [
           if (!isLoggedIn)
             OneTapTooltip(
@@ -35,14 +43,13 @@ class UserSheltersView extends StatelessWidget {
           ),
         ],
       ),
-      body: BlocBuilder<UserSheltersCubit, UserSheltersState>(
+      body: BlocBuilder<FilteredUserSheltersBloc, FilteredUserSheltersState>(
           builder: (context, state) {
-        if (state is ListUserSheltersSuccess) {
-          return state.userShelters.isEmpty
+        if (state is FilteredUserSheltersLoadSuccessState) {
+          return state.filteredUserShelters.isEmpty
               ? _emptyUserSheltersView()
-              : _userSheltersListView(state.userShelters, state.avatarsKeyUrl);
-        } else if (state is ListUserSheltersFailure) {
-          return _exceptionView(state.exception);
+              : _userSheltersListView(
+                  state.filteredUserShelters, state.avatarsKeyUrl);
         } else {
           return Container(
             color: Colors.white,
@@ -79,9 +86,9 @@ class UserSheltersView extends StatelessWidget {
     );
   }
 
-  Widget _exceptionView(Exception exception) {
-    return Text(exception.toString());
-  }
+  // Widget _exceptionView(Exception exception) {
+  //   return Text(exception.toString());
+  // }
 
   Widget _emptyUserSheltersView() {
     return Center(child: Text('Еще не создано ни одного зоодома'));

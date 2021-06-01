@@ -10,11 +10,11 @@ class PetsView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<PetsCubit, PetsState>(builder: (context, state) {
-      if (state is ListPetsSuccess) {
+      if (state is ListPetsSuccessState) {
         return state.pets.isEmpty
             ? _emptyPetsView()
             : _userPetsListView(state.pets);
-      } else if (state is ListPetsFailure) {
+      } else if (state is ListPetsFailureState) {
         return _exceptionView(state.exception);
       } else {
         return ListTile(

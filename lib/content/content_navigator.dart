@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/content_state.dart';
+import 'package:zoo_home/content/filtered_user_shelters/filtered_user_shelters_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/content/pets/pets_repository.dart';
@@ -35,7 +36,12 @@ class ContentNavigator extends StatelessWidget {
                   ..observePets(),
               ),
             ],
-            child: UserSheltersView(),
+            child: BlocProvider<FilteredUserSheltersBloc>(
+              create: (context) => FilteredUserSheltersBloc(
+                userSheltersCubit: context.read<UserSheltersCubit>(),
+              ),
+              child: UserSheltersView(),
+            ),
           )),
           if (state.currentUserShelter != null)
             MaterialPage(

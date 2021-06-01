@@ -11,22 +11,22 @@ class PetsCubit extends Cubit<PetsState> {
   final PetsRepository petsRepo;
 
   PetsCubit({@required this.contentCubit, @required this.petsRepo})
-      : super(LoadingPets());
+      : super(LoadingPetsState());
 
   void getPets() async {
-    if (state is ListPetsSuccess == false) {
-      emit(LoadingPets());
+    if (state is ListPetsSuccessState == false) {
+      emit(LoadingPetsState());
     }
 
     try {
       // load all shelters
       final pets = await petsRepo.getPets();
       // ok
-      emit(ListPetsSuccess(
+      emit(ListPetsSuccessState(
         pets: pets,
       ));
     } catch (e) {
-      emit(ListPetsFailure(exception: e));
+      emit(ListPetsFailureState(exception: e));
     }
   }
 

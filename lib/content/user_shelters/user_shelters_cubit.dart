@@ -11,11 +11,11 @@ class UserSheltersCubit extends Cubit<UserSheltersState> {
 
   UserSheltersCubit(
       {@required this.contentCubit, @required this.userShelterRepo})
-      : super(LoadingUserShelters());
+      : super(LoadingUserSheltersState());
 
   void getUserShelters() async {
-    if (state is ListUserSheltersSuccess == false) {
-      emit(LoadingUserShelters());
+    if (state is ListUserSheltersSuccessState == false) {
+      emit(LoadingUserSheltersState());
     }
 
     try {
@@ -28,12 +28,12 @@ class UserSheltersCubit extends Cubit<UserSheltersState> {
           avatarsKeyUrl[userShelter.avatarKey] =
               await ImageUrlCache.instance.getUrl(userShelter.avatarKey);
       })).then((_) => // ok
-          emit(ListUserSheltersSuccess(
+          emit(ListUserSheltersSuccessState(
             userShelters: userShelters,
             avatarsKeyUrl: avatarsKeyUrl,
           )));
     } catch (e) {
-      emit(ListUserSheltersFailure(exception: e));
+      emit(ListUserSheltersFailureState(exception: e));
     }
   }
 

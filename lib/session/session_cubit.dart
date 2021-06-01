@@ -10,10 +10,10 @@ class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
   final UserSheltersRepository userShelterRepo;
 
-  bool get isGuestLoggedIn => (state is AuthenticatedAsGuest);
-  bool get isUserLoggedIn => (state is AuthenticatedAsUser);
+  bool get isGuestLoggedIn => (state is AuthenticatedAsGuestState);
+  bool get isUserLoggedIn => (state is AuthenticatedAsUserState);
   UserShelter get currentUser =>
-      isUserLoggedIn ? (state as AuthenticatedAsUser).user : null;
+      isUserLoggedIn ? (state as AuthenticatedAsUserState).user : null;
 
   SessionCubit({
     @required this.authRepo,
@@ -27,7 +27,7 @@ class SessionCubit extends Cubit<SessionState> {
       final userId = await authRepo.attemptAutoLogin();
       if (userId == null) {
         //throw Exception('User not logged in');
-        emit(AuthenticatedAsGuest());
+        emit(AuthenticatedAsGuestState());
       } else {
         UserShelter user = await userShelterRepo.getUserById(userId);
         if (user == null) {
@@ -36,9 +36,9 @@ class SessionCubit extends Cubit<SessionState> {
           //   email: user.email,
           // );
           //throw Exception('User auth exception');
-          emit(AuthenticatedAsGuest());
+          emit(AuthenticatedAsGuestState());
         } else {
-          emit(AuthenticatedAsUser(user: user));
+          emit(AuthenticatedAsUserState(user: user));
         }
       }
     } on Exception catch (e) {
@@ -47,9 +47,9 @@ class SessionCubit extends Cubit<SessionState> {
     }
   }
 
-  void showAuth() => emit(Unauthenticated());
+  void showAuth() => emit(UnauthenticatedState());
 
-  void popToMain() => emit(AuthenticatedAsGuest());
+  void popToMain() => emit(AuthenticatedAsGuestState());
 
   void showSession(AuthCredentials credentials) async {
     try {
@@ -62,14 +62,14 @@ class SessionCubit extends Cubit<SessionState> {
           email: credentials.email,
         );
       }
-      emit(AuthenticatedAsUser(user: user));
+      emit(AuthenticatedAsUserState(user: user));
     } catch (e) {
-      emit(Unauthenticated());
+      emit(UnauthenticatedState());
     }
   }
 
   void signOut() {
     authRepo.signOut();
-    emit(AuthenticatedAsGuest());
+    emit(AuthenticatedAsGuestState());
   }
 }

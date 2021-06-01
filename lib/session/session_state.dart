@@ -5,12 +5,12 @@ abstract class SessionState {}
 
 class UnknownSessionState extends SessionState {}
 
-class Unauthenticated extends SessionState {}
+class UnauthenticatedState extends SessionState {}
 
-class AuthenticatedAsGuest extends SessionState {}
+class AuthenticatedAsGuestState extends SessionState {}
 
-class AuthenticatedAsUser extends SessionState {
+class AuthenticatedAsUserState extends SessionState {
   final UserShelter user;
 
-  AuthenticatedAsUser({@required this.user});
+  AuthenticatedAsUserState({@required this.user});
 }

@@ -26,7 +26,7 @@ class AppNavigator extends StatelessWidget {
                 MaterialPage(child: LoadingView()),
 
               // auth flow
-              if (state is Unauthenticated)
+              if (state is UnauthenticatedState)
                 MaterialPage(
                   child: BlocProvider(
                     create: (context) =>
@@ -36,7 +36,8 @@ class AppNavigator extends StatelessWidget {
                 ),
 
               // content flow
-              if (state is AuthenticatedAsGuest || state is AuthenticatedAsUser)
+              if (state is AuthenticatedAsGuestState ||
+                  state is AuthenticatedAsUserState)
                 MaterialPage(
                   child: BlocProvider(
                     create: (context) => ContentCubit(

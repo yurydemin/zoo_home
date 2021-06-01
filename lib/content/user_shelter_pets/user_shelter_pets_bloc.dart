@@ -18,7 +18,7 @@ class UserShelterPetsBloc
   UserShelterPetsBloc({@required this.userShelterId, @required this.petsCubit})
       : super(UserShelterPetsInitialState()) {
     petsSubscription = petsCubit.stream.listen((state) {
-      if (state is ListPetsSuccess) {
+      if (state is ListPetsSuccessState) {
         add(UserShelterPetsUpdatedEvent(userShelterId));
       }
     });
@@ -34,11 +34,11 @@ class UserShelterPetsBloc
 
   Stream<UserShelterPetsState> _mapPetsUpdateToState(
       UserShelterPetsUpdatedEvent event) async* {
-    if (petsCubit.state is ListPetsSuccess) {
+    if (petsCubit.state is ListPetsSuccessState) {
       // filter pets by userShelterId
       final filteredPets = _mapPetsToShelterPets(
         event.userShelterId,
-        (petsCubit.state as ListPetsSuccess).pets,
+        (petsCubit.state as ListPetsSuccessState).pets,
       );
       // preload avatars urls
       final avatarsKeyUrl = Map<String, String>();
