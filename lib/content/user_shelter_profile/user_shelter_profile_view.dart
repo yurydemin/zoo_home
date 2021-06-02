@@ -166,7 +166,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.location_city),
-        subtitle: Text('адрес'),
+        subtitle: Text('местоположение'),
         title: TextFormField(
           initialValue: state.location,
           decoration: InputDecoration.collapsed(
@@ -193,6 +193,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.mail),
+        subtitle: Text('адрес электронной почты'),
         title: SelectableText(state.email),
       );
     });
@@ -204,7 +205,7 @@ class UserShelterProfileView extends StatelessWidget {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.title),
-        subtitle: Text('название зоодома'),
+        subtitle: Text('название'),
         title: TextFormField(
           initialValue: state.title,
           decoration: InputDecoration.collapsed(

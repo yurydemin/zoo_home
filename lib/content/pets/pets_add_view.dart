@@ -63,7 +63,7 @@ class _PetsAddViewState extends State<PetsAddView> {
               TextFormField(
                 initialValue: _title,
                 decoration: InputDecoration(
-                  hintText: 'Имя',
+                  hintText: 'Имя животного',
                 ),
                 validator: (val) {
                   return val.trim().isEmpty ? 'Имя не может быть пустым' : null;
@@ -73,12 +73,12 @@ class _PetsAddViewState extends State<PetsAddView> {
               TextFormField(
                 initialValue: _description,
                 decoration: InputDecoration(
-                  hintText: 'Описание',
+                  hintText: 'Ифнормация о животном',
                 ),
                 maxLines: 8,
                 validator: (val) {
                   return val.trim().isEmpty
-                      ? 'Описание не может быть пустым'
+                      ? 'Информация о животном не может быть пустой'
                       : null;
                 },
                 onSaved: (value) => _description = value,

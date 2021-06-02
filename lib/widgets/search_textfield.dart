@@ -25,8 +25,7 @@ class _SearchTextfieldState extends State<SearchTextfield> {
     return TextField(
       controller: _controller,
       decoration: InputDecoration.collapsed(
-          hintText: 'Найти зоодом (город, название)',
-          hintStyle: TextStyle(color: Colors.white)),
+          hintText: 'Найти зоодом', hintStyle: TextStyle(color: Colors.white)),
       style: TextStyle(color: Colors.white),
       autocorrect: false,
       onChanged: widget.onChanged,

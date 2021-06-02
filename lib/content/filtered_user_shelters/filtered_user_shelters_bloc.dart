@@ -77,12 +77,14 @@ class FilteredUserSheltersBloc
       List<UserShelter> userShelters, String searchFilter) {
     return userShelters
         .where((userShelter) =>
-            userShelter.title
-                .toLowerCase()
-                .contains(searchFilter.toLowerCase()) ||
-            userShelter.location
-                .toLowerCase()
-                .contains(searchFilter.toLowerCase()))
+            (userShelter.title != null &&
+                userShelter.title
+                    .toLowerCase()
+                    .contains(searchFilter.toLowerCase())) ||
+            (userShelter.location != null &&
+                userShelter.location
+                    .toLowerCase()
+                    .contains(searchFilter.toLowerCase())))
         .toList();
   }
 

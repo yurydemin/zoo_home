@@ -234,7 +234,7 @@ class _PetProfileViewState extends State<PetProfileView> {
       return ListTile(
         tileColor: Colors.white,
         leading: Icon(Icons.edit),
-        subtitle: Text('описание'),
+        subtitle: Text('информация о животном'),
         title: TextFormField(
           initialValue: state.description,
           decoration: InputDecoration.collapsed(
