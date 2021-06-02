@@ -13,53 +13,61 @@ import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_view.
 import 'package:zoo_home/models/ModelProvider.dart';
 
 class ContentNavigator extends StatelessWidget {
+  final _navigatorKey = GlobalKey<NavigatorState>();
   @override
   Widget build(BuildContext context) {
     return BlocBuilder<ContentCubit, ContentState>(builder: ((context, state) {
-      return Navigator(
-        pages: [
-          MaterialPage(
-              child: MultiBlocProvider(
-            providers: [
-              BlocProvider(
-                create: (context) => UserSheltersCubit(
-                    contentCubit: context.read<ContentCubit>(),
-                    userShelterRepo: context.read<UserSheltersRepository>())
-                  ..getUserShelters()
-                  ..observeUserShelters(),
-              ),
-              BlocProvider(
-                create: (context) => PetsCubit(
-                    contentCubit: context.read<ContentCubit>(),
-                    petsRepo: context.read<PetsRepository>())
-                  ..getPets()
-                  ..observePets(),
-              ),
-            ],
-            child: BlocProvider<FilteredUserSheltersBloc>(
-              create: (context) => FilteredUserSheltersBloc(
-                userSheltersCubit: context.read<UserSheltersCubit>(),
-              ),
-              child: UserSheltersView(),
-            ),
-          )),
-          if (state.currentUserShelter != null)
-            MaterialPage(
-                child: UserShelterProfileView(
-              selectedUser: state.currentUserShelter,
-            )),
-          if (state.currentPet != null)
-            MaterialPage(
-                child: PetProfileView(
-              selectedPet: state.currentPet,
-            )),
-        ],
-        onPopPage: (route, result) {
-          BlocProvider.of<ContentCubit>(context).popToMain();
-          if (result is UserShelter)
-            BlocProvider.of<ContentCubit>(context).updateSession(result);
-          return route.didPop(result);
+      return WillPopScope(
+        onWillPop: () async {
+          _navigatorKey.currentState.maybePop();
+          return false;
         },
+        child: Navigator(
+          key: _navigatorKey,
+          pages: [
+            MaterialPage(
+                child: MultiBlocProvider(
+              providers: [
+                BlocProvider(
+                  create: (context) => UserSheltersCubit(
+                      contentCubit: context.read<ContentCubit>(),
+                      userShelterRepo: context.read<UserSheltersRepository>())
+                    ..getUserShelters()
+                    ..observeUserShelters(),
+                ),
+                BlocProvider(
+                  create: (context) => PetsCubit(
+                      contentCubit: context.read<ContentCubit>(),
+                      petsRepo: context.read<PetsRepository>())
+                    ..getPets()
+                    ..observePets(),
+                ),
+              ],
+              child: BlocProvider<FilteredUserSheltersBloc>(
+                create: (context) => FilteredUserSheltersBloc(
+                  userSheltersCubit: context.read<UserSheltersCubit>(),
+                ),
+                child: UserSheltersView(),
+              ),
+            )),
+            if (state.currentUserShelter != null)
+              MaterialPage(
+                  child: UserShelterProfileView(
+                selectedUser: state.currentUserShelter,
+              )),
+            if (state.currentPet != null)
+              MaterialPage(
+                  child: PetProfileView(
+                selectedPet: state.currentPet,
+              )),
+          ],
+          onPopPage: (route, result) {
+            BlocProvider.of<ContentCubit>(context).popToMain();
+            if (result is UserShelter)
+              BlocProvider.of<ContentCubit>(context).updateSession(result);
+            return route.didPop(result);
+          },
+        ),
       );
     }));
   }

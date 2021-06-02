@@ -27,30 +27,37 @@ class UserShelterProfileView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final currentUser = context.read<SessionCubit>().currentUser;
-    return BlocProvider(
-      create: (context) => UserShelterProfileBloc(
-        userShelterRepo: context.read<UserSheltersRepository>(),
-        storageRepo: context.read<StorageRepository>(),
-        user: selectedUser,
-        isCurrentUser: currentUser != null && currentUser.id == selectedUser.id,
-      ),
-      child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
-        listener: (context, state) {
-          if (state.avatarImageSourceActionSheetIsVisible) {
-            _showImageSourceActionSheet(context);
-          }
+    final isCurrentUser =
+        currentUser != null && currentUser.id == selectedUser.id;
+    return WillPopScope(
+      onWillPop: () async {
+        return !isCurrentUser;
+      },
+      child: BlocProvider(
+        create: (context) => UserShelterProfileBloc(
+          userShelterRepo: context.read<UserSheltersRepository>(),
+          storageRepo: context.read<StorageRepository>(),
+          user: selectedUser,
+          isCurrentUser: isCurrentUser,
+        ),
+        child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
+          listener: (context, state) {
+            if (state.avatarImageSourceActionSheetIsVisible) {
+              _showImageSourceActionSheet(context);
+            }
 
-          final formStatus = state.formStatus;
-          if (formStatus is SubmissionFailed) {
-            _showSnackBar(context, formStatus.exception.toString());
-          } else if (formStatus is SubmissionSuccess) {
-            _showSnackBar(context, 'Информация обновлена');
-          }
-        },
-        child: Scaffold(
-          backgroundColor: Color(0xFFF2F2F7),
-          appBar: _appBar(),
-          body: _profilePage(),
+            final formStatus = state.formStatus;
+            if (formStatus is SubmissionFailed) {
+              _showSnackBar(context, formStatus.exception.toString());
+            } else if (formStatus is SubmissionSuccess) {
+              _showSnackBar(context, 'Информация обновлена');
+            }
+          },
+          child: Scaffold(
+            backgroundColor: Color(0xFFF2F2F7),
+            appBar: _appBar(),
+            body: _profilePage(),
+          ),
         ),
       ),
     );
