@@ -34,7 +34,9 @@ class SignUpView extends StatelessWidget {
         listener: (context, state) {
           final formStatus = state.formStatus;
           if (formStatus is SubmissionFailed) {
-            _showSnackBar(context, formStatus.exception.toString());
+            print(formStatus.exception.toString());
+            _showSnackBar(context, 'Ошибка авторизации. Повторите позже');
+            context.read<SignUpBloc>().add(SignUpResetSubmition());
           }
         },
         child: Form(

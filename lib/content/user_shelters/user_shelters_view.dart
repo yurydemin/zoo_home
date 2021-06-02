@@ -28,7 +28,6 @@ class UserSheltersView extends StatelessWidget {
                 .add(FilterUpdated(value));
           },
         ),
-        leading: Icon(Icons.search),
         actions: [
           if (!isLoggedIn)
             OneTapTooltip(

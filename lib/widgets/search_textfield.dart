@@ -24,10 +24,12 @@ class _SearchTextfieldState extends State<SearchTextfield> {
   Widget build(BuildContext context) {
     return TextField(
       controller: _controller,
-      decoration: InputDecoration.collapsed(
-          hintText: 'Найти зоодом', hintStyle: TextStyle(color: Colors.white)),
+      decoration: InputDecoration(
+        labelText: 'Найти зоодом',
+        labelStyle: TextStyle(color: Colors.white),
+        icon: Icon(Icons.search),
+      ),
       style: TextStyle(color: Colors.white),
-      autocorrect: false,
       onChanged: widget.onChanged,
     );
   }

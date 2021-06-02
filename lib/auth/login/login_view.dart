@@ -33,7 +33,9 @@ class LoginView extends StatelessWidget {
         listener: (context, state) {
           final formStatus = state.formStatus;
           if (formStatus is SubmissionFailed) {
-            _showSnackBar(context, formStatus.exception.toString());
+            print(formStatus.exception.toString());
+            _showSnackBar(context, 'Неверный электронный адрес или пароль');
+            context.read<LoginBloc>().add(LoginResetSubmition());
           }
         },
         child: Form(

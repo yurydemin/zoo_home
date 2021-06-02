@@ -34,6 +34,8 @@ class SignUpBloc extends Bloc<SignUpEvent, SignUpState> {
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }
+    } else if (event is SignUpResetSubmition) {
+      yield state.copyWith(formStatus: InitialFormStatus());
     }
   }
 }
