@@ -17,6 +17,10 @@ import 'package:zoo_home/widgets/user_shelter_card.dart';
 class UserSheltersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
+    // FocusScopeNode curentScope = FocusScope.of(context);
+    // if (!curentScope.hasPrimaryFocus && curentScope.hasFocus) {
+    //   FocusManager.instance.primaryFocus.unfocus();
+    // }
     bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
     String loggedUserShelterId = context.read<ContentCubit>().userId;
     return Scaffold(

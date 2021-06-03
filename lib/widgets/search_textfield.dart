@@ -27,10 +27,21 @@ class _SearchTextfieldState extends State<SearchTextfield> {
       decoration: InputDecoration(
         labelText: 'Найти зоодом',
         labelStyle: TextStyle(color: Colors.white),
-        icon: Icon(Icons.search),
+        //floatingLabelBehavior: FloatingLabelBehavior.never,
+        icon: Icon(
+          Icons.search,
+          color: Colors.white,
+        ),
       ),
+      cursorColor: Colors.white,
       style: TextStyle(color: Colors.white),
       onChanged: widget.onChanged,
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
   }
 }
