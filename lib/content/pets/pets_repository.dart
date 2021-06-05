@@ -16,23 +16,22 @@ class PetsRepository {
   }
 
   Future<Pet> createPet({
-    @required String userShelterId,
+    @required String shelterID,
     @required PetKind kind,
     @required PetStatus status,
     @required String title,
     @required String description,
-    @required List<String> images,
+    @required List<String> imageKeys,
     @required String contact,
     @required TemporalDateTime date,
   }) async {
     final newPet = Pet(
-        userShelterId: userShelterId,
+        shelterID: shelterID,
         kind: kind,
         status: status,
         title: title,
         description: description,
-        images: images,
-        contact: contact,
+        imageKeys: imageKeys,
         date: date);
     try {
       await Amplify.DataStore.save(newPet);

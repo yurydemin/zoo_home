@@ -6,38 +6,38 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
-import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_event.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_state.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_event.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_state.dart';
+import 'package:zoo_home/content/shelters/shelters_repository.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/services/image_url_cache.dart';
 
-class UserShelterProfileBloc
-    extends Bloc<UserShelterProfileEvent, UserShelterProfileState> {
-  final UserSheltersRepository userShelterRepo;
+class ShelterProfileBloc
+    extends Bloc<ShelterProfileEvent, ShelterProfileState> {
+  final SheltersRepository sheltersRepo;
   final StorageRepository storageRepo;
   final _imagePicker = ImagePicker();
 
-  UserShelterProfileBloc({
-    @required this.userShelterRepo,
+  ShelterProfileBloc({
+    @required this.sheltersRepo,
     @required this.storageRepo,
-    @required UserShelter user,
-    @required bool isCurrentUser,
-  }) : super(
-            UserShelterProfileState(user: user, isCurrentUser: isCurrentUser)) {
+    @required Shelter shelter,
+    @required bool isCurrentShelter,
+  }) : super(ShelterProfileState(
+            shelter: shelter, isCurrentShelter: isCurrentShelter)) {
     ImageUrlCache.instance
-        .getUrl(user.avatarKey)
+        .getUrl(shelter.avatarKey)
         .then((url) => add(ProvideAvatarImagePath(avatarUrl: url)));
-    Future.wait(user.images.map((imageKey) async {
+    Future.wait(shelter.imageKeys.map((imageKey) async {
       return await ImageUrlCache.instance.getUrl(imageKey);
     }).toList())
         .then((urls) => add(ProvideProfileImagesPaths(imageUrls: urls)));
   }
 
   @override
-  Stream<UserShelterProfileState> mapEventToState(
-      UserShelterProfileEvent event) async* {
+  Stream<ShelterProfileState> mapEventToState(
+      ShelterProfileEvent event) async* {
     if (event is ChangeAvatarRequest) {
       yield state.copyWith(avatarImageSourceActionSheetIsVisible: true);
     } else if (event is OpenImagePicker) {
@@ -47,17 +47,16 @@ class UserShelterProfileBloc
           await _imagePicker.getImage(source: event.imageSource);
       if (pickedImage == null) return;
 
-      final imageKey =
-          await storageRepo.uploadFile(File(pickedImage.path), state.user.id);
-      final updatedUser = state.user.copyWith(avatarKey: imageKey);
+      final imageKey = await storageRepo.uploadFile(
+          File(pickedImage.path), state.shelter.id);
+      final updatedShelter = state.shelter.copyWith(avatarKey: imageKey);
 
       final results = await Future.wait([
-        userShelterRepo.updateUser(updatedUser),
+        sheltersRepo.updateShelter(updatedShelter),
         storageRepo.getUrlForFile(imageKey),
       ]);
 
-      yield state.copyWith(
-          user: updatedUser, avatarUrl: results.last, isUserChanged: true);
+      yield state.copyWith(shelter: updatedShelter, avatarUrl: results.last);
     } else if (event is ProvideAvatarImagePath) {
       yield state.copyWith(avatarUrl: event.avatarUrl);
     } else if (event is OpenMultiImagePicker) {
@@ -88,55 +87,54 @@ class UserShelterProfileBloc
       final newImageKeys = await Future.wait(pickedImages.map((image) async {
         final imagePath =
             await FlutterAbsolutePath.getAbsolutePath(image.identifier);
-        return await storageRepo.uploadFile(File(imagePath), state.user.id);
+        return await storageRepo.uploadFile(File(imagePath), state.shelter.id);
       }).toList());
       // get images urls
       final newImageUrls = await Future.wait(newImageKeys.map((imageKey) async {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
       // combine keys and urls with existing
-      final imageKeys = [...state.user.images, ...newImageKeys];
+      final imageKeys = [...state.shelter.imageKeys, ...newImageKeys];
       final imageUrls = [...state.imageUrls, ...newImageUrls];
 
       // update user and state
-      final updatedUser = state.user.copyWith(images: imageKeys);
-      await userShelterRepo.updateUser(updatedUser);
+      final updatedShelter = state.shelter.copyWith(imageKeys: imageKeys);
+      await sheltersRepo.updateShelter(updatedShelter);
 
-      yield state.copyWith(
-          user: updatedUser, imageUrls: imageUrls, isUserChanged: true);
+      yield state.copyWith(shelter: updatedShelter, imageUrls: imageUrls);
     } else if (event is ProvideProfileImagesPaths) {
       yield state.copyWith(imageUrls: event.imageUrls);
-    } else if (event is UserShelterProfileLocationChanged) {
+    } else if (event is ShelterProfileLocationChanged) {
       yield state.copyWith(location: event.location);
-    } else if (event is UserShelterProfileTitleChanged) {
+    } else if (event is ShelterProfileTitleChanged) {
       yield state.copyWith(title: event.title);
-    } else if (event is UserShelterProfileDescriptionChanged) {
+    } else if (event is ShelterProfileDescriptionChanged) {
       yield state.copyWith(description: event.description);
-    } else if (event is UserShelterProfileRemoveImage) {
-      final updatedImageKeys =
-          state.user.images.where((item) => item != event.imageKey).toList();
-      final updatedUser = state.user.copyWith(images: updatedImageKeys);
-      await userShelterRepo.updateUser(updatedUser);
+    } else if (event is ShelterProfileRemoveImage) {
+      final updatedImageKeys = state.shelter.imageKeys
+          .where((item) => item != event.imageKey)
+          .toList();
+      final updatedShelter =
+          state.shelter.copyWith(imageKeys: updatedImageKeys);
+      await sheltersRepo.updateShelter(updatedShelter);
 
       final updatedImageUrls =
           state.imageUrls.where((item) => item != event.imageUrl).toList();
       yield state.copyWith(
-          user: updatedUser, imageUrls: updatedImageUrls, isUserChanged: true);
-    } else if (event is SaveUserShelterProfileChanges) {
+          shelter: updatedShelter, imageUrls: updatedImageUrls);
+    } else if (event is SaveShelterProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());
 
-      final updatedUser = state.user.copyWith(
+      final updatedShelter = state.shelter.copyWith(
         location: state.location,
         title: state.title,
         description: state.description,
       );
 
       try {
-        await userShelterRepo.updateUser(updatedUser);
+        await sheltersRepo.updateShelter(updatedShelter);
         yield state.copyWith(
-            user: updatedUser,
-            formStatus: SubmissionSuccess(),
-            isUserChanged: true);
+            shelter: updatedShelter, formStatus: SubmissionSuccess());
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }

@@ -1,16 +1,16 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
-import 'package:zoo_home/models/UserShelter.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 
-class UserShelterCard extends StatelessWidget {
+class ShelterCard extends StatelessWidget {
   final GestureTapCallback onTap;
-  final UserShelter userShelter;
+  final Shelter shelter;
   final String avatarUrl;
 
-  const UserShelterCard({
+  const ShelterCard({
     Key key,
     @required this.onTap,
-    @required this.userShelter,
+    @required this.shelter,
     @required this.avatarUrl,
   }) : super(key: key);
 
@@ -34,7 +34,7 @@ class UserShelterCard extends StatelessWidget {
                   AspectRatio(
                     aspectRatio: 1.0,
                     child: Hero(
-                      tag: '${userShelter.id}-shelter',
+                      tag: '${shelter.id}-shelter',
                       child: ClipRRect(
                         borderRadius: BorderRadius.only(
                             topLeft: Radius.circular(10.0),
@@ -69,7 +69,7 @@ class UserShelterCard extends StatelessWidget {
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: <Widget>[
                                 Text(
-                                  userShelter.title ?? 'Новый зоодом',
+                                  shelter.title ?? 'Новый зоодом',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
                                   style: const TextStyle(
@@ -79,7 +79,7 @@ class UserShelterCard extends StatelessWidget {
                                 const Padding(
                                     padding: EdgeInsets.only(bottom: 2.0)),
                                 Text(
-                                  userShelter.description ??
+                                  shelter.description ??
                                       'Описание нового зоодома',
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
@@ -98,7 +98,7 @@ class UserShelterCard extends StatelessWidget {
                               mainAxisAlignment: MainAxisAlignment.end,
                               children: <Widget>[
                                 Text(
-                                  userShelter.location ??
+                                  shelter.location ??
                                       'Неизвестное местоположение',
                                   style: const TextStyle(
                                     fontSize: 12.0,

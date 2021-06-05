@@ -11,7 +11,6 @@ import 'package:zoo_home/content/pets/pets_repository.dart';
 import 'package:zoo_home/helpers/pet_visual_helper.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
-import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/widgets/profile_carousel.dart';
 
 class PetProfileView extends StatefulWidget {
@@ -25,14 +24,15 @@ class PetProfileView extends StatefulWidget {
 class _PetProfileViewState extends State<PetProfileView> {
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<SessionCubit>().currentUser;
     return BlocProvider(
       create: (context) => PetProfileBloc(
         petsRepo: context.read<PetsRepository>(),
         storageRepo: context.read<StorageRepository>(),
         pet: widget.selectedPet,
-        isCurrentPet: currentUser != null &&
-            currentUser.id == widget.selectedPet.userShelterId,
+        // TODO check current or not from widget
+        isCurrentPet: true,
+        // isCurrentPet: currentUser != null &&
+        //     currentUser.id == widget.selectedPet.shelterID,
       ),
       child: BlocListener<PetProfileBloc, PetProfileState>(
         listener: (context, state) {
@@ -117,7 +117,7 @@ class _PetProfileViewState extends State<PetProfileView> {
     return BlocBuilder<PetProfileBloc, PetProfileState>(
         builder: (context, state) {
       return ProfileCarousel(
-        imageKeys: state.pet.images,
+        imageKeys: state.pet.imageKeys,
         imageUrls: state.imageUrls,
         onRemoveImage: (String imageKey, String imageUrl) {
           context.read<PetProfileBloc>().add(
@@ -273,7 +273,8 @@ class _PetProfileViewState extends State<PetProfileView> {
   Widget _mailToTextButton() {
     return BlocBuilder<PetProfileBloc, PetProfileState>(
         builder: (context, state) {
-      final targetEmail = state.pet.contact;
+      //TODO get contact from widget
+      final targetEmail = '';
       final petCardTitle = state.pet.title;
       return TextButton(
         onPressed: () async {

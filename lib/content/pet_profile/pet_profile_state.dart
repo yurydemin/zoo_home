@@ -11,7 +11,7 @@ class PetProfileState {
   final String description;
   final List<String> imageUrls;
 
-  String get ownerUserShelterId => pet.userShelterId;
+  String get ownerShelterID => pet.shelterID;
   final FormSubmissionStatus formStatus;
 
   PetProfileState({

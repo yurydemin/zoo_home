@@ -43,12 +43,12 @@ class PetsCubit extends Cubit<PetsState> {
   ) async {
     if (!contentCubit.isUserLoggedIn) return;
     await petsRepo.createPet(
-      userShelterId: contentCubit.userId,
+      shelterID: contentCubit.userId,
       kind: kind,
       status: status,
       title: title,
       description: description,
-      images: [],
+      imageKeys: [],
       contact: contentCubit.userContact,
       date: TemporalDateTime(DateTime.now()),
     );

@@ -9,55 +9,50 @@ import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/content_cubit.dart';
-import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_bloc.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_event.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_state.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_bloc.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_event.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_state.dart';
+import 'package:zoo_home/content/shelters/shelters_repository.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/widgets/profile_carousel.dart';
 
-class UserShelterProfileView extends StatelessWidget {
-  final UserShelter selectedUser;
+class ShelterProfileView extends StatelessWidget {
+  final Shelter selectedShelter;
 
-  UserShelterProfileView({Key key, @required this.selectedUser})
+  ShelterProfileView({Key key, @required this.selectedShelter})
       : super(key: key);
 
   @override
   Widget build(BuildContext context) {
     final currentUser = context.read<SessionCubit>().currentUser;
-    final isCurrentUser =
-        currentUser != null && currentUser.id == selectedUser.id;
-    return WillPopScope(
-      onWillPop: () async {
-        return !isCurrentUser;
-      },
-      child: BlocProvider(
-        create: (context) => UserShelterProfileBloc(
-          userShelterRepo: context.read<UserSheltersRepository>(),
-          storageRepo: context.read<StorageRepository>(),
-          user: selectedUser,
-          isCurrentUser: isCurrentUser,
-        ),
-        child: BlocListener<UserShelterProfileBloc, UserShelterProfileState>(
-          listener: (context, state) {
-            if (state.avatarImageSourceActionSheetIsVisible) {
-              _showImageSourceActionSheet(context);
-            }
+    final isCurrentShelter =
+        currentUser != null && currentUser.id == selectedShelter.userId;
+    return BlocProvider(
+      create: (context) => ShelterProfileBloc(
+        sheltersRepo: context.read<SheltersRepository>(),
+        storageRepo: context.read<StorageRepository>(),
+        shelter: selectedShelter,
+        isCurrentShelter: isCurrentShelter,
+      ),
+      child: BlocListener<ShelterProfileBloc, ShelterProfileState>(
+        listener: (context, state) {
+          if (state.avatarImageSourceActionSheetIsVisible) {
+            _showImageSourceActionSheet(context);
+          }
 
-            final formStatus = state.formStatus;
-            if (formStatus is SubmissionFailed) {
-              _showSnackBar(context, formStatus.exception.toString());
-            } else if (formStatus is SubmissionSuccess) {
-              _showSnackBar(context, 'Информация обновлена');
-            }
-          },
-          child: Scaffold(
-            backgroundColor: Color(0xFFF2F2F7),
-            appBar: _appBar(),
-            body: _profilePage(),
-          ),
+          final formStatus = state.formStatus;
+          if (formStatus is SubmissionFailed) {
+            _showSnackBar(context, formStatus.exception.toString());
+          } else if (formStatus is SubmissionSuccess) {
+            _showSnackBar(context, 'Информация обновлена');
+          }
+        },
+        child: Scaffold(
+          backgroundColor: Color(0xFFF2F2F7),
+          appBar: _appBar(),
+          body: _profilePage(),
         ),
       ),
     );
@@ -67,24 +62,13 @@ class UserShelterProfileView extends StatelessWidget {
     final appBarHeight = AppBar().preferredSize.height;
     return PreferredSize(
       preferredSize: Size.fromHeight(appBarHeight),
-      child: BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+      child: BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
           builder: (context, state) {
         return AppBar(
           title: Text(state.title),
           centerTitle: true,
-          leading: IconButton(
-              icon: Icon(Icons.arrow_back),
-              onPressed: () {
-                Navigator.pop(
-                    context,
-                    state.isCurrentUser
-                        ? state.isUserChanged
-                            ? state.user
-                            : null
-                        : null);
-              }),
           actions: [
-            if (state.isCurrentUser)
+            if (state.isCurrentShelter)
               IconButton(
                 icon: Icon(Icons.logout),
                 onPressed: () => context.read<ContentCubit>().signOut(),
@@ -96,7 +80,7 @@ class UserShelterProfileView extends StatelessWidget {
   }
 
   Widget _profilePage() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return SafeArea(
         child: SingleChildScrollView(
@@ -104,15 +88,15 @@ class UserShelterProfileView extends StatelessWidget {
             children: [
               SizedBox(height: 20),
               _avatar(),
-              if (state.isCurrentUser) _changeAvatarButton(),
+              if (state.isCurrentShelter) _changeAvatarButton(),
               SizedBox(height: 10),
               _titleTile(),
               _locationTile(),
               _emailTile(),
               _descriptionTile(),
-              if (state.isCurrentUser) _addImagesButton(),
+              if (state.isCurrentShelter) _addImagesButton(),
               if (state.imageUrls.isNotEmpty) _galleryCarousel(),
-              state.isCurrentUser
+              state.isCurrentShelter
                   ? _saveProfileChangesButton()
                   : _mailToTextButton(),
               SizedBox(height: 10),
@@ -124,7 +108,7 @@ class UserShelterProfileView extends StatelessWidget {
   }
 
   Widget _avatar() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return Container(
         decoration: BoxDecoration(
@@ -157,18 +141,18 @@ class UserShelterProfileView extends StatelessWidget {
   }
 
   Widget _changeAvatarButton() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return TextButton(
         onPressed: () =>
-            context.read<UserShelterProfileBloc>().add(ChangeAvatarRequest()),
+            context.read<ShelterProfileBloc>().add(ChangeAvatarRequest()),
         child: Text('Изменить аватар'),
       );
     });
   }
 
   Widget _locationTile() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ListTile(
         tileColor: Colors.white,
@@ -177,25 +161,25 @@ class UserShelterProfileView extends StatelessWidget {
         title: TextFormField(
           initialValue: state.location,
           decoration: InputDecoration.collapsed(
-              hintText: state.isCurrentUser ? 'Укажите город' : 'Город'),
+              hintText: state.isCurrentShelter ? 'Укажите город' : 'Город'),
           maxLines: null,
-          readOnly: !state.isCurrentUser,
+          readOnly: !state.isCurrentShelter,
           toolbarOptions: ToolbarOptions(
-            copy: state.isCurrentUser,
-            cut: state.isCurrentUser,
-            paste: state.isCurrentUser,
-            selectAll: state.isCurrentUser,
+            copy: state.isCurrentShelter,
+            cut: state.isCurrentShelter,
+            paste: state.isCurrentShelter,
+            selectAll: state.isCurrentShelter,
           ),
           onChanged: (value) => context
-              .read<UserShelterProfileBloc>()
-              .add(UserShelterProfileLocationChanged(location: value)),
+              .read<ShelterProfileBloc>()
+              .add(ShelterProfileLocationChanged(location: value)),
         ),
       );
     });
   }
 
   Widget _emailTile() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ListTile(
         tileColor: Colors.white,
@@ -207,7 +191,7 @@ class UserShelterProfileView extends StatelessWidget {
   }
 
   Widget _titleTile() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ListTile(
         tileColor: Colors.white,
@@ -216,27 +200,27 @@ class UserShelterProfileView extends StatelessWidget {
         title: TextFormField(
           initialValue: state.title,
           decoration: InputDecoration.collapsed(
-              hintText: state.isCurrentUser
+              hintText: state.isCurrentShelter
                   ? 'Добавьте название своего зоодома'
                   : 'Название зоодома'),
           maxLines: null,
-          readOnly: !state.isCurrentUser,
+          readOnly: !state.isCurrentShelter,
           toolbarOptions: ToolbarOptions(
-            copy: state.isCurrentUser,
-            cut: state.isCurrentUser,
-            paste: state.isCurrentUser,
-            selectAll: state.isCurrentUser,
+            copy: state.isCurrentShelter,
+            cut: state.isCurrentShelter,
+            paste: state.isCurrentShelter,
+            selectAll: state.isCurrentShelter,
           ),
           onChanged: (value) => context
-              .read<UserShelterProfileBloc>()
-              .add(UserShelterProfileTitleChanged(title: value)),
+              .read<ShelterProfileBloc>()
+              .add(ShelterProfileTitleChanged(title: value)),
         ),
       );
     });
   }
 
   Widget _descriptionTile() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ListTile(
         tileColor: Colors.white,
@@ -245,27 +229,27 @@ class UserShelterProfileView extends StatelessWidget {
         title: TextFormField(
           initialValue: state.description,
           decoration: InputDecoration.collapsed(
-              hintText: state.isCurrentUser
+              hintText: state.isCurrentShelter
                   ? 'Добавьте описание своего зоодома'
                   : 'Описание зоодома'),
           maxLines: null,
-          readOnly: !state.isCurrentUser,
+          readOnly: !state.isCurrentShelter,
           toolbarOptions: ToolbarOptions(
-            copy: state.isCurrentUser,
-            cut: state.isCurrentUser,
-            paste: state.isCurrentUser,
-            selectAll: state.isCurrentUser,
+            copy: state.isCurrentShelter,
+            cut: state.isCurrentShelter,
+            paste: state.isCurrentShelter,
+            selectAll: state.isCurrentShelter,
           ),
           onChanged: (value) => context
-              .read<UserShelterProfileBloc>()
-              .add(UserShelterProfileDescriptionChanged(description: value)),
+              .read<ShelterProfileBloc>()
+              .add(ShelterProfileDescriptionChanged(description: value)),
         ),
       );
     });
   }
 
   Widget _addImagesButton() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ListTile(
         tileColor: Colors.white,
@@ -273,47 +257,46 @@ class UserShelterProfileView extends StatelessWidget {
         subtitle: Text('нажмите, чтобы добавить фото'),
         title: Text('Галерея'),
         onTap: () => context
-            .read<UserShelterProfileBloc>()
+            .read<ShelterProfileBloc>()
             .add(OpenMultiImagePicker(imageSource: ImageSource.gallery)),
       );
     });
   }
 
   Widget _galleryCarousel() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return ProfileCarousel(
-        imageKeys: state.user.images,
+        imageKeys: state.shelter.imageKeys,
         imageUrls: state.imageUrls,
         onRemoveImage: (String imageKey, String imageUrl) {
-          context.read<UserShelterProfileBloc>().add(
-              UserShelterProfileRemoveImage(
-                  imageKey: imageKey, imageUrl: imageUrl));
+          context.read<ShelterProfileBloc>().add(ShelterProfileRemoveImage(
+              imageKey: imageKey, imageUrl: imageUrl));
         },
-        isRemovable: state.isCurrentUser,
+        isRemovable: state.isCurrentShelter,
       );
     });
   }
 
   Widget _saveProfileChangesButton() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
       return (state.formStatus is FormSubmitting)
           ? CircularProgressIndicator()
           : ElevatedButton(
               onPressed: () => context
-                  .read<UserShelterProfileBloc>()
-                  .add(SaveUserShelterProfileChanges()),
+                  .read<ShelterProfileBloc>()
+                  .add(SaveShelterProfileChanges()),
               child: Text('Сохранить изменения'),
             );
     });
   }
 
   Widget _mailToTextButton() {
-    return BlocBuilder<UserShelterProfileBloc, UserShelterProfileState>(
+    return BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
         builder: (context, state) {
-      final targetEmail = state.user.email;
-      final targetUserShelterName = state.user.title;
+      final targetEmail = state.shelter.contact;
+      final targetUserShelterName = state.shelter.title;
       return TextButton(
         onPressed: () async {
           final url = Mailto(
@@ -336,7 +319,7 @@ class UserShelterProfileView extends StatelessWidget {
   void _showImageSourceActionSheet(BuildContext context) {
     Function(ImageSource) selectImageSource = (imageSource) {
       context
-          .read<UserShelterProfileBloc>()
+          .read<ShelterProfileBloc>()
           .add(OpenImagePicker(imageSource: imageSource));
     };
 

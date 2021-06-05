@@ -17,18 +17,20 @@
 
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'Pet.dart';
-import 'UserShelter.dart';
+import 'Shelter.dart';
+import 'User.dart';
 
 export 'Pet.dart';
 export 'PetKind.dart';
 export 'PetStatus.dart';
-export 'UserShelter.dart';
+export 'Shelter.dart';
+export 'User.dart';
 
 class ModelProvider implements ModelProviderInterface {
   @override
-  String version = "ec231aa1ce08252149486ac073cfee46";
+  String version = "79fecb6512985bf31bc46c11c39e3160";
   @override
-  List<ModelSchema> modelSchemas = [Pet.schema, UserShelter.schema];
+  List<ModelSchema> modelSchemas = [Pet.schema, Shelter.schema, User.schema];
   static final ModelProvider _instance = ModelProvider();
 
   static ModelProvider get instance => _instance;
@@ -40,9 +42,14 @@ class ModelProvider implements ModelProviderInterface {
           return Pet.classType;
         }
         break;
-      case "UserShelter":
+      case "Shelter":
         {
-          return UserShelter.classType;
+          return Shelter.classType;
+        }
+        break;
+      case "User":
+        {
+          return User.classType;
         }
         break;
       default:

@@ -22,7 +22,7 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
     @required Pet pet,
     @required bool isCurrentPet,
   }) : super(PetProfileState(pet: pet, isCurrentPet: isCurrentPet)) {
-    Future.wait(pet.images.map((imageKey) async {
+    Future.wait(pet.imageKeys.map((imageKey) async {
       return await ImageUrlCache.instance.getUrl(imageKey);
     }).toList())
         .then((urls) => add(ProvideProfileImagesPaths(imageUrls: urls)));
@@ -65,11 +65,11 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
         return await storageRepo.getUrlForFile(imageKey);
       }).toList());
       // combine keys and urls with existing
-      final imageKeys = [...state.pet.images, ...newImageKeys];
+      final imageKeys = [...state.pet.imageKeys, ...newImageKeys];
       final imageUrls = [...state.imageUrls, ...newImageUrls];
 
       // update pet and state
-      final updatedPet = state.pet.copyWith(images: imageKeys);
+      final updatedPet = state.pet.copyWith(imageKeys: imageKeys);
       await petsRepo.updatePet(updatedPet);
 
       yield state.copyWith(pet: updatedPet, imageUrls: imageUrls);
@@ -85,8 +85,8 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       yield state.copyWith(description: event.description);
     } else if (event is PetProfileRemoveImage) {
       final updatedImageKeys =
-          state.pet.images.where((item) => item != event.imageKey).toList();
-      final updatedPet = state.pet.copyWith(images: updatedImageKeys);
+          state.pet.imageKeys.where((item) => item != event.imageKey).toList();
+      final updatedPet = state.pet.copyWith(imageKeys: updatedImageKeys);
       await petsRepo.updatePet(updatedPet);
 
       final updatedImageUrls =

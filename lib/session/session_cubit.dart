@@ -2,22 +2,22 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
-import 'package:zoo_home/models/UserShelter.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/repositories/user_repository.dart';
 import 'package:zoo_home/session/session_state.dart';
 
 class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
-  final UserSheltersRepository userShelterRepo;
+  final UserRepository userRepo;
 
   bool get isGuestLoggedIn => (state is AuthenticatedAsGuestState);
   bool get isUserLoggedIn => (state is AuthenticatedAsUserState);
-  UserShelter get currentUser =>
+  User get currentUser =>
       isUserLoggedIn ? (state as AuthenticatedAsUserState).user : null;
 
   SessionCubit({
     @required this.authRepo,
-    @required this.userShelterRepo,
+    @required this.userRepo,
   }) : super(UnknownSessionState()) {
     attemptAutoLogin();
   }
@@ -29,7 +29,7 @@ class SessionCubit extends Cubit<SessionState> {
         //throw Exception('User not logged in');
         emit(AuthenticatedAsGuestState());
       } else {
-        UserShelter user = await userShelterRepo.getUserById(userId);
+        User user = await userRepo.getUserById(userId);
         if (user == null) {
           // user = await userShelterRepo.createUser(
           //   userId: userId,
@@ -53,11 +53,10 @@ class SessionCubit extends Cubit<SessionState> {
 
   void showSession(AuthCredentials credentials) async {
     try {
-      UserShelter user =
-          await userShelterRepo.getUserById(credentials.userShelterId);
+      User user = await userRepo.getUserById(credentials.userShelterId);
 
       if (user == null) {
-        user = await userShelterRepo.createUser(
+        user = await userRepo.createUser(
           userId: credentials.userShelterId,
           email: credentials.email,
         );

@@ -20,18 +20,19 @@ import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_inte
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
 
-/** This is an auto generated class representing the Pet type in your schema. */
+/** This is an auto generated class representing the Shelter type in your schema. */
 @immutable
-class Pet extends Model {
-  static const classType = const _PetModelType();
+class Shelter extends Model {
+  static const classType = const _ShelterModelType();
   final String id;
-  final String shelterID;
-  final PetStatus status;
-  final PetKind kind;
+  final String userId;
+  final String location;
   final String title;
   final String description;
+  final String contact;
+  final String avatarKey;
   final List<String> imageKeys;
-  final TemporalDateTime date;
+  final List<Pet> pets;
 
   @override
   getInstanceType() => classType;
@@ -41,34 +42,37 @@ class Pet extends Model {
     return id;
   }
 
-  const Pet._internal(
+  const Shelter._internal(
       {@required this.id,
-      this.shelterID,
-      this.status,
-      this.kind,
+      @required this.userId,
+      this.location,
       this.title,
       this.description,
+      @required this.contact,
+      this.avatarKey,
       @required this.imageKeys,
-      @required this.date});
+      this.pets});
 
-  factory Pet(
+  factory Shelter(
       {String id,
-      String shelterID,
-      PetStatus status,
-      PetKind kind,
+      @required String userId,
+      String location,
       String title,
       String description,
+      @required String contact,
+      String avatarKey,
       @required List<String> imageKeys,
-      @required TemporalDateTime date}) {
-    return Pet._internal(
+      List<Pet> pets}) {
+    return Shelter._internal(
         id: id == null ? UUID.getUUID() : id,
-        shelterID: shelterID,
-        status: status,
-        kind: kind,
+        userId: userId,
+        location: location,
         title: title,
         description: description,
+        contact: contact,
+        avatarKey: avatarKey,
         imageKeys: imageKeys != null ? List.unmodifiable(imageKeys) : imageKeys,
-        date: date);
+        pets: pets != null ? List.unmodifiable(pets) : pets);
   }
 
   bool equals(Object other) {
@@ -78,15 +82,16 @@ class Pet extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is Pet &&
+    return other is Shelter &&
         id == other.id &&
-        shelterID == other.shelterID &&
-        status == other.status &&
-        kind == other.kind &&
+        userId == other.userId &&
+        location == other.location &&
         title == other.title &&
         description == other.description &&
+        contact == other.contact &&
+        avatarKey == other.avatarKey &&
         DeepCollectionEquality().equals(imageKeys, other.imageKeys) &&
-        date == other.date;
+        DeepCollectionEquality().equals(pets, other.pets);
   }
 
   @override
@@ -96,78 +101,86 @@ class Pet extends Model {
   String toString() {
     var buffer = new StringBuffer();
 
-    buffer.write("Pet {");
+    buffer.write("Shelter {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("shelterID=" + "$shelterID" + ", ");
-    buffer.write(
-        "status=" + (status != null ? enumToString(status) : "null") + ", ");
-    buffer.write("kind=" + (kind != null ? enumToString(kind) : "null") + ", ");
+    buffer.write("userId=" + "$userId" + ", ");
+    buffer.write("location=" + "$location" + ", ");
     buffer.write("title=" + "$title" + ", ");
     buffer.write("description=" + "$description" + ", ");
-    buffer.write("imageKeys=" +
-        (imageKeys != null ? imageKeys.toString() : "null") +
-        ", ");
-    buffer.write("date=" + (date != null ? date.format() : "null"));
+    buffer.write("contact=" + "$contact" + ", ");
+    buffer.write("avatarKey=" + "$avatarKey" + ", ");
+    buffer.write(
+        "imageKeys=" + (imageKeys != null ? imageKeys.toString() : "null"));
     buffer.write("}");
 
     return buffer.toString();
   }
 
-  Pet copyWith(
+  Shelter copyWith(
       {String id,
-      String shelterID,
-      PetStatus status,
-      PetKind kind,
+      String userId,
+      String location,
       String title,
       String description,
+      String contact,
+      String avatarKey,
       List<String> imageKeys,
-      TemporalDateTime date}) {
-    return Pet(
+      List<Pet> pets}) {
+    return Shelter(
         id: id ?? this.id,
-        shelterID: shelterID ?? this.shelterID,
-        status: status ?? this.status,
-        kind: kind ?? this.kind,
+        userId: userId ?? this.userId,
+        location: location ?? this.location,
         title: title ?? this.title,
         description: description ?? this.description,
+        contact: contact ?? this.contact,
+        avatarKey: avatarKey ?? this.avatarKey,
         imageKeys: imageKeys ?? this.imageKeys,
-        date: date ?? this.date);
+        pets: pets ?? this.pets);
   }
 
-  Pet.fromJson(Map<String, dynamic> json)
+  Shelter.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        shelterID = json['shelterID'],
-        status = enumFromString<PetStatus>(json['status'], PetStatus.values),
-        kind = enumFromString<PetKind>(json['kind'], PetKind.values),
+        userId = json['userId'],
+        location = json['location'],
         title = json['title'],
         description = json['description'],
+        contact = json['contact'],
+        avatarKey = json['avatarKey'],
         imageKeys = json['imageKeys']?.cast<String>(),
-        date = json['date'] != null
-            ? TemporalDateTime.fromString(json['date'])
+        pets = json['pets'] is List
+            ? (json['pets'] as List)
+                .map((e) => Pet.fromJson(new Map<String, dynamic>.from(e)))
+                .toList()
             : null;
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'shelterID': shelterID,
-        'status': enumToString(status),
-        'kind': enumToString(kind),
+        'userId': userId,
+        'location': location,
         'title': title,
         'description': description,
+        'contact': contact,
+        'avatarKey': avatarKey,
         'imageKeys': imageKeys,
-        'date': date?.format()
+        'pets': pets?.map((e) => e?.toJson())?.toList()
       };
 
-  static final QueryField ID = QueryField(fieldName: "pet.id");
-  static final QueryField SHELTERID = QueryField(fieldName: "shelterID");
-  static final QueryField STATUS = QueryField(fieldName: "status");
-  static final QueryField KIND = QueryField(fieldName: "kind");
+  static final QueryField ID = QueryField(fieldName: "shelter.id");
+  static final QueryField USERID = QueryField(fieldName: "userId");
+  static final QueryField LOCATION = QueryField(fieldName: "location");
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
+  static final QueryField CONTACT = QueryField(fieldName: "contact");
+  static final QueryField AVATARKEY = QueryField(fieldName: "avatarKey");
   static final QueryField IMAGEKEYS = QueryField(fieldName: "imageKeys");
-  static final QueryField DATE = QueryField(fieldName: "date");
+  static final QueryField PETS = QueryField(
+      fieldName: "pets",
+      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
+          ofModelName: (Pet).toString()));
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
-    modelSchemaDefinition.name = "Pet";
-    modelSchemaDefinition.pluralName = "Pets";
+    modelSchemaDefinition.name = "Shelter";
+    modelSchemaDefinition.pluralName = "Shelters";
 
     modelSchemaDefinition.authRules = [
       AuthRule(authStrategy: AuthStrategy.PUBLIC, operations: [
@@ -181,49 +194,55 @@ class Pet extends Model {
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.SHELTERID,
+        key: Shelter.USERID,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Shelter.LOCATION,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.STATUS,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
-
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.KIND,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.enumeration)));
-
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.TITLE,
+        key: Shelter.TITLE,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.DESCRIPTION,
+        key: Shelter.DESCRIPTION,
         isRequired: false,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.IMAGEKEYS,
+        key: Shelter.CONTACT,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Shelter.AVATARKEY,
+        isRequired: false,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Shelter.IMAGEKEYS,
         isRequired: true,
         isArray: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.string))));
 
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.DATE,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+        key: Shelter.PETS,
+        isRequired: false,
+        ofModelName: (Pet).toString(),
+        associatedKey: Pet.SHELTERID));
   });
 }
 
-class _PetModelType extends ModelType<Pet> {
-  const _PetModelType();
+class _ShelterModelType extends ModelType<Shelter> {
+  const _ShelterModelType();
 
   @override
-  Pet fromJson(Map<String, dynamic> jsonData) {
-    return Pet.fromJson(jsonData);
+  Shelter fromJson(Map<String, dynamic> jsonData) {
+    return Shelter.fromJson(jsonData);
   }
 }

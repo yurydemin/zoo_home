@@ -1,25 +1,24 @@
 import 'package:flutter/foundation.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
-import 'package:zoo_home/models/UserShelter.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 
-class UserShelterProfileState {
-  final UserShelter user;
-  final bool isCurrentUser;
+class ShelterProfileState {
+  final Shelter shelter;
+  final bool isCurrentShelter;
   final String location;
   final String title;
   final String description;
   final List<String> imageUrls;
   final String avatarUrl;
-  final bool isUserChanged;
 
-  String get email => user.email;
+  String get email => shelter.contact;
 
   final FormSubmissionStatus formStatus;
   bool avatarImageSourceActionSheetIsVisible;
 
-  UserShelterProfileState({
-    @required UserShelter user,
-    @required bool isCurrentUser,
+  ShelterProfileState({
+    @required Shelter shelter,
+    @required bool isCurrentShelter,
     String location,
     String title,
     String description,
@@ -27,20 +26,18 @@ class UserShelterProfileState {
     String avatarUrl,
     this.formStatus = const InitialFormStatus(),
     avatarImageSourceActionSheetIsVisible = false,
-    isUserChanged = false,
-  })  : this.user = user,
-        this.isCurrentUser = isCurrentUser,
-        this.location = location ?? user.location,
-        this.title = title ?? user.title,
-        this.description = description ?? user.description,
+  })  : this.shelter = shelter,
+        this.isCurrentShelter = isCurrentShelter,
+        this.location = location ?? shelter.location,
+        this.title = title ?? shelter.title,
+        this.description = description ?? shelter.description,
         this.imageUrls = imageUrls ?? <String>[],
         this.avatarUrl = avatarUrl,
         this.avatarImageSourceActionSheetIsVisible =
-            avatarImageSourceActionSheetIsVisible,
-        this.isUserChanged = isUserChanged;
+            avatarImageSourceActionSheetIsVisible;
 
-  UserShelterProfileState copyWith({
-    UserShelter user,
+  ShelterProfileState copyWith({
+    Shelter shelter,
     String location,
     String title,
     String description,
@@ -48,11 +45,10 @@ class UserShelterProfileState {
     String avatarUrl,
     FormSubmissionStatus formStatus,
     bool avatarImageSourceActionSheetIsVisible,
-    bool isUserChanged,
   }) {
-    return UserShelterProfileState(
-      user: user ?? this.user,
-      isCurrentUser: this.isCurrentUser,
+    return ShelterProfileState(
+      shelter: shelter ?? this.shelter,
+      isCurrentShelter: this.isCurrentShelter,
       location: location ?? this.location,
       title: title ?? this.title,
       description: description ?? this.description,
@@ -62,7 +58,6 @@ class UserShelterProfileState {
       avatarImageSourceActionSheetIsVisible:
           avatarImageSourceActionSheetIsVisible ??
               this.avatarImageSourceActionSheetIsVisible,
-      isUserChanged: isUserChanged ?? this.isUserChanged,
     );
   }
 }

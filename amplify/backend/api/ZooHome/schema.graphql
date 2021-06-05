@@ -1,7 +1,29 @@
-enum PetStatus {
-  OPENED
-  CLOSED
-  RESERVED
+type User @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  email: String!
+}
+
+type Shelter @model @auth(rules: [{allow: public}]) {
+  id: ID!
+  userId: ID!
+  location: String
+  title: String
+  description: String
+  contact: String!
+  avatarKey: String
+  imageKeys: [String]!
+  pets: [Pet] @connection(keyName: "byShelter", fields: ["id"])
+}
+
+type Pet @model @auth(rules: [{allow: public}]) @key(name: "byShelter", fields: ["shelterID"]) {
+  id: ID!
+  shelterID: ID
+  status: PetStatus
+  kind: PetKind
+  title: String
+  description: String
+  imageKeys: [String]!
+  date: AWSDateTime!
 }
 
 enum PetKind {
@@ -10,25 +32,9 @@ enum PetKind {
   OTHER
 }
 
-type Pet @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  userShelterId: ID!
-  kind: PetKind
-  status: PetStatus
-  title: String
-  description: String
-  images: [String]!
-  contact: String
-  date: AWSDateTime!
-}
-
-type UserShelter @model @auth(rules: [{allow: public}]) {
-  id: ID!
-  email: String!
-  location: String
-  title: String
-  description: String
-  images: [String]!
-  avatarKey: String
+enum PetStatus {
+  OPENED
+  CLOSED
+  RESERVED
 }
  

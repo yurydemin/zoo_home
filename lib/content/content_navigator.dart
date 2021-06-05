@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/content_state.dart';
-import 'package:zoo_home/content/filtered_user_shelters/filtered_user_shelters_bloc.dart';
+import 'package:zoo_home/content/filtered_shelters/filtered_shelters_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/content/pets/pets_repository.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_cubit.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_repository.dart';
-import 'package:zoo_home/content/user_shelters/user_shelters_view.dart';
-import 'package:zoo_home/content/user_shelter_profile/user_shelter_profile_view.dart';
+import 'package:zoo_home/content/shelters/shelters_cubit.dart';
+import 'package:zoo_home/content/shelters/shelters_repository.dart';
+import 'package:zoo_home/content/shelters/shelters_view.dart';
+import 'package:zoo_home/content/shelter_profile/shelter_profile_view.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
 class ContentNavigator extends StatelessWidget {
@@ -29,11 +29,11 @@ class ContentNavigator extends StatelessWidget {
                 child: MultiBlocProvider(
               providers: [
                 BlocProvider(
-                  create: (context) => UserSheltersCubit(
+                  create: (context) => SheltersCubit(
                       contentCubit: context.read<ContentCubit>(),
-                      userShelterRepo: context.read<UserSheltersRepository>())
-                    ..getUserShelters()
-                    ..observeUserShelters(),
+                      sheltersRepo: context.read<SheltersRepository>())
+                    ..getShelters()
+                    ..observeShelters(),
                 ),
                 BlocProvider(
                   create: (context) => PetsCubit(
@@ -43,17 +43,17 @@ class ContentNavigator extends StatelessWidget {
                     ..observePets(),
                 ),
               ],
-              child: BlocProvider<FilteredUserSheltersBloc>(
-                create: (context) => FilteredUserSheltersBloc(
-                  userSheltersCubit: context.read<UserSheltersCubit>(),
+              child: BlocProvider<FilteredSheltersBloc>(
+                create: (context) => FilteredSheltersBloc(
+                  sheltersCubit: context.read<SheltersCubit>(),
                 ),
-                child: UserSheltersView(),
+                child: SheltersView(),
               ),
             )),
-            if (state.currentUserShelter != null)
+            if (state.currentShelter != null)
               MaterialPage(
-                  child: UserShelterProfileView(
-                selectedUser: state.currentUserShelter,
+                  child: ShelterProfileView(
+                selectedShelter: state.currentShelter,
               )),
             if (state.currentPet != null)
               MaterialPage(
@@ -63,7 +63,7 @@ class ContentNavigator extends StatelessWidget {
           ],
           onPopPage: (route, result) {
             BlocProvider.of<ContentCubit>(context).popToMain();
-            if (result is UserShelter)
+            if (result is Shelter)
               BlocProvider.of<ContentCubit>(context).updateSession(result);
             return route.didPop(result);
           },
