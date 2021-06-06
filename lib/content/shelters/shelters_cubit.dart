@@ -27,21 +27,25 @@ class SheltersCubit extends Cubit<SheltersState> {
     try {
       // load all shelters
       final shelters = await sheltersRepo.getShelters();
+      // load all pets
+      final pets = await petsRepo.getPets();
       // preload avatars urls
       final avatarsKeyUrl = Map<String, String>();
-      Future.wait(shelters.map((shelter) async {
-        if (shelter.avatarKey != null && shelter.avatarKey.isNotEmpty)
-          avatarsKeyUrl[shelter.avatarKey] =
-              await ImageUrlCache.instance.getUrl(shelter.avatarKey);
-        if (shelter.pets != null && shelter.pets.isNotEmpty)
-          await Future.wait(shelter.pets.map((pet) async {
-            if (pet.imageKeys.isNotEmpty)
-              avatarsKeyUrl[pet.imageKeys.first] =
-                  await ImageUrlCache.instance.getUrl(pet.imageKeys.first);
-          }));
-      })).then((_) => // ok
+      Future.wait([
+        Future.wait(shelters.map((shelter) async {
+          if (shelter.avatarKey != null && shelter.avatarKey.isNotEmpty)
+            avatarsKeyUrl[shelter.avatarKey] =
+                await ImageUrlCache.instance.getUrl(shelter.avatarKey);
+        })),
+        Future.wait(pets.map((pet) async {
+          if (pet.imageKeys.isNotEmpty)
+            avatarsKeyUrl[pet.imageKeys.first] =
+                await ImageUrlCache.instance.getUrl(pet.imageKeys.first);
+        })),
+      ]).then((_) => // ok
           emit(ListSheltersSuccessState(
             shelters: shelters,
+            pets: pets,
             avatarsKeyUrl: avatarsKeyUrl,
           )));
     } catch (e) {

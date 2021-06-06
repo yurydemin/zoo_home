@@ -6,9 +6,10 @@ class LoadingSheltersState extends SheltersState {}
 
 class ListSheltersSuccessState extends SheltersState {
   final List<Shelter> shelters;
+  final List<Pet> pets;
   final Map<String, String> avatarsKeyUrl;
 
-  ListSheltersSuccessState({this.shelters, this.avatarsKeyUrl});
+  ListSheltersSuccessState({this.shelters, this.pets, this.avatarsKeyUrl});
 }
 
 class ListSheltersFailureState extends SheltersState {

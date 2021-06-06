@@ -52,6 +52,7 @@ class SheltersView extends StatelessWidget {
               ? _emptyUserSheltersView()
               : _userSheltersListView(
                   state.filteredShelters,
+                  state.filteredPets,
                   state.avatarsKeyUrl,
                   loggedUserShelterIndex,
                 );
@@ -100,7 +101,7 @@ class SheltersView extends StatelessWidget {
     //Center(child: Text('Еще не создано ни одного зоодома'));
   }
 
-  Widget _userSheltersListView(List<Shelter> shelters,
+  Widget _userSheltersListView(List<Shelter> shelters, List<Pet> pets,
       Map<String, String> avatarsKeyUrl, int loggedUserShelterIndex) {
     return ListView.builder(
       itemCount: shelters.length,
@@ -112,6 +113,8 @@ class SheltersView extends StatelessWidget {
                 : index == loggedUserShelterIndex
                     ? shelters[0]
                     : shelters[index];
+        final shelterPets =
+            pets.where((pet) => pet.shelterID == shelter.id).toList();
         return Column(
           mainAxisSize: MainAxisSize.min,
           children: [
@@ -123,35 +126,28 @@ class SheltersView extends StatelessWidget {
                 avatarUrl: avatarsKeyUrl.containsKey(shelter.avatarKey)
                     ? avatarsKeyUrl[shelter.avatarKey]
                     : null),
-            shelter.pets == null || shelter.pets.isEmpty
+            shelterPets == null || shelterPets.isEmpty
                 ? Text('Еще не добавлено ни одного животного')
                 : Column(
                     children: [
-                      ...shelter.pets
-                          .asMap()
-                          .map((petIndex, pet) {
-                            final avatarUrl = pet.imageKeys.isNotEmpty
-                                ? avatarsKeyUrl.containsKey(pet.imageKeys.first)
-                                    ? avatarsKeyUrl[pet.imageKeys.first]
-                                    : null
-                                : null;
-                            return MapEntry(
-                                petIndex,
-                                Padding(
-                                  padding: const EdgeInsets.only(left: 24.0),
-                                  child: PetCard(
-                                    avatarUrl: avatarUrl,
-                                    pet: pet,
-                                    onTap: () => context
-                                        .read<ContentCubit>()
-                                        .showPetProfile(
-                                            selectedShelter: shelter,
-                                            selectedPetIndex: petIndex),
-                                  ),
-                                ));
-                          })
-                          .values
-                          .toList(),
+                      ...shelterPets.map((pet) {
+                        final avatarUrl = pet.imageKeys.isNotEmpty
+                            ? avatarsKeyUrl.containsKey(pet.imageKeys.first)
+                                ? avatarsKeyUrl[pet.imageKeys.first]
+                                : null
+                            : null;
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 24.0),
+                          child: PetCard(
+                            avatarUrl: avatarUrl,
+                            pet: pet,
+                            onTap: () => context
+                                .read<ContentCubit>()
+                                .showPetProfile(
+                                    selectedShelter: shelter, selectedPet: pet),
+                          ),
+                        );
+                      }).toList(),
                     ],
                   ),
           ],

@@ -3,8 +3,7 @@ import 'package:zoo_home/models/ModelProvider.dart';
 
 class ContentState {
   final Shelter selectedShelter;
-  final int selectedPetIndex;
+  final Pet selectedPet;
 
-  ContentState(
-      {@required this.selectedShelter, @required this.selectedPetIndex});
+  ContentState({@required this.selectedShelter, @required this.selectedPet});
 }

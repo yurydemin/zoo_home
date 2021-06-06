@@ -38,15 +38,15 @@ class ContentNavigator extends StatelessWidget {
                 child: SheltersView(),
               ),
             )),
-            if (state.selectedShelter != null && state.selectedPetIndex == null)
+            if (state.selectedShelter != null && state.selectedPet == null)
               MaterialPage(
                   child: ShelterProfileView(
                 selectedShelter: state.selectedShelter,
               )),
-            if (state.selectedShelter != null && state.selectedPetIndex != null)
+            if (state.selectedShelter != null && state.selectedPet != null)
               MaterialPage(
                   child: PetProfileView(
-                selectedPet: state.selectedShelter.pets[state.selectedPetIndex],
+                selectedPet: state.selectedPet,
                 selectedPetShelter: state.selectedShelter,
               )),
           ],

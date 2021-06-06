@@ -18,6 +18,7 @@ class FilteredSheltersBloc
           sheltersCubit.state is ListSheltersSuccessState
               ? FilteredSheltersLoadSuccessState(
                   (sheltersCubit.state as ListSheltersSuccessState).shelters,
+                  (sheltersCubit.state as ListSheltersSuccessState).pets,
                   (sheltersCubit.state as ListSheltersSuccessState)
                       .avatarsKeyUrl,
                   '')
@@ -44,11 +45,17 @@ class FilteredSheltersBloc
   Stream<FilteredSheltersState> _mapFilterUpdateToState(
       FilterUpdated event) async* {
     if (sheltersCubit.state is ListSheltersSuccessState) {
+      final filteredShelters = _mapSheltersToFilteredShelters(
+        (sheltersCubit.state as ListSheltersSuccessState).shelters,
+        event.searchFilter,
+      );
+      final fileteredPets = _mapPetsToFilteredPets(
+          (sheltersCubit.state as ListSheltersSuccessState).pets,
+          filteredShelters);
+
       yield FilteredSheltersLoadSuccessState(
-        _mapMoviesToFilteredMovies(
-          (sheltersCubit.state as ListSheltersSuccessState).shelters,
-          event.searchFilter,
-        ),
+        filteredShelters,
+        fileteredPets,
         (sheltersCubit.state as ListSheltersSuccessState).avatarsKeyUrl,
         event.searchFilter,
       );
@@ -60,17 +67,22 @@ class FilteredSheltersBloc
     final searchFilter = state is FilteredSheltersLoadSuccessState
         ? (state as FilteredSheltersLoadSuccessState).searchFilter
         : '';
+    final filteredShelters = _mapSheltersToFilteredShelters(
+      (sheltersCubit.state as ListSheltersSuccessState).shelters,
+      searchFilter,
+    );
+    final fileteredPets = _mapPetsToFilteredPets(
+        (sheltersCubit.state as ListSheltersSuccessState).pets,
+        filteredShelters);
     yield FilteredSheltersLoadSuccessState(
-      _mapMoviesToFilteredMovies(
-        (sheltersCubit.state as ListSheltersSuccessState).shelters,
-        searchFilter,
-      ),
+      filteredShelters,
+      fileteredPets,
       (sheltersCubit.state as ListSheltersSuccessState).avatarsKeyUrl,
       searchFilter,
     );
   }
 
-  List<Shelter> _mapMoviesToFilteredMovies(
+  List<Shelter> _mapSheltersToFilteredShelters(
       List<Shelter> shelters, String searchFilter) {
     return searchFilter.isEmpty
         ? shelters
@@ -85,6 +97,16 @@ class FilteredSheltersBloc
                         .toLowerCase()
                         .contains(searchFilter.toLowerCase())))
             .toList();
+  }
+
+  List<Pet> _mapPetsToFilteredPets(
+      List<Pet> pets, List<Shelter> filteredShelters) {
+    var filteredPets = <Pet>[];
+    filteredShelters.map((shelter) {
+      filteredPets
+          .addAll(pets.where((pet) => pet.shelterID == shelter.id).toList());
+    });
+    return filteredPets;
   }
 
   @override
