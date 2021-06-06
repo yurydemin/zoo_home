@@ -8,26 +8,27 @@ class ContentCubit extends Cubit<ContentState> {
   final SessionCubit sessionCubit;
 
   ContentCubit({@required this.sessionCubit})
-      : super(ContentState(currentShelter: null, currentPet: null));
+      : super(ContentState(selectedShelter: null, selectedPetIndex: null));
 
   bool get isUserLoggedIn => sessionCubit.isUserLoggedIn;
-  String get userId =>
-      sessionCubit.isUserLoggedIn ? sessionCubit.loggedInUser.id : null;
-  String get userContact =>
-      sessionCubit.isUserLoggedIn ? sessionCubit.loggedInUser.email : '';
+  String get userShelterID =>
+      sessionCubit.isUserLoggedIn ? sessionCubit.loggedInUserShelterID : null;
 
   void showAuth() => sessionCubit.showAuth();
 
   void showShelterProfile({
     Shelter selectedShelter,
   }) =>
-      emit(ContentState(currentShelter: selectedShelter, currentPet: null));
+      emit(ContentState(
+          selectedShelter: selectedShelter, selectedPetIndex: null));
 
-  void showPetProfile({Pet selectedPet}) =>
-      emit(ContentState(currentShelter: null, currentPet: selectedPet));
+  void showPetProfile({Shelter selectedShelter, int selectedPetIndex}) =>
+      emit(ContentState(
+          selectedShelter: selectedShelter,
+          selectedPetIndex: selectedPetIndex));
 
   void popToMain() =>
-      emit(ContentState(currentShelter: null, currentPet: null));
+      emit(ContentState(selectedShelter: null, selectedPetIndex: null));
 
   void signOut() {
     popToMain();

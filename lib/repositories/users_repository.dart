@@ -17,8 +17,9 @@ class UsersRepository {
   Future<User> createUser({
     String userId,
     String email,
+    String shelterID,
   }) async {
-    final newUser = User(id: userId, email: email);
+    final newUser = User(id: userId, email: email, shelterID: shelterID);
     try {
       await Amplify.DataStore.save(newUser);
       return newUser;

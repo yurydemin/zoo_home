@@ -24,6 +24,7 @@ class User extends Model {
   static const classType = const _UserModelType();
   final String id;
   final String email;
+  final String shelterID;
 
   @override
   getInstanceType() => classType;
@@ -33,10 +34,15 @@ class User extends Model {
     return id;
   }
 
-  const User._internal({@required this.id, @required this.email});
+  const User._internal(
+      {@required this.id, @required this.email, @required this.shelterID});
 
-  factory User({String id, @required String email}) {
-    return User._internal(id: id == null ? UUID.getUUID() : id, email: email);
+  factory User(
+      {String id, @required String email, @required String shelterID}) {
+    return User._internal(
+        id: id == null ? UUID.getUUID() : id,
+        email: email,
+        shelterID: shelterID);
   }
 
   bool equals(Object other) {
@@ -46,7 +52,10 @@ class User extends Model {
   @override
   bool operator ==(Object other) {
     if (identical(other, this)) return true;
-    return other is User && id == other.id && email == other.email;
+    return other is User &&
+        id == other.id &&
+        email == other.email &&
+        shelterID == other.shelterID;
   }
 
   @override
@@ -58,24 +67,31 @@ class User extends Model {
 
     buffer.write("User {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("email=" + "$email");
+    buffer.write("email=" + "$email" + ", ");
+    buffer.write("shelterID=" + "$shelterID");
     buffer.write("}");
 
     return buffer.toString();
   }
 
-  User copyWith({String id, String email}) {
-    return User(id: id ?? this.id, email: email ?? this.email);
+  User copyWith({String id, String email, String shelterID}) {
+    return User(
+        id: id ?? this.id,
+        email: email ?? this.email,
+        shelterID: shelterID ?? this.shelterID);
   }
 
   User.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        email = json['email'];
+        email = json['email'],
+        shelterID = json['shelterID'];
 
-  Map<String, dynamic> toJson() => {'id': id, 'email': email};
+  Map<String, dynamic> toJson() =>
+      {'id': id, 'email': email, 'shelterID': shelterID};
 
   static final QueryField ID = QueryField(fieldName: "user.id");
   static final QueryField EMAIL = QueryField(fieldName: "email");
+  static final QueryField SHELTERID = QueryField(fieldName: "shelterID");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "User";
@@ -94,6 +110,11 @@ class User extends Model {
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: User.EMAIL,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: User.SHELTERID,
         isRequired: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });

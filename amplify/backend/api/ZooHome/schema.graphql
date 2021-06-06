@@ -1,11 +1,11 @@
 type User @model @auth(rules: [{allow: public}]) {
   id: ID!
   email: String!
+  shelterID: String!
 }
 
 type Shelter @model @auth(rules: [{allow: public}]) {
   id: ID!
-  userId: ID!
   location: String
   title: String
   description: String
@@ -13,6 +13,7 @@ type Shelter @model @auth(rules: [{allow: public}]) {
   avatarKey: String
   imageKeys: [String]!
   pets: [Pet] @connection(keyName: "byShelter", fields: ["id"])
+  userID: String!
 }
 
 type Pet @model @auth(rules: [{allow: public}]) @key(name: "byShelter", fields: ["shelterID"]) {

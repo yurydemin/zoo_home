@@ -5,6 +5,7 @@ import 'package:zoo_home/content/content_state.dart';
 import 'package:zoo_home/content/filtered_shelters/filtered_shelters_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_view.dart';
 import 'package:zoo_home/content/shelters/shelters_cubit.dart';
+import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/repositories/shelters_repository.dart';
 import 'package:zoo_home/content/shelters/shelters_view.dart';
 import 'package:zoo_home/content/shelter_profile/shelter_profile_view.dart';
@@ -26,7 +27,8 @@ class ContentNavigator extends StatelessWidget {
                 child: BlocProvider(
               create: (context) => SheltersCubit(
                   contentCubit: context.read<ContentCubit>(),
-                  sheltersRepo: context.read<SheltersRepository>())
+                  sheltersRepo: context.read<SheltersRepository>(),
+                  petsRepo: context.read<PetsRepository>())
                 ..getShelters()
                 ..observeShelters(),
               child: BlocProvider(
@@ -36,15 +38,16 @@ class ContentNavigator extends StatelessWidget {
                 child: SheltersView(),
               ),
             )),
-            if (state.currentShelter != null)
+            if (state.selectedShelter != null && state.selectedPetIndex == null)
               MaterialPage(
                   child: ShelterProfileView(
-                selectedShelter: state.currentShelter,
+                selectedShelter: state.selectedShelter,
               )),
-            if (state.currentPet != null)
+            if (state.selectedShelter != null && state.selectedPetIndex != null)
               MaterialPage(
                   child: PetProfileView(
-                selectedPet: state.currentPet,
+                selectedPet: state.selectedShelter.pets[state.selectedPetIndex],
+                selectedPetShelter: state.selectedShelter,
               )),
           ],
           onPopPage: (route, result) {

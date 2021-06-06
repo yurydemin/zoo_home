@@ -25,7 +25,6 @@ import 'package:flutter/foundation.dart';
 class Shelter extends Model {
   static const classType = const _ShelterModelType();
   final String id;
-  final String userId;
   final String location;
   final String title;
   final String description;
@@ -33,6 +32,7 @@ class Shelter extends Model {
   final String avatarKey;
   final List<String> imageKeys;
   final List<Pet> pets;
+  final String userID;
 
   @override
   getInstanceType() => classType;
@@ -44,35 +44,35 @@ class Shelter extends Model {
 
   const Shelter._internal(
       {@required this.id,
-      @required this.userId,
       this.location,
       this.title,
       this.description,
       @required this.contact,
       this.avatarKey,
       @required this.imageKeys,
-      this.pets});
+      this.pets,
+      @required this.userID});
 
   factory Shelter(
       {String id,
-      @required String userId,
       String location,
       String title,
       String description,
       @required String contact,
       String avatarKey,
       @required List<String> imageKeys,
-      List<Pet> pets}) {
+      List<Pet> pets,
+      @required String userID}) {
     return Shelter._internal(
         id: id == null ? UUID.getUUID() : id,
-        userId: userId,
         location: location,
         title: title,
         description: description,
         contact: contact,
         avatarKey: avatarKey,
         imageKeys: imageKeys != null ? List.unmodifiable(imageKeys) : imageKeys,
-        pets: pets != null ? List.unmodifiable(pets) : pets);
+        pets: pets != null ? List.unmodifiable(pets) : pets,
+        userID: userID);
   }
 
   bool equals(Object other) {
@@ -84,14 +84,14 @@ class Shelter extends Model {
     if (identical(other, this)) return true;
     return other is Shelter &&
         id == other.id &&
-        userId == other.userId &&
         location == other.location &&
         title == other.title &&
         description == other.description &&
         contact == other.contact &&
         avatarKey == other.avatarKey &&
         DeepCollectionEquality().equals(imageKeys, other.imageKeys) &&
-        DeepCollectionEquality().equals(pets, other.pets);
+        DeepCollectionEquality().equals(pets, other.pets) &&
+        userID == other.userID;
   }
 
   @override
@@ -103,14 +103,15 @@ class Shelter extends Model {
 
     buffer.write("Shelter {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("userId=" + "$userId" + ", ");
     buffer.write("location=" + "$location" + ", ");
     buffer.write("title=" + "$title" + ", ");
     buffer.write("description=" + "$description" + ", ");
     buffer.write("contact=" + "$contact" + ", ");
     buffer.write("avatarKey=" + "$avatarKey" + ", ");
-    buffer.write(
-        "imageKeys=" + (imageKeys != null ? imageKeys.toString() : "null"));
+    buffer.write("imageKeys=" +
+        (imageKeys != null ? imageKeys.toString() : "null") +
+        ", ");
+    buffer.write("userID=" + "$userID");
     buffer.write("}");
 
     return buffer.toString();
@@ -118,29 +119,28 @@ class Shelter extends Model {
 
   Shelter copyWith(
       {String id,
-      String userId,
       String location,
       String title,
       String description,
       String contact,
       String avatarKey,
       List<String> imageKeys,
-      List<Pet> pets}) {
+      List<Pet> pets,
+      String userID}) {
     return Shelter(
         id: id ?? this.id,
-        userId: userId ?? this.userId,
         location: location ?? this.location,
         title: title ?? this.title,
         description: description ?? this.description,
         contact: contact ?? this.contact,
         avatarKey: avatarKey ?? this.avatarKey,
         imageKeys: imageKeys ?? this.imageKeys,
-        pets: pets ?? this.pets);
+        pets: pets ?? this.pets,
+        userID: userID ?? this.userID);
   }
 
   Shelter.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        userId = json['userId'],
         location = json['location'],
         title = json['title'],
         description = json['description'],
@@ -151,22 +151,22 @@ class Shelter extends Model {
             ? (json['pets'] as List)
                 .map((e) => Pet.fromJson(new Map<String, dynamic>.from(e)))
                 .toList()
-            : null;
+            : null,
+        userID = json['userID'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'userId': userId,
         'location': location,
         'title': title,
         'description': description,
         'contact': contact,
         'avatarKey': avatarKey,
         'imageKeys': imageKeys,
-        'pets': pets?.map((e) => e?.toJson())?.toList()
+        'pets': pets?.map((e) => e?.toJson())?.toList(),
+        'userID': userID
       };
 
   static final QueryField ID = QueryField(fieldName: "shelter.id");
-  static final QueryField USERID = QueryField(fieldName: "userId");
   static final QueryField LOCATION = QueryField(fieldName: "location");
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
@@ -177,6 +177,7 @@ class Shelter extends Model {
       fieldName: "pets",
       fieldType: ModelFieldType(ModelFieldTypeEnum.model,
           ofModelName: (Pet).toString()));
+  static final QueryField USERID = QueryField(fieldName: "userID");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Shelter";
@@ -192,11 +193,6 @@ class Shelter extends Model {
     ];
 
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Shelter.USERID,
-        isRequired: true,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Shelter.LOCATION,
@@ -235,6 +231,11 @@ class Shelter extends Model {
         isRequired: false,
         ofModelName: (Pet).toString(),
         associatedKey: Pet.SHELTERID));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Shelter.USERID,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 

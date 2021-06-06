@@ -5,12 +5,12 @@ import 'package:zoo_home/models/ModelProvider.dart';
 typedef OnSaveCallback = Function(
     PetKind kind, PetStatus status, String title, String description);
 
-class PetsAddView extends StatefulWidget {
+class CreatePetView extends StatefulWidget {
   final bool isEditing;
   final OnSaveCallback onSave;
   final Pet pet;
 
-  PetsAddView({
+  CreatePetView({
     Key key,
     @required this.onSave,
     @required this.isEditing,
@@ -18,10 +18,10 @@ class PetsAddView extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  _PetsAddViewState createState() => _PetsAddViewState();
+  _CreatePetViewState createState() => _CreatePetViewState();
 }
 
-class _PetsAddViewState extends State<PetsAddView> {
+class _CreatePetViewState extends State<CreatePetView> {
   static final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   String _title;

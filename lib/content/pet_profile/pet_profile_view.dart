@@ -4,20 +4,23 @@ import 'package:image_picker/image_picker.dart';
 import 'package:mailto/mailto.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
+import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_state.dart';
 import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/helpers/pet_visual_helper.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/repositories/shelters_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/widgets/profile_carousel.dart';
 
 class PetProfileView extends StatefulWidget {
   final Pet selectedPet;
-  final String contact;
+  final Shelter selectedPetShelter;
 
-  PetProfileView({Key key, @required this.selectedPet, @required this.contact})
+  PetProfileView(
+      {Key key, @required this.selectedPet, @required this.selectedPetShelter})
       : super(key: key);
   @override
   _PetProfileViewState createState() => _PetProfileViewState();
@@ -28,12 +31,13 @@ class _PetProfileViewState extends State<PetProfileView> {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => PetProfileBloc(
-        petsRepo: context.read<PetsRepository>(),
-        storageRepo: context.read<StorageRepository>(),
-        pet: widget.selectedPet,
-        isCurrentPet:
-            true, //TODO selectedPet.shelterID == context.read<ContentCubit>().loggedInUserShelterID
-      ),
+          petsRepo: context.read<PetsRepository>(),
+          sheltersRepo: context.read<SheltersRepository>(),
+          storageRepo: context.read<StorageRepository>(),
+          pet: widget.selectedPet,
+          shelter: widget.selectedPetShelter,
+          isCurrentPet: widget.selectedPet.shelterID ==
+              context.read<ContentCubit>().userShelterID),
       child: BlocListener<PetProfileBloc, PetProfileState>(
         listener: (context, state) {
           final formStatus = state.formStatus;
@@ -274,7 +278,7 @@ class _PetProfileViewState extends State<PetProfileView> {
   Widget _mailToTextButton() {
     return BlocBuilder<PetProfileBloc, PetProfileState>(
         builder: (context, state) {
-      final targetEmail = widget.contact;
+      final targetEmail = widget.selectedPetShelter.contact;
       final petCardTitle = state.pet.title;
       return TextButton(
         onPressed: () async {

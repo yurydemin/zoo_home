@@ -2,8 +2,9 @@ import 'package:flutter/widgets.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
 class ContentState {
-  final Shelter currentShelter;
-  final Pet currentPet;
+  final Shelter selectedShelter;
+  final int selectedPetIndex;
 
-  ContentState({@required this.currentShelter, @required this.currentPet});
+  ContentState(
+      {@required this.selectedShelter, @required this.selectedPetIndex});
 }

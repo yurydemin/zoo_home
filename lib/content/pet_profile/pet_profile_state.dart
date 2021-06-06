@@ -4,6 +4,7 @@ import 'package:zoo_home/models/ModelProvider.dart';
 
 class PetProfileState {
   final Pet pet;
+  final Shelter shelter;
   final bool isCurrentPet;
   final PetKind kind;
   final PetStatus status;
@@ -11,11 +12,11 @@ class PetProfileState {
   final String description;
   final List<String> imageUrls;
 
-  String get ownerShelterID => pet.shelterID;
   final FormSubmissionStatus formStatus;
 
   PetProfileState({
     @required Pet pet,
+    @required Shelter shelter,
     @required bool isCurrentPet,
     PetKind kind,
     PetStatus status,
@@ -24,6 +25,7 @@ class PetProfileState {
     List<String> imageUrls,
     this.formStatus = const InitialFormStatus(),
   })  : this.pet = pet,
+        this.shelter = shelter,
         this.isCurrentPet = isCurrentPet,
         this.kind = kind ?? pet.kind,
         this.status = status ?? pet.status,
@@ -33,6 +35,7 @@ class PetProfileState {
 
   PetProfileState copyWith({
     Pet pet,
+    Shelter shelter,
     bool isCurrentPet,
     PetKind kind,
     PetStatus status,
@@ -43,6 +46,7 @@ class PetProfileState {
   }) {
     return PetProfileState(
       pet: pet ?? this.pet,
+      shelter: shelter ?? this.shelter,
       isCurrentPet: this.isCurrentPet,
       kind: kind ?? this.kind,
       status: status ?? this.status,

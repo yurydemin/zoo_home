@@ -27,12 +27,11 @@ class ShelterProfileView extends StatelessWidget {
   Widget build(BuildContext context) {
     return BlocProvider(
       create: (context) => ShelterProfileBloc(
-        sheltersRepo: context.read<SheltersRepository>(),
-        storageRepo: context.read<StorageRepository>(),
-        shelter: selectedShelter,
-        isCurrentShelter:
-            true, //TODO selectedShelter.id == context.read<ContentCubit>().loggedInUserShelterID
-      ),
+          sheltersRepo: context.read<SheltersRepository>(),
+          storageRepo: context.read<StorageRepository>(),
+          shelter: selectedShelter,
+          isCurrentShelter:
+              selectedShelter.id == context.read<ContentCubit>().userShelterID),
       child: BlocListener<ShelterProfileBloc, ShelterProfileState>(
         listener: (context, state) {
           if (state.avatarImageSourceActionSheetIsVisible) {

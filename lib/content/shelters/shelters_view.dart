@@ -4,8 +4,8 @@ import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/filtered_shelters/filtered_shelters_bloc.dart';
 import 'package:zoo_home/content/filtered_shelters/filtered_shelters_event.dart';
 import 'package:zoo_home/content/filtered_shelters/filtered_shelters_state.dart';
-import 'package:zoo_home/content/pets/pets_add_view.dart';
-import 'package:zoo_home/content/pets/pets_cubit.dart';
+import 'package:zoo_home/content/shelters/shelters_cubit.dart';
+import 'package:zoo_home/views/create_pet_view.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/widgets/pet_card.dart';
 import 'package:zoo_home/widgets/search_textfield.dart';
@@ -14,12 +14,8 @@ import 'package:zoo_home/widgets/user_shelter_card.dart';
 class SheltersView extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    // FocusScopeNode curentScope = FocusScope.of(context);
-    // if (!curentScope.hasPrimaryFocus && curentScope.hasFocus) {
-    //   FocusManager.instance.primaryFocus.unfocus();
-    // }
     bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
-    String loggedInUserId = context.read<ContentCubit>().userId;
+    String loggedInUserShelterID = context.read<ContentCubit>().userShelterID;
     return Scaffold(
       appBar: AppBar(
         title: SearchTextfield(
@@ -47,10 +43,11 @@ class SheltersView extends StatelessWidget {
       body: BlocBuilder<FilteredSheltersBloc, FilteredSheltersState>(
           builder: (context, state) {
         if (state is FilteredSheltersLoadSuccessState) {
-          final loggedUserShelterIndex = loggedInUserId == null
+          // check index to set current shelter to the top of shelters list
+          final loggedUserShelterIndex = loggedInUserShelterID == null
               ? -1
               : state.filteredShelters
-                  .indexWhere((item) => item.userId == loggedInUserId);
+                  .indexWhere((item) => item.id == loggedInUserShelterID);
           return state.filteredShelters.isEmpty
               ? _emptyUserSheltersView()
               : _userSheltersListView(
@@ -75,7 +72,7 @@ class SheltersView extends StatelessWidget {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                      builder: (routedContext) => PetsAddView(
+                      builder: (routedContext) => CreatePetView(
                             isEditing: false,
                             onSave: (
                               PetKind kind,
@@ -83,7 +80,7 @@ class SheltersView extends StatelessWidget {
                               String title,
                               String description,
                             ) {
-                              BlocProvider.of<PetsCubit>(context)
+                              BlocProvider.of<SheltersCubit>(context)
                                   .createPet(kind, status, title, description);
                             },
                           )),
@@ -130,23 +127,31 @@ class SheltersView extends StatelessWidget {
                 ? Text('Еще не добавлено ни одного животного')
                 : Column(
                     children: [
-                      ...shelter.pets.map((pet) {
-                        final avatarUrl = pet.imageKeys.isNotEmpty
-                            ? avatarsKeyUrl.containsKey(pet.imageKeys.first)
-                                ? avatarsKeyUrl[pet.imageKeys.first]
-                                : null
-                            : null;
-                        return Padding(
-                          padding: const EdgeInsets.only(left: 24.0),
-                          child: PetCard(
-                            avatarUrl: avatarUrl,
-                            pet: pet,
-                            onTap: () => context
-                                .read<ContentCubit>()
-                                .showPetProfile(selectedPet: pet),
-                          ),
-                        );
-                      }).toList(),
+                      ...shelter.pets
+                          .asMap()
+                          .map((petIndex, pet) {
+                            final avatarUrl = pet.imageKeys.isNotEmpty
+                                ? avatarsKeyUrl.containsKey(pet.imageKeys.first)
+                                    ? avatarsKeyUrl[pet.imageKeys.first]
+                                    : null
+                                : null;
+                            return MapEntry(
+                                petIndex,
+                                Padding(
+                                  padding: const EdgeInsets.only(left: 24.0),
+                                  child: PetCard(
+                                    avatarUrl: avatarUrl,
+                                    pet: pet,
+                                    onTap: () => context
+                                        .read<ContentCubit>()
+                                        .showPetProfile(
+                                            selectedShelter: shelter,
+                                            selectedPetIndex: petIndex),
+                                  ),
+                                ));
+                          })
+                          .values
+                          .toList(),
                     ],
                   ),
           ],
@@ -155,43 +160,6 @@ class SheltersView extends StatelessWidget {
     );
   }
 }
-
-// Widget _userShelterPetsList() {
-//   return BlocBuilder<UserShelterPetsBloc, UserShelterPetsState>(
-//     builder: (context, state) {
-//       if (state is UserShelterPetsInitialState) {
-//         return Text('Загрузка животных зоодома...');
-//       } else if (state is UserShelterPetsLoadSuccessState) {
-//         final pets = state.pets;
-//         return pets.isEmpty
-//             ? Text('Еще не добавлено ни одного животного')
-//             : Column(
-//                 children: [
-//                   ...pets.map((pet) {
-//                     final avatarUrl = pet.imageKeys.isNotEmpty
-//                         ? state.avatarsKeyUrl.containsKey(pet.imageKeys.first)
-//                             ? state.avatarsKeyUrl[pet.imageKeys.first]
-//                             : null
-//                         : null;
-//                     return Padding(
-//                       padding: const EdgeInsets.only(left: 24.0),
-//                       child: PetCard(
-//                         avatarUrl: avatarUrl,
-//                         pet: pet,
-//                         onTap: () => context
-//                             .read<ContentCubit>()
-//                             .showPetProfile(selectedPet: pet),
-//                       ),
-//                     );
-//                   }).toList(),
-//                 ],
-//               );
-//       } else {
-//         return Text('Ошибка при загрузке списка животных');
-//       }
-//     },
-//   );
-// }
 
 class OneTapTooltip extends StatelessWidget {
   final Widget child;

@@ -7,21 +7,26 @@ import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_state.dart';
+import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/pets_repository.dart';
-import 'package:zoo_home/models/Pet.dart';
+import 'package:zoo_home/repositories/shelters_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/services/image_url_cache.dart';
 
 class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
   final PetsRepository petsRepo;
+  final SheltersRepository sheltersRepo;
   final StorageRepository storageRepo;
 
   PetProfileBloc({
     @required this.petsRepo,
+    @required this.sheltersRepo,
     @required this.storageRepo,
     @required Pet pet,
+    @required Shelter shelter,
     @required bool isCurrentPet,
-  }) : super(PetProfileState(pet: pet, isCurrentPet: isCurrentPet)) {
+  }) : super(PetProfileState(
+            pet: pet, shelter: shelter, isCurrentPet: isCurrentPet)) {
     Future.wait(pet.imageKeys.map((imageKey) async {
       return await ImageUrlCache.instance.getUrl(imageKey);
     }).toList())
@@ -70,9 +75,15 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
 
       // update pet and state
       final updatedPet = state.pet.copyWith(imageKeys: imageKeys);
-      await petsRepo.updatePet(updatedPet);
 
-      yield state.copyWith(pet: updatedPet, imageUrls: imageUrls);
+      try {
+        final updatedShelter =
+            await _updateShelterWithPet(state.shelter, updatedPet);
+        yield state.copyWith(
+            pet: updatedPet, shelter: updatedShelter, imageUrls: imageUrls);
+      } catch (e) {
+        print(e);
+      }
     } else if (event is ProvideProfileImagesPaths) {
       yield state.copyWith(imageUrls: event.imageUrls);
     } else if (event is PetProfileKindChanged) {
@@ -87,11 +98,19 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       final updatedImageKeys =
           state.pet.imageKeys.where((item) => item != event.imageKey).toList();
       final updatedPet = state.pet.copyWith(imageKeys: updatedImageKeys);
-      await petsRepo.updatePet(updatedPet);
-
       final updatedImageUrls =
           state.imageUrls.where((item) => item != event.imageUrl).toList();
-      yield state.copyWith(pet: updatedPet, imageUrls: updatedImageUrls);
+
+      try {
+        final updatedShelter =
+            await _updateShelterWithPet(state.shelter, updatedPet);
+        yield state.copyWith(
+            pet: updatedPet,
+            shelter: updatedShelter,
+            imageUrls: updatedImageUrls);
+      } catch (e) {
+        print(e);
+      }
     } else if (event is SavePetProfileChanges) {
       yield state.copyWith(formStatus: FormSubmitting());
 
@@ -103,11 +122,36 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
       );
 
       try {
-        await petsRepo.updatePet(updatedPet);
-        yield state.copyWith(pet: updatedPet, formStatus: SubmissionSuccess());
+        final updatedShelter =
+            await _updateShelterWithPet(state.shelter, updatedPet);
+        yield state.copyWith(
+            pet: updatedPet,
+            shelter: updatedShelter,
+            formStatus: SubmissionSuccess());
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));
       }
+    }
+  }
+
+  Future<Shelter> _updateShelterWithPet(
+      Shelter shelterToUpdate, Pet updatedPet) async {
+    try {
+      // update pet
+      await petsRepo.updatePet(updatedPet);
+      // add/update pet to shelter pets list
+      final newPetsList = [
+        ...shelterToUpdate.pets
+            .where((pet) => pet.id != updatedPet.id)
+            .toList(),
+        updatedPet
+      ];
+      final updatedShelter = shelterToUpdate.copyWith(pets: newPetsList);
+      // update shelter with new pets list
+      return await sheltersRepo.updateShelter(updatedShelter);
+    } catch (e) {
+      print(e.toString());
+      throw e;
     }
   }
 }

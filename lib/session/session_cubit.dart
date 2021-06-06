@@ -11,8 +11,9 @@ class SessionCubit extends Cubit<SessionState> {
   final UsersRepository usersRepo;
 
   bool get isUserLoggedIn => (state is AuthenticatedAsUserState);
-  User get loggedInUser =>
-      isUserLoggedIn ? (state as AuthenticatedAsUserState).user : null;
+  String get loggedInUserShelterID => isUserLoggedIn
+      ? (state as AuthenticatedAsUserState).user.shelterID
+      : null;
 
   SessionCubit({
     @required this.authRepo,
@@ -25,7 +26,6 @@ class SessionCubit extends Cubit<SessionState> {
     try {
       final userId = await authRepo.attemptAutoLogin();
       if (userId == null) {
-        //throw Exception('User not logged in');
         emit(AuthenticatedAsGuestState());
       } else {
         User user = await usersRepo.getUserById(userId);
