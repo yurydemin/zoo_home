@@ -15,7 +15,6 @@
 
 // ignore_for_file: public_member_api_docs
 
-import 'ModelProvider.dart';
 import 'package:amplify_datastore_plugin_interface/amplify_datastore_plugin_interface.dart';
 import 'package:collection/collection.dart';
 import 'package:flutter/foundation.dart';
@@ -32,7 +31,7 @@ class Shelter extends Model {
   final String avatarKey;
   final List<String> imageKeys;
   final String userID;
-  final List<Pet> pets;
+  final List<String> pets;
 
   @override
   getInstanceType() => classType;
@@ -51,7 +50,7 @@ class Shelter extends Model {
       this.avatarKey,
       @required this.imageKeys,
       @required this.userID,
-      this.pets});
+      @required this.pets});
 
   factory Shelter(
       {String id,
@@ -62,7 +61,7 @@ class Shelter extends Model {
       String avatarKey,
       @required List<String> imageKeys,
       @required String userID,
-      List<Pet> pets}) {
+      @required List<String> pets}) {
     return Shelter._internal(
         id: id == null ? UUID.getUUID() : id,
         location: location,
@@ -111,7 +110,8 @@ class Shelter extends Model {
     buffer.write("imageKeys=" +
         (imageKeys != null ? imageKeys.toString() : "null") +
         ", ");
-    buffer.write("userID=" + "$userID");
+    buffer.write("userID=" + "$userID" + ", ");
+    buffer.write("pets=" + (pets != null ? pets.toString() : "null"));
     buffer.write("}");
 
     return buffer.toString();
@@ -126,7 +126,7 @@ class Shelter extends Model {
       String avatarKey,
       List<String> imageKeys,
       String userID,
-      List<Pet> pets}) {
+      List<String> pets}) {
     return Shelter(
         id: id ?? this.id,
         location: location ?? this.location,
@@ -148,11 +148,7 @@ class Shelter extends Model {
         avatarKey = json['avatarKey'],
         imageKeys = json['imageKeys']?.cast<String>(),
         userID = json['userID'],
-        pets = json['pets'] is List
-            ? (json['pets'] as List)
-                .map((e) => Pet.fromJson(new Map<String, dynamic>.from(e)))
-                .toList()
-            : null;
+        pets = json['pets']?.cast<String>();
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -163,7 +159,7 @@ class Shelter extends Model {
         'avatarKey': avatarKey,
         'imageKeys': imageKeys,
         'userID': userID,
-        'pets': pets?.map((e) => e?.toJson())?.toList()
+        'pets': pets
       };
 
   static final QueryField ID = QueryField(fieldName: "shelter.id");
@@ -174,10 +170,7 @@ class Shelter extends Model {
   static final QueryField AVATARKEY = QueryField(fieldName: "avatarKey");
   static final QueryField IMAGEKEYS = QueryField(fieldName: "imageKeys");
   static final QueryField USERID = QueryField(fieldName: "userID");
-  static final QueryField PETS = QueryField(
-      fieldName: "pets",
-      fieldType: ModelFieldType(ModelFieldTypeEnum.model,
-          ofModelName: (Pet).toString()));
+  static final QueryField PETS = QueryField(fieldName: "pets");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Shelter";
@@ -231,11 +224,12 @@ class Shelter extends Model {
         isRequired: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Shelter.PETS,
         isRequired: true,
-        ofModelName: (Pet).toString(),
-        associatedKey: Pet.SHELTERID));
+        isArray: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.collection,
+            ofModelName: describeEnum(ModelFieldTypeEnum.string))));
   });
 }
 

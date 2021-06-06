@@ -13,10 +13,10 @@ type Shelter @model @auth(rules: [{allow: public}]) {
   avatarKey: String
   imageKeys: [String]!
   userID: String!
-  pets: [Pet!] @connection(keyName: "byShelter", fields: ["id"])
+  pets: [String]!
 }
 
-type Pet @model @auth(rules: [{allow: public}]) @key(name: "byShelter", fields: ["shelterID"]) {
+type Pet @model @auth(rules: [{allow: public}]) {
   id: ID!
   status: PetStatus
   kind: PetKind
@@ -24,7 +24,7 @@ type Pet @model @auth(rules: [{allow: public}]) @key(name: "byShelter", fields: 
   description: String
   imageKeys: [String]!
   date: AWSDateTime!
-  shelterID: ID!
+  shelterID: String!
 }
 
 enum PetKind {

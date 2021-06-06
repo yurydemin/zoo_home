@@ -86,10 +86,14 @@ class SheltersCubit extends Cubit<SheltersState> {
           .shelters
           .firstWhere((shelter) => shelter.id == contentCubit.userShelterID);
       // add/update pet
-      final newPetsList = [
-        ...currentShelter.pets.where((pet) => pet.id != updatedPet.id).toList(),
-        updatedPet
-      ];
+      final newPetsList = currentShelter.pets == null
+          ? [updatedPet.id]
+          : [
+              ...currentShelter.pets
+                  .where((petId) => petId != updatedPet.id)
+                  .toList(),
+              updatedPet.id
+            ];
       final updatedShelter = currentShelter.copyWith(pets: newPetsList);
       // update shelter with new pets list
       await sheltersRepo.updateShelter(updatedShelter);

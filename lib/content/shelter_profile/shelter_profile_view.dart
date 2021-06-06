@@ -61,7 +61,7 @@ class ShelterProfileView extends StatelessWidget {
       child: BlocBuilder<ShelterProfileBloc, ShelterProfileState>(
           builder: (context, state) {
         return AppBar(
-          title: Text(state.title),
+          title: Text(state.title == null ? 'Новый зоодом' : state.title),
           centerTitle: true,
           actions: [
             if (state.isCurrentShelter)
