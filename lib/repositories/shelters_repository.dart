@@ -27,8 +27,8 @@ class SheltersRepository {
   }
 
   Future<String> createEmptyShelter(String contact, String userID) async {
-    final emptyShelter =
-        Shelter(contact: contact, userID: userID, imageKeys: []);
+    final emptyShelter = Shelter(
+        contact: contact, userID: userID, imageKeys: <String>[], pets: <Pet>[]);
     try {
       await Amplify.DataStore.save(emptyShelter);
       return emptyShelter.id;

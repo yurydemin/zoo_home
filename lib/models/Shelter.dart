@@ -31,8 +31,8 @@ class Shelter extends Model {
   final String contact;
   final String avatarKey;
   final List<String> imageKeys;
-  final List<Pet> pets;
   final String userID;
+  final List<Pet> pets;
 
   @override
   getInstanceType() => classType;
@@ -50,8 +50,8 @@ class Shelter extends Model {
       @required this.contact,
       this.avatarKey,
       @required this.imageKeys,
-      this.pets,
-      @required this.userID});
+      @required this.userID,
+      this.pets});
 
   factory Shelter(
       {String id,
@@ -61,8 +61,8 @@ class Shelter extends Model {
       @required String contact,
       String avatarKey,
       @required List<String> imageKeys,
-      List<Pet> pets,
-      @required String userID}) {
+      @required String userID,
+      List<Pet> pets}) {
     return Shelter._internal(
         id: id == null ? UUID.getUUID() : id,
         location: location,
@@ -71,8 +71,8 @@ class Shelter extends Model {
         contact: contact,
         avatarKey: avatarKey,
         imageKeys: imageKeys != null ? List.unmodifiable(imageKeys) : imageKeys,
-        pets: pets != null ? List.unmodifiable(pets) : pets,
-        userID: userID);
+        userID: userID,
+        pets: pets != null ? List.unmodifiable(pets) : pets);
   }
 
   bool equals(Object other) {
@@ -90,8 +90,8 @@ class Shelter extends Model {
         contact == other.contact &&
         avatarKey == other.avatarKey &&
         DeepCollectionEquality().equals(imageKeys, other.imageKeys) &&
-        DeepCollectionEquality().equals(pets, other.pets) &&
-        userID == other.userID;
+        userID == other.userID &&
+        DeepCollectionEquality().equals(pets, other.pets);
   }
 
   @override
@@ -125,8 +125,8 @@ class Shelter extends Model {
       String contact,
       String avatarKey,
       List<String> imageKeys,
-      List<Pet> pets,
-      String userID}) {
+      String userID,
+      List<Pet> pets}) {
     return Shelter(
         id: id ?? this.id,
         location: location ?? this.location,
@@ -135,8 +135,8 @@ class Shelter extends Model {
         contact: contact ?? this.contact,
         avatarKey: avatarKey ?? this.avatarKey,
         imageKeys: imageKeys ?? this.imageKeys,
-        pets: pets ?? this.pets,
-        userID: userID ?? this.userID);
+        userID: userID ?? this.userID,
+        pets: pets ?? this.pets);
   }
 
   Shelter.fromJson(Map<String, dynamic> json)
@@ -147,12 +147,12 @@ class Shelter extends Model {
         contact = json['contact'],
         avatarKey = json['avatarKey'],
         imageKeys = json['imageKeys']?.cast<String>(),
+        userID = json['userID'],
         pets = json['pets'] is List
             ? (json['pets'] as List)
                 .map((e) => Pet.fromJson(new Map<String, dynamic>.from(e)))
                 .toList()
-            : null,
-        userID = json['userID'];
+            : null;
 
   Map<String, dynamic> toJson() => {
         'id': id,
@@ -162,8 +162,8 @@ class Shelter extends Model {
         'contact': contact,
         'avatarKey': avatarKey,
         'imageKeys': imageKeys,
-        'pets': pets?.map((e) => e?.toJson())?.toList(),
-        'userID': userID
+        'userID': userID,
+        'pets': pets?.map((e) => e?.toJson())?.toList()
       };
 
   static final QueryField ID = QueryField(fieldName: "shelter.id");
@@ -173,11 +173,11 @@ class Shelter extends Model {
   static final QueryField CONTACT = QueryField(fieldName: "contact");
   static final QueryField AVATARKEY = QueryField(fieldName: "avatarKey");
   static final QueryField IMAGEKEYS = QueryField(fieldName: "imageKeys");
+  static final QueryField USERID = QueryField(fieldName: "userID");
   static final QueryField PETS = QueryField(
       fieldName: "pets",
       fieldType: ModelFieldType(ModelFieldTypeEnum.model,
           ofModelName: (Pet).toString()));
-  static final QueryField USERID = QueryField(fieldName: "userID");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Shelter";
@@ -226,16 +226,16 @@ class Shelter extends Model {
         ofType: ModelFieldType(ModelFieldTypeEnum.collection,
             ofModelName: describeEnum(ModelFieldTypeEnum.string))));
 
-    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
-        key: Shelter.PETS,
-        isRequired: false,
-        ofModelName: (Pet).toString(),
-        associatedKey: Pet.SHELTERID));
-
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Shelter.USERID,
         isRequired: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.string)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.hasMany(
+        key: Shelter.PETS,
+        isRequired: true,
+        ofModelName: (Pet).toString(),
+        associatedKey: Pet.SHELTERID));
   });
 }
 

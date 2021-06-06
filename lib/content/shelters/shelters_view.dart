@@ -123,7 +123,7 @@ class SheltersView extends StatelessWidget {
                 avatarUrl: avatarsKeyUrl.containsKey(shelter.avatarKey)
                     ? avatarsKeyUrl[shelter.avatarKey]
                     : null),
-            shelter.pets.isEmpty
+            shelter.pets == null || shelter.pets.isEmpty
                 ? Text('Еще не добавлено ни одного животного')
                 : Column(
                     children: [

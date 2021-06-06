@@ -33,11 +33,12 @@ class SheltersCubit extends Cubit<SheltersState> {
         if (shelter.avatarKey != null && shelter.avatarKey.isNotEmpty)
           avatarsKeyUrl[shelter.avatarKey] =
               await ImageUrlCache.instance.getUrl(shelter.avatarKey);
-        await Future.wait(shelter.pets.map((pet) async {
-          if (pet.imageKeys.isNotEmpty)
-            avatarsKeyUrl[pet.imageKeys.first] =
-                await ImageUrlCache.instance.getUrl(pet.imageKeys.first);
-        }));
+        if (shelter.pets != null && shelter.pets.isNotEmpty)
+          await Future.wait(shelter.pets.map((pet) async {
+            if (pet.imageKeys.isNotEmpty)
+              avatarsKeyUrl[pet.imageKeys.first] =
+                  await ImageUrlCache.instance.getUrl(pet.imageKeys.first);
+          }));
       })).then((_) => // ok
           emit(ListSheltersSuccessState(
             shelters: shelters,
@@ -68,7 +69,7 @@ class SheltersCubit extends Cubit<SheltersState> {
         status: status,
         title: title,
         description: description,
-        imageKeys: [],
+        imageKeys: <String>[],
         date: TemporalDateTime(DateTime.now()),
       );
       _updateShelterWithPet(newPet);

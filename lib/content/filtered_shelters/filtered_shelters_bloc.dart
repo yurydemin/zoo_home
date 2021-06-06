@@ -72,17 +72,19 @@ class FilteredSheltersBloc
 
   List<Shelter> _mapMoviesToFilteredMovies(
       List<Shelter> shelters, String searchFilter) {
-    return shelters
-        .where((shelter) =>
-            (shelter.title != null &&
-                shelter.title
-                    .toLowerCase()
-                    .contains(searchFilter.toLowerCase())) ||
-            (shelter.location != null &&
-                shelter.location
-                    .toLowerCase()
-                    .contains(searchFilter.toLowerCase())))
-        .toList();
+    return searchFilter.isEmpty
+        ? shelters
+        : shelters
+            .where((shelter) =>
+                (shelter.title != null &&
+                    shelter.title
+                        .toLowerCase()
+                        .contains(searchFilter.toLowerCase())) ||
+                (shelter.location != null &&
+                    shelter.location
+                        .toLowerCase()
+                        .contains(searchFilter.toLowerCase())))
+            .toList();
   }
 
   @override

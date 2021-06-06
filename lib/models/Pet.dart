@@ -25,13 +25,13 @@ import 'package:flutter/foundation.dart';
 class Pet extends Model {
   static const classType = const _PetModelType();
   final String id;
-  final String shelterID;
   final PetStatus status;
   final PetKind kind;
   final String title;
   final String description;
   final List<String> imageKeys;
   final TemporalDateTime date;
+  final String shelterID;
 
   @override
   getInstanceType() => classType;
@@ -43,32 +43,32 @@ class Pet extends Model {
 
   const Pet._internal(
       {@required this.id,
-      this.shelterID,
       this.status,
       this.kind,
       this.title,
       this.description,
       @required this.imageKeys,
-      @required this.date});
+      @required this.date,
+      @required this.shelterID});
 
   factory Pet(
       {String id,
-      String shelterID,
       PetStatus status,
       PetKind kind,
       String title,
       String description,
       @required List<String> imageKeys,
-      @required TemporalDateTime date}) {
+      @required TemporalDateTime date,
+      @required String shelterID}) {
     return Pet._internal(
         id: id == null ? UUID.getUUID() : id,
-        shelterID: shelterID,
         status: status,
         kind: kind,
         title: title,
         description: description,
         imageKeys: imageKeys != null ? List.unmodifiable(imageKeys) : imageKeys,
-        date: date);
+        date: date,
+        shelterID: shelterID);
   }
 
   bool equals(Object other) {
@@ -80,13 +80,13 @@ class Pet extends Model {
     if (identical(other, this)) return true;
     return other is Pet &&
         id == other.id &&
-        shelterID == other.shelterID &&
         status == other.status &&
         kind == other.kind &&
         title == other.title &&
         description == other.description &&
         DeepCollectionEquality().equals(imageKeys, other.imageKeys) &&
-        date == other.date;
+        date == other.date &&
+        shelterID == other.shelterID;
   }
 
   @override
@@ -98,7 +98,6 @@ class Pet extends Model {
 
     buffer.write("Pet {");
     buffer.write("id=" + "$id" + ", ");
-    buffer.write("shelterID=" + "$shelterID" + ", ");
     buffer.write(
         "status=" + (status != null ? enumToString(status) : "null") + ", ");
     buffer.write("kind=" + (kind != null ? enumToString(kind) : "null") + ", ");
@@ -107,7 +106,8 @@ class Pet extends Model {
     buffer.write("imageKeys=" +
         (imageKeys != null ? imageKeys.toString() : "null") +
         ", ");
-    buffer.write("date=" + (date != null ? date.format() : "null"));
+    buffer.write("date=" + (date != null ? date.format() : "null") + ", ");
+    buffer.write("shelterID=" + "$shelterID");
     buffer.write("}");
 
     return buffer.toString();
@@ -115,27 +115,26 @@ class Pet extends Model {
 
   Pet copyWith(
       {String id,
-      String shelterID,
       PetStatus status,
       PetKind kind,
       String title,
       String description,
       List<String> imageKeys,
-      TemporalDateTime date}) {
+      TemporalDateTime date,
+      String shelterID}) {
     return Pet(
         id: id ?? this.id,
-        shelterID: shelterID ?? this.shelterID,
         status: status ?? this.status,
         kind: kind ?? this.kind,
         title: title ?? this.title,
         description: description ?? this.description,
         imageKeys: imageKeys ?? this.imageKeys,
-        date: date ?? this.date);
+        date: date ?? this.date,
+        shelterID: shelterID ?? this.shelterID);
   }
 
   Pet.fromJson(Map<String, dynamic> json)
       : id = json['id'],
-        shelterID = json['shelterID'],
         status = enumFromString<PetStatus>(json['status'], PetStatus.values),
         kind = enumFromString<PetKind>(json['kind'], PetKind.values),
         title = json['title'],
@@ -143,27 +142,28 @@ class Pet extends Model {
         imageKeys = json['imageKeys']?.cast<String>(),
         date = json['date'] != null
             ? TemporalDateTime.fromString(json['date'])
-            : null;
+            : null,
+        shelterID = json['shelterID'];
 
   Map<String, dynamic> toJson() => {
         'id': id,
-        'shelterID': shelterID,
         'status': enumToString(status),
         'kind': enumToString(kind),
         'title': title,
         'description': description,
         'imageKeys': imageKeys,
-        'date': date?.format()
+        'date': date?.format(),
+        'shelterID': shelterID
       };
 
   static final QueryField ID = QueryField(fieldName: "pet.id");
-  static final QueryField SHELTERID = QueryField(fieldName: "shelterID");
   static final QueryField STATUS = QueryField(fieldName: "status");
   static final QueryField KIND = QueryField(fieldName: "kind");
   static final QueryField TITLE = QueryField(fieldName: "title");
   static final QueryField DESCRIPTION = QueryField(fieldName: "description");
   static final QueryField IMAGEKEYS = QueryField(fieldName: "imageKeys");
   static final QueryField DATE = QueryField(fieldName: "date");
+  static final QueryField SHELTERID = QueryField(fieldName: "shelterID");
   static var schema =
       Model.defineSchema(define: (ModelSchemaDefinition modelSchemaDefinition) {
     modelSchemaDefinition.name = "Pet";
@@ -179,11 +179,6 @@ class Pet extends Model {
     ];
 
     modelSchemaDefinition.addField(ModelFieldDefinition.id());
-
-    modelSchemaDefinition.addField(ModelFieldDefinition.field(
-        key: Pet.SHELTERID,
-        isRequired: false,
-        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
 
     modelSchemaDefinition.addField(ModelFieldDefinition.field(
         key: Pet.STATUS,
@@ -216,6 +211,11 @@ class Pet extends Model {
         key: Pet.DATE,
         isRequired: true,
         ofType: ModelFieldType(ModelFieldTypeEnum.dateTime)));
+
+    modelSchemaDefinition.addField(ModelFieldDefinition.field(
+        key: Pet.SHELTERID,
+        isRequired: true,
+        ofType: ModelFieldType(ModelFieldTypeEnum.string)));
   });
 }
 

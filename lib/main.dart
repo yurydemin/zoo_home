@@ -1,5 +1,3 @@
-import 'dart:js';
-
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -11,6 +9,7 @@ import 'package:zoo_home/amplifyconfiguration.dart';
 import 'package:zoo_home/app_navigator.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/repositories/shelters_repository.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/repositories/users_repository.dart';
@@ -53,6 +52,7 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
                   RepositoryProvider(create: (context) => UsersRepository()),
                   RepositoryProvider(create: (context) => StorageRepository()),
                   RepositoryProvider(create: (context) => SheltersRepository()),
+                  RepositoryProvider(create: (context) => PetsRepository()),
                 ],
                 child: BlocProvider(
                   create: (context) => SessionCubit(
