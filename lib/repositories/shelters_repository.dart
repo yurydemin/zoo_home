@@ -25,4 +25,15 @@ class SheltersRepository {
   Stream observeShelters() {
     return Amplify.DataStore.observe(Shelter.classType);
   }
+
+  Future<String> createEmptyShelter(String contact, String userID) async {
+    final emptyShelter =
+        Shelter(contact: contact, userID: userID, imageKeys: []);
+    try {
+      await Amplify.DataStore.save(emptyShelter);
+      return emptyShelter.id;
+    } catch (e) {
+      throw (e);
+    }
+  }
 }

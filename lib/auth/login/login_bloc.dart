@@ -31,7 +31,7 @@ class LoginBloc extends Bloc<LoginEvent, LoginState> {
 
         authCubit.launchSession(AuthCredentials(
           email: state.email,
-          userShelterId: userId,
+          userId: userId,
         ));
       } catch (e) {
         yield state.copyWith(formStatus: SubmissionFailed(e));

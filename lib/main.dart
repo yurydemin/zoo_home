@@ -1,3 +1,5 @@
+import 'dart:js';
+
 import 'package:amplify_api/amplify_api.dart';
 import 'package:amplify_auth_cognito/amplify_auth_cognito.dart';
 import 'package:amplify_datastore/amplify_datastore.dart';
@@ -56,6 +58,7 @@ class _ZooHomeAppState extends State<ZooHomeApp> {
                   create: (context) => SessionCubit(
                     authRepo: context.read<AuthRepository>(),
                     usersRepo: context.read<UsersRepository>(),
+                    sheltersRepo: context.read<SheltersRepository>(),
                   ),
                   child: AppNavigator(),
                 ),

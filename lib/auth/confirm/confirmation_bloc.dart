@@ -37,7 +37,7 @@ class ConfirmationBloc extends Bloc<ConfirmationEvent, ConfirmationState> {
           email: credentials.email,
           password: credentials.password,
         );
-        credentials.userShelterId = userId;
+        credentials.userId = userId;
 
         authCubit.launchSession(credentials);
       } catch (e) {
