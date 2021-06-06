@@ -2,7 +2,7 @@ import 'package:amplify_datastore/amplify_datastore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/content/content_cubit.dart';
-import 'package:zoo_home/content/pets/pets_repository.dart';
+import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/content/pets/pets_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
@@ -49,7 +49,6 @@ class PetsCubit extends Cubit<PetsState> {
       title: title,
       description: description,
       imageKeys: [],
-      contact: contentCubit.userContact,
       date: TemporalDateTime(DateTime.now()),
     );
   }

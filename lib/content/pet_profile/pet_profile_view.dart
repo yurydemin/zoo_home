@@ -7,7 +7,7 @@ import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_bloc.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_state.dart';
-import 'package:zoo_home/content/pets/pets_repository.dart';
+import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/helpers/pet_visual_helper.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
@@ -15,8 +15,10 @@ import 'package:zoo_home/widgets/profile_carousel.dart';
 
 class PetProfileView extends StatefulWidget {
   final Pet selectedPet;
+  final String contact;
 
-  PetProfileView({Key key, @required this.selectedPet}) : super(key: key);
+  PetProfileView({Key key, @required this.selectedPet, @required this.contact})
+      : super(key: key);
   @override
   _PetProfileViewState createState() => _PetProfileViewState();
 }
@@ -29,10 +31,8 @@ class _PetProfileViewState extends State<PetProfileView> {
         petsRepo: context.read<PetsRepository>(),
         storageRepo: context.read<StorageRepository>(),
         pet: widget.selectedPet,
-        // TODO check current or not from widget
-        isCurrentPet: true,
-        // isCurrentPet: currentUser != null &&
-        //     currentUser.id == widget.selectedPet.shelterID,
+        isCurrentPet:
+            true, //TODO selectedPet.shelterID == context.read<ContentCubit>().loggedInUserShelterID
       ),
       child: BlocListener<PetProfileBloc, PetProfileState>(
         listener: (context, state) {
@@ -61,6 +61,7 @@ class _PetProfileViewState extends State<PetProfileView> {
         return AppBar(
           title: Text(state.title),
           centerTitle: true,
+          // TODO Remove pet
           // actions: [
           //   if (state.isCurrentPet)
           //     IconButton(
@@ -273,8 +274,7 @@ class _PetProfileViewState extends State<PetProfileView> {
   Widget _mailToTextButton() {
     return BlocBuilder<PetProfileBloc, PetProfileState>(
         builder: (context, state) {
-      //TODO get contact from widget
-      final targetEmail = '';
+      final targetEmail = widget.contact;
       final petCardTitle = state.pet.title;
       return TextButton(
         onPressed: () async {

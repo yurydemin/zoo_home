@@ -12,10 +12,9 @@ import 'package:zoo_home/content/content_cubit.dart';
 import 'package:zoo_home/content/shelter_profile/shelter_profile_bloc.dart';
 import 'package:zoo_home/content/shelter_profile/shelter_profile_event.dart';
 import 'package:zoo_home/content/shelter_profile/shelter_profile_state.dart';
-import 'package:zoo_home/content/shelters/shelters_repository.dart';
+import 'package:zoo_home/repositories/shelters_repository.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
-import 'package:zoo_home/session/session_cubit.dart';
 import 'package:zoo_home/widgets/profile_carousel.dart';
 
 class ShelterProfileView extends StatelessWidget {
@@ -26,15 +25,13 @@ class ShelterProfileView extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentUser = context.read<SessionCubit>().currentUser;
-    final isCurrentShelter =
-        currentUser != null && currentUser.id == selectedShelter.userId;
     return BlocProvider(
       create: (context) => ShelterProfileBloc(
         sheltersRepo: context.read<SheltersRepository>(),
         storageRepo: context.read<StorageRepository>(),
         shelter: selectedShelter,
-        isCurrentShelter: isCurrentShelter,
+        isCurrentShelter:
+            true, //TODO selectedShelter.id == context.read<ContentCubit>().loggedInUserShelterID
       ),
       child: BlocListener<ShelterProfileBloc, ShelterProfileState>(
         listener: (context, state) {

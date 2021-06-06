@@ -1,7 +1,7 @@
 import 'package:amplify_flutter/amplify.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 
-class UserRepository {
+class UsersRepository {
   Future<User> getUserById(String userId) async {
     try {
       final users = await Amplify.DataStore.query(

@@ -7,6 +7,7 @@ import 'package:zoo_home/content/filtered_shelters/filtered_shelters_state.dart'
 import 'package:zoo_home/content/pets/pets_add_view.dart';
 import 'package:zoo_home/content/pets/pets_cubit.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
+import 'package:zoo_home/widgets/pet_card.dart';
 import 'package:zoo_home/widgets/search_textfield.dart';
 import 'package:zoo_home/widgets/user_shelter_card.dart';
 
@@ -18,7 +19,7 @@ class SheltersView extends StatelessWidget {
     //   FocusManager.instance.primaryFocus.unfocus();
     // }
     bool isLoggedIn = context.read<ContentCubit>().isUserLoggedIn;
-    String loggedUserShelterId = context.read<ContentCubit>().userId;
+    String loggedInUserId = context.read<ContentCubit>().userId;
     return Scaffold(
       appBar: AppBar(
         title: SearchTextfield(
@@ -38,7 +39,7 @@ class SheltersView extends StatelessWidget {
           IconButton(
             icon: Icon(isLoggedIn ? Icons.home : Icons.login),
             onPressed: () => isLoggedIn
-                ? context.read<ContentCubit>().showUserProfile()
+                ? context.read<ContentCubit>().showShelterProfile()
                 : context.read<ContentCubit>().showAuth(),
           ),
         ],
@@ -46,10 +47,10 @@ class SheltersView extends StatelessWidget {
       body: BlocBuilder<FilteredSheltersBloc, FilteredSheltersState>(
           builder: (context, state) {
         if (state is FilteredSheltersLoadSuccessState) {
-          final loggedUserShelterIndex = loggedUserShelterId == null
+          final loggedUserShelterIndex = loggedInUserId == null
               ? -1
               : state.filteredShelters
-                  .indexWhere((item) => item.id == loggedUserShelterId);
+                  .indexWhere((item) => item.userId == loggedInUserId);
           return state.filteredShelters.isEmpty
               ? _emptyUserSheltersView()
               : _userSheltersListView(
@@ -120,18 +121,34 @@ class SheltersView extends StatelessWidget {
             ShelterCard(
                 onTap: () => context
                     .read<ContentCubit>()
-                    .showUserProfile(selectedShelter: shelter),
+                    .showShelterProfile(selectedShelter: shelter),
                 shelter: shelter,
                 avatarUrl: avatarsKeyUrl.containsKey(shelter.avatarKey)
                     ? avatarsKeyUrl[shelter.avatarKey]
                     : null),
-            // BlocProvider<UserShelterPetsBloc>(
-            //   create: (context) => UserShelterPetsBloc(
-            //     userShelterId: shelter.id,
-            //     petsCubit: BlocProvider.of<PetsCubit>(context),
-            //   )..add(UserShelterPetsUpdatedEvent(shelter.id)),
-            //   child: _userShelterPetsList(),
-            // ),
+            shelter.pets.isEmpty
+                ? Text('Еще не добавлено ни одного животного')
+                : Column(
+                    children: [
+                      ...shelter.pets.map((pet) {
+                        final avatarUrl = pet.imageKeys.isNotEmpty
+                            ? avatarsKeyUrl.containsKey(pet.imageKeys.first)
+                                ? avatarsKeyUrl[pet.imageKeys.first]
+                                : null
+                            : null;
+                        return Padding(
+                          padding: const EdgeInsets.only(left: 24.0),
+                          child: PetCard(
+                            avatarUrl: avatarUrl,
+                            pet: pet,
+                            onTap: () => context
+                                .read<ContentCubit>()
+                                .showPetProfile(selectedPet: pet),
+                          ),
+                        );
+                      }).toList(),
+                    ],
+                  ),
           ],
         );
       },

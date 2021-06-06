@@ -7,7 +7,7 @@ import 'package:multi_image_picker2/multi_image_picker2.dart';
 import 'package:zoo_home/auth/form_submission_status.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_event.dart';
 import 'package:zoo_home/content/pet_profile/pet_profile_state.dart';
-import 'package:zoo_home/content/pets/pets_repository.dart';
+import 'package:zoo_home/repositories/pets_repository.dart';
 import 'package:zoo_home/models/Pet.dart';
 import 'package:zoo_home/repositories/storage_repository.dart';
 import 'package:zoo_home/services/image_url_cache.dart';

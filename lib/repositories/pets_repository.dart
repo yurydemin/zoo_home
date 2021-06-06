@@ -15,6 +15,18 @@ class PetsRepository {
     }
   }
 
+  Future<List<Pet>> getPetsByShelterID(String shelterID) async {
+    try {
+      final pets = await Amplify.DataStore.query(
+        Pet.classType,
+        where: Pet.SHELTERID.eq(shelterID),
+      );
+      return pets;
+    } catch (e) {
+      throw e;
+    }
+  }
+
   Future<Pet> createPet({
     @required String shelterID,
     @required PetKind kind,
@@ -22,7 +34,6 @@ class PetsRepository {
     @required String title,
     @required String description,
     @required List<String> imageKeys,
-    @required String contact,
     @required TemporalDateTime date,
   }) async {
     final newPet = Pet(

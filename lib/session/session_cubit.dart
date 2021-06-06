@@ -3,21 +3,20 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/auth/auth_repository.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
-import 'package:zoo_home/repositories/user_repository.dart';
+import 'package:zoo_home/repositories/users_repository.dart';
 import 'package:zoo_home/session/session_state.dart';
 
 class SessionCubit extends Cubit<SessionState> {
   final AuthRepository authRepo;
-  final UserRepository userRepo;
+  final UsersRepository usersRepo;
 
-  bool get isGuestLoggedIn => (state is AuthenticatedAsGuestState);
   bool get isUserLoggedIn => (state is AuthenticatedAsUserState);
-  User get currentUser =>
+  User get loggedInUser =>
       isUserLoggedIn ? (state as AuthenticatedAsUserState).user : null;
 
   SessionCubit({
     @required this.authRepo,
-    @required this.userRepo,
+    @required this.usersRepo,
   }) : super(UnknownSessionState()) {
     attemptAutoLogin();
   }
@@ -29,13 +28,8 @@ class SessionCubit extends Cubit<SessionState> {
         //throw Exception('User not logged in');
         emit(AuthenticatedAsGuestState());
       } else {
-        User user = await userRepo.getUserById(userId);
+        User user = await usersRepo.getUserById(userId);
         if (user == null) {
-          // user = await userShelterRepo.createUser(
-          //   userId: userId,
-          //   email: user.email,
-          // );
-          //throw Exception('User auth exception');
           emit(AuthenticatedAsGuestState());
         } else {
           emit(AuthenticatedAsUserState(user: user));
@@ -43,7 +37,6 @@ class SessionCubit extends Cubit<SessionState> {
       }
     } on Exception catch (e) {
       print(e.toString());
-      //emit(AuthenticatedAsGuest());
     }
   }
 
@@ -53,10 +46,10 @@ class SessionCubit extends Cubit<SessionState> {
 
   void showSession(AuthCredentials credentials) async {
     try {
-      User user = await userRepo.getUserById(credentials.userShelterId);
+      User user = await usersRepo.getUserById(credentials.userShelterId);
 
       if (user == null) {
-        user = await userRepo.createUser(
+        user = await usersRepo.createUser(
           userId: credentials.userShelterId,
           email: credentials.email,
         );

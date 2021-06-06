@@ -1,6 +1,5 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:zoo_home/auth/auth_credentials.dart';
 import 'package:zoo_home/content/content_state.dart';
 import 'package:zoo_home/models/ModelProvider.dart';
 import 'package:zoo_home/session/session_cubit.dart';
@@ -13,13 +12,13 @@ class ContentCubit extends Cubit<ContentState> {
 
   bool get isUserLoggedIn => sessionCubit.isUserLoggedIn;
   String get userId =>
-      sessionCubit.isUserLoggedIn ? sessionCubit.currentUser.id : null;
+      sessionCubit.isUserLoggedIn ? sessionCubit.loggedInUser.id : null;
   String get userContact =>
-      sessionCubit.isUserLoggedIn ? sessionCubit.currentUser.email : '';
+      sessionCubit.isUserLoggedIn ? sessionCubit.loggedInUser.email : '';
 
   void showAuth() => sessionCubit.showAuth();
 
-  void showUserProfile({
+  void showShelterProfile({
     Shelter selectedShelter,
   }) =>
       emit(ContentState(currentShelter: selectedShelter, currentPet: null));
@@ -29,11 +28,6 @@ class ContentCubit extends Cubit<ContentState> {
 
   void popToMain() =>
       emit(ContentState(currentShelter: null, currentPet: null));
-
-  void updateSession(Shelter updatedShelter) {
-    sessionCubit.showSession(AuthCredentials(
-        email: updatedShelter.contact, userShelterId: updatedShelter.id));
-  }
 
   void signOut() {
     popToMain();
