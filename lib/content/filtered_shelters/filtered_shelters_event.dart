@@ -10,6 +10,7 @@ class FilterUpdated extends FilteredSheltersEvent {
 
 class SheltersUpdated extends FilteredSheltersEvent {
   final List<Shelter> shelters;
+  final List<Pet> pets;
 
-  SheltersUpdated(this.shelters);
+  SheltersUpdated(this.shelters, this.pets);
 }

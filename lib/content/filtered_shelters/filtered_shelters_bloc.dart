@@ -27,7 +27,8 @@ class FilteredSheltersBloc
     sheltersSubscription = sheltersCubit.stream.listen((state) {
       if (state is ListSheltersSuccessState) {
         add(SheltersUpdated(
-            (sheltersCubit.state as ListSheltersSuccessState).shelters));
+            (sheltersCubit.state as ListSheltersSuccessState).shelters,
+            (sheltersCubit.state as ListSheltersSuccessState).pets));
       }
     });
   }
@@ -101,8 +102,8 @@ class FilteredSheltersBloc
 
   List<Pet> _mapPetsToFilteredPets(
       List<Pet> pets, List<Shelter> filteredShelters) {
-    var filteredPets = <Pet>[];
-    filteredShelters.map((shelter) {
+    List<Pet> filteredPets = [];
+    filteredShelters.forEach((shelter) {
       filteredPets
           .addAll(pets.where((pet) => pet.shelterID == shelter.id).toList());
     });
