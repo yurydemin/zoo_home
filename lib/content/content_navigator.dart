@@ -29,8 +29,8 @@ class ContentNavigator extends StatelessWidget {
                   contentCubit: context.read<ContentCubit>(),
                   sheltersRepo: context.read<SheltersRepository>(),
                   petsRepo: context.read<PetsRepository>())
-                ..getShelters()
-                ..observeShelters(),
+                ..getShelters(),
+              //..observeShelters(),
               child: BlocProvider(
                 create: (context) => FilteredSheltersBloc(
                   sheltersCubit: context.read<SheltersCubit>(),

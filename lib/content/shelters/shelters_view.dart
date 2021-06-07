@@ -50,12 +50,16 @@ class SheltersView extends StatelessWidget {
                   .indexWhere((item) => item.id == loggedInUserShelterID);
           return state.filteredShelters.isEmpty
               ? _emptyUserSheltersView()
-              : _userSheltersListView(
-                  state.filteredShelters,
-                  state.filteredPets,
-                  state.avatarsKeyUrl,
-                  loggedUserShelterIndex,
-                );
+              : RefreshIndicator(
+                  child: _userSheltersListView(
+                    state.filteredShelters,
+                    state.filteredPets,
+                    state.avatarsKeyUrl,
+                    loggedUserShelterIndex,
+                  ),
+                  onRefresh: () async {
+                    context.read<SheltersCubit>().getShelters();
+                  });
         } else {
           return Container(
             color: Colors.white,
