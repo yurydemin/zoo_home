@@ -144,7 +144,7 @@ class PetProfileBloc extends Bloc<PetProfileEvent, PetProfileState> {
         ...shelterToUpdate.pets
             .where((petId) => petId != updatedPet.id)
             .toList(),
-        updatedPet
+        updatedPet.id,
       ];
       final updatedShelter = shelterToUpdate.copyWith(pets: newPetsList);
       // update shelter with new pets list

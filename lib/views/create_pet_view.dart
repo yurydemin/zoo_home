@@ -73,7 +73,7 @@ class _CreatePetViewState extends State<CreatePetView> {
               TextFormField(
                 initialValue: _description,
                 decoration: InputDecoration(
-                  hintText: 'Ифнормация о животном',
+                  hintText: 'Информация о животном',
                 ),
                 maxLines: 8,
                 validator: (val) {
