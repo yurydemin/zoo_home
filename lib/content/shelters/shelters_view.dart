@@ -34,9 +34,12 @@ class SheltersView extends StatelessWidget {
             ),
           IconButton(
             icon: Icon(isLoggedIn ? Icons.home : Icons.login),
-            onPressed: () => isLoggedIn
-                ? context.read<ContentCubit>().showShelterProfile()
-                : context.read<ContentCubit>().showAuth(),
+            onPressed: () {
+              _dropFocusNode(context);
+              isLoggedIn
+                  ? context.read<ContentCubit>().showShelterProfile()
+                  : context.read<ContentCubit>().showAuth();
+            },
           ),
         ],
       ),
@@ -123,9 +126,12 @@ class SheltersView extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           children: [
             ShelterCard(
-                onTap: () => context
-                    .read<ContentCubit>()
-                    .showShelterProfile(selectedShelter: shelter),
+                onTap: () {
+                  _dropFocusNode(context);
+                  context
+                      .read<ContentCubit>()
+                      .showShelterProfile(selectedShelter: shelter);
+                },
                 shelter: shelter,
                 avatarUrl: avatarsKeyUrl.containsKey(shelter.avatarKey)
                     ? avatarsKeyUrl[shelter.avatarKey]
@@ -143,13 +149,13 @@ class SheltersView extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(left: 24.0),
                           child: PetCard(
-                            avatarUrl: avatarUrl,
-                            pet: pet,
-                            onTap: () => context
-                                .read<ContentCubit>()
-                                .showPetProfile(
-                                    selectedShelter: shelter, selectedPet: pet),
-                          ),
+                              avatarUrl: avatarUrl,
+                              pet: pet,
+                              onTap: () {
+                                _dropFocusNode(context);
+                                context.read<ContentCubit>().showPetProfile(
+                                    selectedShelter: shelter, selectedPet: pet);
+                              }),
                         );
                       }).toList(),
                     ],
@@ -158,6 +164,13 @@ class SheltersView extends StatelessWidget {
         );
       },
     );
+  }
+
+  void _dropFocusNode(BuildContext context) {
+    FocusScopeNode curentScope = FocusScope.of(context);
+    if (!curentScope.hasPrimaryFocus && curentScope.hasFocus) {
+      FocusManager.instance.primaryFocus.unfocus();
+    }
   }
 }
 
