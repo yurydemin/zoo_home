@@ -54,6 +54,7 @@ class SheltersCubit extends Cubit<SheltersState> {
   }
 
   void observeShelters() {
+    if (!contentCubit.isUserLoggedIn) return;
     final sheltersStream = sheltersRepo.observeShelters();
     sheltersStream.listen((_) => getShelters());
   }
