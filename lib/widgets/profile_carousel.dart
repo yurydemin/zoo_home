@@ -22,7 +22,6 @@ class ProfileCarousel extends StatelessWidget {
   Widget build(BuildContext context) {
     return CarouselSlider(
       options: CarouselOptions(
-          height: 250.0,
           autoPlay: false,
           enlargeCenterPage: true,
           enableInfiniteScroll: imageUrls.length > 1),
@@ -34,7 +33,6 @@ class ProfileCarousel extends StatelessWidget {
               Builder(
                 builder: (BuildContext context) {
                   return Container(
-                    width: MediaQuery.of(context).size.width,
                     margin: EdgeInsets.symmetric(horizontal: 5.0),
                     child: Stack(
                       children: [
@@ -54,7 +52,6 @@ class ProfileCarousel extends StatelessWidget {
                           child: CachedNetworkImage(
                             imageUrl: url,
                             fit: BoxFit.cover,
-                            width: 1000.0,
                             progressIndicatorBuilder:
                                 (context, url, downloadProgress) => Center(
                               child: CircularProgressIndicator(

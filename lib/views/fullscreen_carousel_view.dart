@@ -20,7 +20,6 @@ class FullScreenCarouselView extends StatelessWidget {
             options: CarouselOptions(
               initialPage: initialImageIndex,
               height: height,
-              viewportFraction: 1.0,
               enlargeCenterPage: false,
             ),
             items: imageUrls.map((url) {
